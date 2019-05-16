@@ -1,33 +1,49 @@
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class MainForm {
+public class MainForm implements ActionListener{
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
 
     private JFrame authorization_frame = new JFrame("Log in");
     private JFrame main_frame = new JFrame("Accounting");
 
-    public void createUserAuthorizationForm(){
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
+    private JTextField textField = new JTextField(20);
+    private JPasswordField passwordField = new JPasswordField(20);
 
-        authorization_frame.setSize(300, 150);
+    public void createUserAuthorizationForm(){
+        JPanel jPanel = new JPanel();
+
+        JButton okButton = new JButton("Ok");
+        okButton.setActionCommand("ok");
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.setActionCommand("exit");
+
+        jPanel.add(textField);
+        jPanel.add(passwordField);
+        jPanel.add(okButton);
+        jPanel.add(exitButton);
+
+        authorization_frame.setSize(250, 130);
         authorization_frame.setLocationRelativeTo(null);
-        authorization_frame.add(createLoginFiled());
-        authorization_frame.add(createPasswordFiled());
+        authorization_frame.add(jPanel);
         authorization_frame.setVisible(true);
         authorization_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        okButton.addActionListener(this::actionPerformed);
+        exitButton.addActionListener(this::actionPerformed);
+
     }
 
     private void createMainForm() {
         main_frame.setJMenuBar(creatMenuBar());
         main_frame.setSize(WIDTH, HEIGHT);
         main_frame.setLocationRelativeTo(null);
-       // main_frame.setVisible(true);
+        main_frame.setVisible(true);
 
         main_frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -55,14 +71,22 @@ public class MainForm {
         return menuBar;
     }
 
-    private JTextField createLoginFiled(){
-        JTextField textField = new JTextField(20);
-        return textField;
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if("ok".equals(e.getActionCommand()))
+            validateUserAuthorization(textField,passwordField);
+        if("exit".equals(e.getActionCommand()))
+            System.exit(0);
     }
 
-    private JPasswordField createPasswordFiled(){
-        JPasswordField passwordField = new JPasswordField(10);
-        return passwordField;
+    private void validateUserAuthorization(JTextField jTextField, JPasswordField jPasswordField) {
+        char pass[] = jPasswordField.getPassword();
+        String str_pass = String.valueOf(pass);
+        if("admin".equals(jTextField.getText()) & "admin".equals(str_pass) ) {
+            authorization_frame.dispose();
+            createMainForm();
+        }
+        else
+            JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
     }
-
 }
