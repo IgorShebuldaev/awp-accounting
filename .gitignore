@@ -2,5 +2,5 @@
 .gradle/
 out/
 build/
-
+*.DS_Store
 

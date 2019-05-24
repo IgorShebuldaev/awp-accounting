@@ -1,12 +1,15 @@
 package forms;
 
+import database.Database;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.*;
 
-public class MainForm implements ActionListener{
+public class MainForm implements ActionListener {
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
 
@@ -16,7 +19,7 @@ public class MainForm implements ActionListener{
     private JTextField textField = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
 
-    public void createUserAuthorizationForm(){
+    public void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
 
         JButton okButton = new JButton("Ok");
@@ -38,7 +41,6 @@ public class MainForm implements ActionListener{
 
         okButton.addActionListener(this::actionPerformed);
         exitButton.addActionListener(this::actionPerformed);
-
     }
 
     private void createMainForm() {
@@ -75,20 +77,35 @@ public class MainForm implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if("ok".equals(e.getActionCommand()))
-            validateUserAuthorization(textField,passwordField);
-        if("exit".equals(e.getActionCommand()))
+        if ("ok".equals(e.getActionCommand()))
+            validateUserAuthorization(textField, passwordField);
+        if ("exit".equals(e.getActionCommand()))
             System.exit(0);
     }
 
     private void validateUserAuthorization(JTextField jTextField, JPasswordField jPasswordField) {
-        char pass[] = jPasswordField.getPassword();
-        String str_pass = String.valueOf(pass);
-        if("admin".equals(jTextField.getText()) & "admin".equals(str_pass) ) {
-            authorization_frame.dispose();
-            createMainForm();
+        String login = jTextField.getText();
+        String password = String.valueOf(jPasswordField.getPassword());
+
+        try {
+            Connection connection = Database.getDBConnection();
+            PreparedStatement st = connection.prepareStatement("select email, password from users where email = ?");
+            st.setString(1, login);
+            ResultSet rs = st.executeQuery();
+
+            if (!rs.next()){
+                JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
+                return;
+            }
+            if (rs.getString(2).equals(password)) {
+                authorization_frame.dispose();
+                createMainForm();
+            } else {
+                JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
+            }
+
+        } catch (SQLException e) {
+            System.out.print(e.getMessage());
         }
-        else
-            JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
     }
 }
