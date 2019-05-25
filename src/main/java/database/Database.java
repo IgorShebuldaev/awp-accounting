@@ -1,42 +1,34 @@
 package database;
 
-import java.sql.*;
+import config.Config;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class Database {
-    private static String url = "jdbc:mysql://localhost:3306/accounting";
-    private static String user = "wannaasbird";
-    private static String password = "db6234";
+    private static Connection connection;
 
-    public static Connection getDBConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
+        if (connection != null) return connection;
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-        return DriverManager.getConnection(url, user, password);
-    }
 
-    public static boolean login(String login, String password) {
-        try {
-            Connection connection = Database.getDBConnection();
-            PreparedStatement st = connection.prepareStatement("select email, password from users where email = ?");
-            st.setString(1, login);
-            ResultSet resultSet = st.executeQuery();
+        Properties properties = new Config().properties;
 
-            if (!resultSet.next()){
-                return false;
-            }
-            if (resultSet.getString(2).equals(password)) {
-                return true;
-            } else {
-                return false;
-            }
+        String host = properties.getProperty("host");
+        String port = properties.getProperty("port");
+        String database = properties.getProperty("database");
+        String user = properties.getProperty("user");
+        String password = properties.getProperty("pass");
+        String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
 
-        } catch (SQLException e) {
-            System.out.print(e.getMessage());
-        }
-
-        return false;
+        return connection = DriverManager.getConnection(url, user, password);
     }
 }
 

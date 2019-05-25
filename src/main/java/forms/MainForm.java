@@ -1,6 +1,6 @@
 package forms;
 
-import database.Database;
+import database.Authorization;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -83,12 +83,11 @@ public class MainForm implements ActionListener {
     }
 
     private void validateUserAuthorization(JTextField login, JPasswordField password) {
-        if (Database.login(login.getText(), String.valueOf(password.getPassword()))) {
+        if (new Authorization().isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
             authorization_frame.dispose();
             createMainForm();
         } else {
             JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
-            return;
         }
     }
 }
