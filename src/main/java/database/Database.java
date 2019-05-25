@@ -15,4 +15,28 @@ public class Database {
         }
         return DriverManager.getConnection(url, user, password);
     }
+
+    public static boolean login(String login, String password) {
+        try {
+            Connection connection = Database.getDBConnection();
+            PreparedStatement st = connection.prepareStatement("select email, password from users where email = ?");
+            st.setString(1, login);
+            ResultSet resultSet = st.executeQuery();
+
+            if (!resultSet.next()){
+                return false;
+            }
+            if (resultSet.getString(2).equals(password)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.out.print(e.getMessage());
+        }
+
+        return false;
+    }
 }
+

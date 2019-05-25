@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.*;
 
 public class MainForm implements ActionListener {
     private final int WIDTH = 800;
@@ -83,29 +82,13 @@ public class MainForm implements ActionListener {
             System.exit(0);
     }
 
-    private void validateUserAuthorization(JTextField jTextField, JPasswordField jPasswordField) {
-        String login = jTextField.getText();
-        String password = String.valueOf(jPasswordField.getPassword());
-
-        try {
-            Connection connection = Database.getDBConnection();
-            PreparedStatement st = connection.prepareStatement("select email, password from users where email = ?");
-            st.setString(1, login);
-            ResultSet rs = st.executeQuery();
-
-            if (!rs.next()){
-                JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
-                return;
-            }
-            if (rs.getString(2).equals(password)) {
-                authorization_frame.dispose();
-                createMainForm();
-            } else {
-                JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
-            }
-
-        } catch (SQLException e) {
-            System.out.print(e.getMessage());
+    private void validateUserAuthorization(JTextField login, JPasswordField password) {
+        if (Database.login(login.getText(), String.valueOf(password.getPassword()))) {
+            authorization_frame.dispose();
+            createMainForm();
+        } else {
+            JOptionPane.showMessageDialog(authorization_frame, "Invalid login or password! Try again.");
+            return;
         }
     }
 }
