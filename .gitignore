@@ -3,4 +3,5 @@
 out/
 build/
 *.DS_Store
+database.properties
 
