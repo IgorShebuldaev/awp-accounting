@@ -26,15 +26,15 @@ public class Users {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT users.email, users.password, roles.role, users.time_in_program FROM users INNER JOIN roles on users.role_id = roles.id";
-            ResultSet res = statement.executeQuery(query);
+            String query = "SELECT users.email, users.password, roles.role, users.time_in_program FROM users INNER JOIN roles ON users.role_id = roles.id";
+            ResultSet resultSet = statement.executeQuery(query);
 
-            while (res.next()) {
+            while (resultSet.next()) {
                 arrayList.add(new Users(
-                        res.getString("email"),
-                        res.getString("password"),
-                        res.getString("role"),
-                        res.getInt("time_in_program")
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("role"),
+                        resultSet.getInt("time_in_program")
                 ));
             }
             connection.close();
