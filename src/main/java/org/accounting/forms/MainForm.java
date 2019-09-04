@@ -2,17 +2,14 @@ package org.accounting.forms;
 
 import org.accounting.database.Authorization;
 import org.accounting.database.models.Deliveries;
-import org.accounting.database.models.Users;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainForm implements ActionListener {
-    private final int WIDTH = 800;
-    private final int HEIGHT = 600;
-
     private JFrame authorizationFrame = new JFrame("Log in");
     private JFrame mainFrame = new JFrame("Accounting");
 
@@ -69,7 +66,7 @@ public class MainForm implements ActionListener {
 
     private void createMainForm() {
         mainFrame.setJMenuBar(creatMenuBar());
-        mainFrame.setSize(WIDTH, HEIGHT);
+        mainFrame.setSize(800, 600);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
 
@@ -98,27 +95,21 @@ public class MainForm implements ActionListener {
         JMenu settings = new JMenu("Settings");
 
         menu.add(new JMenuItem("Suppliers"));
+        menu.addSeparator();
         menu.add(new JMenuItem("Workers"));
+        menu.addSeparator();
         menu.add(new JMenuItem("Positions"));
+        menu.addSeparator();
         menu.add(new JMenuItem("Notes"));
 
         settings.add(new JMenuItem("Users"));
+        settings.addSeparator();
         settings.add(new JMenuItem("Role"));
 
         menuBar.add(menu);
         menuBar.add(settings);
 
         return menuBar;
-    }
-
-    private void fillTableUser() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Email","Password","Role","Time in program"});
-        ArrayList<Users> arrayList = Users.getUsers();
-        for (Users users : arrayList){
-            model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram});
-        }
-        tableUsers.setModel(model);
     }
 
     private void fillTableDeliveries() {
