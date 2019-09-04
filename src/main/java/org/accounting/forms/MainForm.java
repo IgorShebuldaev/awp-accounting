@@ -1,6 +1,7 @@
 package org.accounting.forms;
 
 import org.accounting.database.Authorization;
+import org.accounting.database.models.Deliveries;
 import org.accounting.database.models.Users;
 
 import javax.swing.*;
@@ -23,6 +24,8 @@ public class MainForm implements ActionListener {
 
     private JTable tableUsers = new JTable();
     private JScrollPane scrollPaneTableUsers = new JScrollPane(tableUsers);
+    private JTable tableDeliveries = new JTable();
+    private JScrollPane scrollPaneTableDeliveries = new JScrollPane(tableDeliveries);
 
     public void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
@@ -50,11 +53,12 @@ public class MainForm implements ActionListener {
 
     private void createMainForm() {
         mainFrame.setJMenuBar(creatMenuBar());
-        fillTableUser();
-        mainFrame.add(scrollPaneTableUsers);
         mainFrame.setSize(WIDTH, HEIGHT);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
+
+        mainFrame.add(scrollPaneTableDeliveries);
+        fillTableDeliveries();
 
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -74,10 +78,19 @@ public class MainForm implements ActionListener {
 
     private JMenuBar creatMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenu menu = new JMenu("Menu");
+        JMenu settings = new JMenu("Settings");
 
-        menu.add(new JMenuItem("Settings"));
+        menu.add(new JMenuItem("Suppliers"));
+        menu.add(new JMenuItem("Workers"));
+        menu.add(new JMenuItem("Positions"));
+        menu.add(new JMenuItem("Notes"));
+
+        settings.add(new JMenuItem("Users"));
+        settings.add(new JMenuItem("Role"));
+
         menuBar.add(menu);
+        menuBar.add(settings);
 
         return menuBar;
     }
@@ -90,6 +103,16 @@ public class MainForm implements ActionListener {
             model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram});
         }
         tableUsers.setModel(model);
+    }
+
+    private void fillTableDeliveries() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"Date delivery", "Company name", "Product", "Price", "Worker"});
+        ArrayList<Deliveries> arrayList = Deliveries.getDeliveries();
+        for (Deliveries deliveries : arrayList){
+            model.addRow(new Object[]{deliveries.deliveryDate, deliveries.supplier, deliveries.product, deliveries.price, deliveries.worker});
+        }
+        tableDeliveries.setModel(model);
     }
 
     @Override
