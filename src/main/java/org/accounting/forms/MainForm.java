@@ -6,10 +6,7 @@ import org.accounting.database.models.Users;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainForm implements ActionListener {
@@ -46,6 +43,25 @@ public class MainForm implements ActionListener {
         authorizationFrame.add(jPanel);
         authorizationFrame.setVisible(true);
         authorizationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        passwordField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+                    validateUserAuthorization(textField,passwordField);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+
+            }
+        });
 
         okButton.addActionListener(this::actionPerformed);
         exitButton.addActionListener(this::actionPerformed);
