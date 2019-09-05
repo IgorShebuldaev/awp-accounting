@@ -6,12 +6,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
-public class UsersForm {
+class UsersForm {
     private JFrame usersFrame = new JFrame("Users");
     private JTable tableUsers = new JTable();
     private JScrollPane scrollPaneTableUsers = new JScrollPane(tableUsers);
 
-    public void createUsersForm() {
+    void createUsersForm() {
         usersFrame.setSize(800, 600);
         usersFrame.setLocationRelativeTo(null);
         usersFrame.setVisible(true);
@@ -28,5 +28,4 @@ public class UsersForm {
         }
         tableUsers.setModel(model);
     }
-
 }

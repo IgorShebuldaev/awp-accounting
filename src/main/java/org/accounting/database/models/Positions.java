@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Positions {
-    public String position;
+class Positions {
+    String position;
 
-    Positions (String position) {
+    private Positions(String position) {
         this.position = position;
     }
 
@@ -27,11 +27,8 @@ public class Positions {
                 arrayList.add(new Positions(
                    resultSet.getString("positions")
                 ));
-
-            connection.close();
-
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

@@ -16,7 +16,7 @@ public class Deliveries {
     public String price;
     public String worker;
 
-    Deliveries (Date deliveryDate, String supplier, String product, String price, String worker) {
+    private Deliveries(Date deliveryDate, String supplier, String product, String price, String worker) {
         this.deliveryDate = deliveryDate;
         this.supplier = supplier;
         this.product = product;
@@ -44,9 +44,8 @@ public class Deliveries {
                         resultSet.getString("full_name")
                 ));
             }
-            connection.close();
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

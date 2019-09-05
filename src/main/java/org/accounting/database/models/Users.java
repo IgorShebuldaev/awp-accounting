@@ -14,7 +14,7 @@ public class Users {
     public String role;
     public int timeInProgram;
 
-    Users (String email, String password, String role, int timeInProgram) {
+    private Users(String email, String password, String role, int timeInProgram) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -36,9 +36,8 @@ public class Users {
                         resultSet.getInt("time_in_program")
                 ));
             }
-            connection.close();
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

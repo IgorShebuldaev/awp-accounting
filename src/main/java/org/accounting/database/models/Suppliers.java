@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Suppliers {
-    public String supplier;
+class Suppliers {
+    String supplier;
 
-    Suppliers (String supplier) {
+    private Suppliers(String supplier) {
         this.supplier = supplier;
     }
     private ArrayList<Suppliers> getSuppliers() {
@@ -26,11 +26,8 @@ public class Suppliers {
                 arrayList.add(new Suppliers(
                         resultSet.getString("supplier")
                 ));
-
-            connection.close();
-
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

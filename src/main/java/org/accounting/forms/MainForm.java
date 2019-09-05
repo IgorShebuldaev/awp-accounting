@@ -20,7 +20,7 @@ public class MainForm implements ActionListener {
 
     private UsersForm usersForm = new UsersForm();
 
-    public void createUserAuthorizationForm() {
+    void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
 
         JButton okButton = new JButton("Ok");
@@ -92,25 +92,43 @@ public class MainForm implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
         JMenu settings = new JMenu("Settings");
+        JMenu about = new JMenu("About");
 
-        menu.add(new JMenuItem("Suppliers"));
-        menu.addSeparator();
-        menu.add(new JMenuItem("Workers"));
-        menu.addSeparator();
-        menu.add(new JMenuItem("Positions"));
-        menu.addSeparator();
-        menu.add(new JMenuItem("Notes"));
+        JMenuItem jMenuItemSuppliers = new JMenuItem("Suppliers");
+        JMenuItem jMenuItemWorkers = new JMenuItem("Workers");
+        JMenuItem jMenuItemPositions = new JMenuItem("Positions");
+        JMenuItem jMenuItemNotes = new JMenuItem("Notes");
 
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
-        jMenuItemUsers.setActionCommand("users");
-        jMenuItemUsers.addActionListener(this);
-        settings.add(jMenuItemUsers);
+        JMenuItem jMenuItemRoles = new JMenuItem("Roles");
 
-        settings.addSeparator();
-        settings.add(new JMenuItem("Role"));
+        jMenuItemSuppliers.setActionCommand("suppliers");
+        jMenuItemWorkers.setActionCommand("workers");
+        jMenuItemPositions.setActionCommand("positions");
+        jMenuItemNotes.setActionCommand("notes");
+
+        jMenuItemUsers.setActionCommand("users");
+
+        jMenuItemSuppliers.addActionListener(this);
+        jMenuItemWorkers.addActionListener(this);
+        jMenuItemPositions.addActionListener(this);
+        jMenuItemNotes.addActionListener(this);
+
+        jMenuItemUsers.addActionListener(this);
+
+        menu.add(jMenuItemSuppliers);
+        menu.addSeparator();
+        menu.add(jMenuItemWorkers);
+        menu.addSeparator();
+        menu.add(jMenuItemPositions);
+        menu.addSeparator();
+        menu.add(jMenuItemNotes);
+
+        settings.add(jMenuItemUsers);
 
         menuBar.add(menu);
         menuBar.add(settings);
+        menuBar.add(about);
 
         return menuBar;
     }

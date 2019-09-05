@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Notes {
-   public String note;
+class Notes {
+   String note;
 
-    Notes (String note) {
+    private Notes(String note) {
         this.note = note;
     }
 
@@ -28,11 +28,8 @@ public class Notes {
                         resultSet.getString("note")
                 ));
             }
-
-            connection.close();
-
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Roles {
-    public String role;
+class Roles {
+    String role;
 
-    Roles(String role) {
+    private Roles(String role) {
         this.role = role;
     }
 
@@ -27,11 +27,8 @@ public class Roles {
                 arrayList.add(new Roles(
                         resultSet.getString("role")
                 ));
-
-            connection.close();
-
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }

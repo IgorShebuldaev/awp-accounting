@@ -11,7 +11,7 @@ public class Database {
     private static Connection connection;
 
     public static Connection getConnection() throws SQLException {
-        //if (connection != null) return connection;
+        if (connection != null) return connection;
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

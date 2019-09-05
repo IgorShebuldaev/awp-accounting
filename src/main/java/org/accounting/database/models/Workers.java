@@ -9,12 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Workers {
-    public String fullName;
-    public Date dob;
-    public String position;
+class Workers {
+    String fullName;
+    Date dob;
+    String position;
 
-    Workers(String fullName, Date dob, String position) {
+    private Workers(String fullName, Date dob, String position) {
         this.fullName = fullName;
         this.dob = dob;
         this.position = position;
@@ -35,11 +35,8 @@ public class Workers {
                         resultSet.getDate("dob"),
                         resultSet.getString("position")
                 ));
-
-            connection.close();
-
         } catch (SQLException se) {
-            System.out.println(se);
+            se.printStackTrace();
         }
         return arrayList;
     }
