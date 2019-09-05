@@ -15,12 +15,11 @@ public class UsersForm {
         usersFrame.setSize(800, 600);
         usersFrame.setLocationRelativeTo(null);
         usersFrame.setVisible(true);
+        fillTableUsers();
         usersFrame.add(scrollPaneTableUsers);
-        fillTableUser();
-
     }
 
-    private void fillTableUser() {
+    private void fillTableUsers() {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Email","Password","Role","Time in program"});
         ArrayList<Users> arrayList = Users.getUsers();

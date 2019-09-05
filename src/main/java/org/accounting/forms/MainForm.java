@@ -5,7 +5,6 @@ import org.accounting.database.models.Deliveries;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -16,10 +15,10 @@ public class MainForm implements ActionListener {
     private JTextField textField = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
 
-    private JTable tableUsers = new JTable();
-    private JScrollPane scrollPaneTableUsers = new JScrollPane(tableUsers);
     private JTable tableDeliveries = new JTable();
     private JScrollPane scrollPaneTableDeliveries = new JScrollPane(tableDeliveries);
+
+    private UsersForm usersForm = new UsersForm();
 
     public void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
@@ -60,8 +59,8 @@ public class MainForm implements ActionListener {
             }
         });
 
-        okButton.addActionListener(this::actionPerformed);
-        exitButton.addActionListener(this::actionPerformed);
+        okButton.addActionListener(this);
+        exitButton.addActionListener(this);
     }
 
     private void createMainForm() {
@@ -102,7 +101,11 @@ public class MainForm implements ActionListener {
         menu.addSeparator();
         menu.add(new JMenuItem("Notes"));
 
-        settings.add(new JMenuItem("Users"));
+        JMenuItem jMenuItemUsers = new JMenuItem("Users");
+        jMenuItemUsers.setActionCommand("users");
+        jMenuItemUsers.addActionListener(this);
+        settings.add(jMenuItemUsers);
+
         settings.addSeparator();
         settings.add(new JMenuItem("Role"));
 
@@ -128,6 +131,8 @@ public class MainForm implements ActionListener {
             validateUserAuthorization(textField, passwordField);
         if ("exit".equals(e.getActionCommand()))
             System.exit(0);
+        if ("users".equals(e.getActionCommand()))
+            usersForm.createUsersForm();
     }
 
     private void validateUserAuthorization(JTextField login, JPasswordField password) {

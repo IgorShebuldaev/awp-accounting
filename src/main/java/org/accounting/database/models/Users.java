@@ -26,9 +26,8 @@ public class Users {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT users.email, users.password, roles.role, users.time_in_program FROM users INNER JOIN roles ON users.role_id = roles.id";
+            String query = "SELECT u.email, u.password, r.role, u.time_in_program FROM users u INNER JOIN roles r ON u.role_id = r.id";
             ResultSet resultSet = statement.executeQuery(query);
-
             while (resultSet.next()) {
                 arrayList.add(new Users(
                         resultSet.getString("email"),
