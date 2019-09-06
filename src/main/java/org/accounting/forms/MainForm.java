@@ -100,7 +100,6 @@ public class MainForm implements ActionListener {
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
 
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
-        JMenuItem jMenuItemRoles = new JMenuItem("Roles");
 
         jMenuItemSuppliers.setActionCommand("suppliers");
         jMenuItemWorkers.setActionCommand("workers");
