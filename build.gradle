@@ -1,5 +1,9 @@
 plugins {
-    id 'java'
+    id 'application'
+}
+
+application {
+  mainClassName = 'org.accounting.forms.Main'
 }
 
 group 'wannaasbird'
@@ -15,3 +19,14 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
 }
+
+task load(type: Exec) {
+  workingDir "$projectDir/"
+  commandLine 'sh', './db.sh', 'load'
+}
+
+task dump(type: Exec) {
+  workingDir "$projectDir/"
+  commandLine 'sh', './db.sh', 'dump'
+}
+
