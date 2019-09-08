@@ -18,8 +18,6 @@ public class MainForm implements ActionListener {
     private JTable tableDeliveries = new JTable();
     private JScrollPane scrollPaneTableDeliveries = new JScrollPane(tableDeliveries);
 
-    private UsersForm usersForm = new UsersForm();
-
     void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
 
@@ -149,7 +147,7 @@ public class MainForm implements ActionListener {
         if ("exit".equals(e.getActionCommand()))
             System.exit(0);
         if ("users".equals(e.getActionCommand()))
-            usersForm.createUsersForm();
+            new UsersForm().createUsersForm();
     }
 
     private void validateUserAuthorization(JTextField login, JPasswordField password) {
