@@ -1,0 +1,15 @@
+diff --git a/build.gradle b/build.gradle
+index 57c8340..b7bae42 100755
+--- a/build.gradle
++++ b/build.gradle
+@@ -1,5 +1,9 @@
+ plugins {
+-    id 'java'
++    id 'application'
++}
++
++application {
++  mainClassName = 'org.accounting.forms.Main'
+ }
+ 
+ group 'wannaasbird'
