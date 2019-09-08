@@ -22,12 +22,36 @@ dependencies {
 }
 
 task load(type: Exec) {
-  workingDir "$projectDir/"
+  group 'Database'
+  description 'Loads database schema'
+
   commandLine 'sh', './db.sh', 'load'
 }
 
 task dump(type: Exec) {
-  workingDir "$projectDir/"
+  group 'Database'
+  description "Creates dump of database's structure"
+
   commandLine 'sh', './db.sh', 'dump'
 }
+
+task destroy(type: Exec) {
+  group 'Database'
+  description 'Destroys database'
+
+  commandLine 'sh', './db.sh', 'destroy'
+}
+
+task create(type: Exec) {
+  group 'Database'
+  description 'Creates empty database'
+
+  commandLine 'sh', './db.sh', 'create'
+}
+
+task setup_db {
+  group 'Database'
+  description 'Creates new database and applies schema'
+}
+setup_db.dependsOn create, load
 

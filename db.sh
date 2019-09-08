@@ -34,4 +34,12 @@ function dump() {
   mysqldump --no-data -h$host -u $user -p$pass -P$port $database > src/main/resources/database_schema.sql
 }
 
+function destroy() {
+  mysql -h$host -u $user -p$pass -P$port -e "drop database $database;"
+}
+
+function create() {
+  mysql -h$host -u $user -p$pass -P$port -e "create database $database;"
+}
+
 $1
