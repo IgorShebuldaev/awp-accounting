@@ -9,7 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 class Notes {
-   String note;
+    int id;
+    String note;
 
     private Notes(String note) {
         this.note = note;

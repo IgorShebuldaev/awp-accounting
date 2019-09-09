@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 class Suppliers {
+    int id;
     String supplier;
 
     private Suppliers(String supplier) {

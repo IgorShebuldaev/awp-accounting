@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 class Workers {
+    int id;
     String fullName;
     Date dob;
     String position;

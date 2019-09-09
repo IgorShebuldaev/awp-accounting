@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Deliveries {
+    public int id;
     public Date deliveryDate;
     public String supplier;
     public String product;

@@ -8,14 +8,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Roles {
-    String role;
+public class Roles {
+    public int id;
+    public String role;
 
-    private Roles(String role) {
+    Roles(String role) {
         this.role = role;
     }
 
-    private ArrayList<Roles> getRoles() {
+    public static ArrayList<Roles> getRoles() {
         ArrayList<Roles> arrayList = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();

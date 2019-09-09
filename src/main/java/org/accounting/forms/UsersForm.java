@@ -2,14 +2,17 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.Roles;
 import org.accounting.database.models.Users;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class UsersForm extends JFrame {
+public class UsersForm extends JFrame implements ActionListener {
     private JPanel panelUsersForm;
     private JScrollPane scrollPaneTableUsers;
     private JTextField textFieldEmail;
@@ -31,6 +34,13 @@ public class UsersForm extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         fillTableUsers();
+
+        ArrayList<Roles> arrayListRoles = Roles.getRoles();
+        for (Roles roles : arrayListRoles) {
+            comboBoxRole.addItem(roles.role);
+        }
+
+        addButton.addActionListener(this);
     }
 
     private void fillTableUsers() {
@@ -41,6 +51,25 @@ public class UsersForm extends JFrame {
             model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram});
         }
         tableUsers.setModel(model);
+    }
+
+    private void buttonAddUsers() {
+        DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
+        Users users = new Users(textFieldEmail.getText(), textFieldPassword.getText(), String.valueOf(comboBoxRole.getSelectedItem()), 0);
+        System.out.println(comboBoxRole.getSelectedItem());
+        Users.insertUsers(users);
+        model.addRow(new Object[]{
+                users.email,
+                users.password,
+                users.role,
+                users.timeInProgram
+        });
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if ("add".equals(e.getActionCommand()))
+            buttonAddUsers();
     }
 
     {
@@ -80,9 +109,10 @@ public class UsersForm extends JFrame {
         labelRole.setText("Role");
         panelUsersForm.add(labelRole, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addRoles = new JButton();
-        addRoles.setText("Add Roles");
+        addRoles.setText("Add roles");
         panelUsersForm.add(addRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
+        addButton.setActionCommand("add");
         addButton.setText("Add");
         panelUsersForm.add(addButton, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
@@ -102,6 +132,7 @@ public class UsersForm extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return panelUsersForm;
     }
+
 
 }
 

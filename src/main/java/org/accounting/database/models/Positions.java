@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 class Positions {
+    int id;
     String position;
 
     private Positions(String position) {

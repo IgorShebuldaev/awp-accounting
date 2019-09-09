@@ -9,12 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Users {
+    public int id;
     public String email;
     public String password;
     public String role;
     public int timeInProgram;
 
-    private Users(String email, String password, String role, int timeInProgram) {
+     public Users(String email, String password, String role, int timeInProgram) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -41,4 +42,41 @@ public class Users {
         }
         return arrayList;
     }
+
+    public static void insertUsers(Users users) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, (SELECT id from roles where role='%s'))", users.email, users.password, users.role);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void deleteUsers(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM users WHERE id=%d", id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void updateUsers(Users users) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE users SET email='%s', password='%s', role_id=(SELECT id from roles where role='%s') where id='%d'", users.email, users.password, users.role, users.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+
+
+
 }
