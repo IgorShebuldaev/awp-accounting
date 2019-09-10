@@ -30,5 +30,9 @@ public class Database {
 
         return connection = DriverManager.getConnection(url, user, password);
     }
+
+    public static void closeConnection() throws SQLException {
+        if (connection != null) connection.close();
+    }
 }
 

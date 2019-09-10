@@ -2,6 +2,7 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.MainTableModel;
 import org.accounting.database.models.Roles;
 import org.accounting.database.models.Users;
 
@@ -19,10 +20,10 @@ public class UsersForm extends JFrame implements ActionListener {
     private JLabel labelEmail;
     private JTable tableUsers;
     private JTextField textFieldPassword;
-    private JComboBox comboBoxRole;
+    private JComboBox<String> comboBoxRole;
     private JLabel labelPassword;
     private JLabel labelRole;
-    private JButton addRoles;
+    private JButton addButtonRoles;
     private JButton addButton;
     private JButton deleteButton;
     private JButton editButton;
@@ -41,23 +42,25 @@ public class UsersForm extends JFrame implements ActionListener {
         }
 
         addButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+        editButton.addActionListener(this);
     }
 
     private void fillTableUsers() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Email", "Password", "Role", "Time in program"});
+        MainTableModel model = new MainTableModel();
+        model.setColumnIdentifiers(new Object[]{"Email", "Password", "Role", "Time in program"}); // отвечает за количество столбцов которое будет отображатся
         ArrayList<Users> arrayList = Users.getUsers();
         for (Users users : arrayList) {
-            model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram});
+            model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram}); //здесь я могу добавить ещё один столбец,но
         }
         tableUsers.setModel(model);
     }
 
-    private void buttonAddUsers() {
+    private void addUser() {
         DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
         Users users = new Users(textFieldEmail.getText(), textFieldPassword.getText(), String.valueOf(comboBoxRole.getSelectedItem()), 0);
         System.out.println(comboBoxRole.getSelectedItem());
-        Users.insertUsers(users);
+        Users.insertUser(users);
         model.addRow(new Object[]{
                 users.email,
                 users.password,
@@ -66,10 +69,32 @@ public class UsersForm extends JFrame implements ActionListener {
         });
     }
 
+    private void deleteUser() {
+        int row = tableUsers.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
+        String email = model.getValueAt(row, 0).toString();
+        model.removeRow(row);
+        Users.deleteUser(email);
+    }
+
+    private void editUser() {
+        int row = tableUsers.getSelectedRow();
+        String email = tableUsers.getModel().getValueAt(row,0).toString();
+        String password = tableUsers.getModel().getValueAt(row,1).toString();
+        String role = tableUsers.getModel().getValueAt(row,2).toString();
+        int timeInProgram = Integer.parseInt(tableUsers.getModel().getValueAt(row,3).toString());
+        Users user = new Users(email,password,role,timeInProgram);
+        Users.updateUser(user);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if ("add".equals(e.getActionCommand()))
-            buttonAddUsers();
+            addUser();
+        if ("delete".equals(e.getActionCommand()))
+            deleteUser();
+        if ("edit".equals(e.getActionCommand()))
+            editUser();
     }
 
     {
@@ -108,14 +133,15 @@ public class UsersForm extends JFrame implements ActionListener {
         labelRole = new JLabel();
         labelRole.setText("Role");
         panelUsersForm.add(labelRole, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        addRoles = new JButton();
-        addRoles.setText("Add roles");
-        panelUsersForm.add(addRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        addButtonRoles = new JButton();
+        addButtonRoles.setText("Add roles");
+        panelUsersForm.add(addButtonRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
         addButton.setActionCommand("add");
         addButton.setText("Add");
         panelUsersForm.add(addButton, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
+        deleteButton.setActionCommand("delete");
         deleteButton.setText("Delete");
         panelUsersForm.add(deleteButton, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
@@ -132,7 +158,5 @@ public class UsersForm extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelUsersForm;
     }
-
-
 }
 

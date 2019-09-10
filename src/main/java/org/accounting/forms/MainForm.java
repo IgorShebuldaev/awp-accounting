@@ -1,11 +1,13 @@
 package org.accounting.forms;
 
 import org.accounting.database.Authorization;
+import org.accounting.database.Database;
 import org.accounting.database.models.Deliveries;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MainForm implements ActionListener {
@@ -78,6 +80,11 @@ public class MainForm implements ActionListener {
                         "Confirm Exit", JOptionPane.YES_NO_OPTION);
 
                 if (x == JOptionPane.YES_OPTION) {
+                    try {
+                        Database.closeConnection();
+                    } catch (SQLException se) {
+                        se.printStackTrace();
+                    }
                     mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
                     mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -144,8 +151,14 @@ public class MainForm implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if ("ok".equals(e.getActionCommand()))
             validateUserAuthorization(textField, passwordField);
-        if ("exit".equals(e.getActionCommand()))
+        if ("exit".equals(e.getActionCommand())) {
+            try {
+                Database.closeConnection();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
             System.exit(0);
+        }
         if ("users".equals(e.getActionCommand()))
             new UsersForm().createUsersForm();
     }
