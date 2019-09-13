@@ -1,5 +1,9 @@
 plugins {
-    id 'java'
+    id 'application'
+}
+
+application {
+  mainClassName = 'org.accounting.forms.Main'
 }
 
 group 'wannaasbird'
@@ -16,4 +20,38 @@ dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
     compile 'com.intellij:forms_rt:7.0.3'
 }
+
+task load(type: Exec) {
+  group 'Database'
+  description 'Loads database schema'
+
+  commandLine 'sh', './db.sh', 'load'
+}
+
+task dump(type: Exec) {
+  group 'Database'
+  description "Creates dump of database's structure"
+
+  commandLine 'sh', './db.sh', 'dump'
+}
+
+task destroy(type: Exec) {
+  group 'Database'
+  description 'Destroys database'
+
+  commandLine 'sh', './db.sh', 'destroy'
+}
+
+task create(type: Exec) {
+  group 'Database'
+  description 'Creates empty database'
+
+  commandLine 'sh', './db.sh', 'create'
+}
+
+task setup_db {
+  group 'Database'
+  description 'Creates new database and applies schema'
+}
+setup_db.dependsOn create, load
 
