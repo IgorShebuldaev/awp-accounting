@@ -1,5 +1,6 @@
 package org.accounting.database.models;
 
+import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
 
 import java.sql.Connection;
@@ -46,18 +47,19 @@ public class Users {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, (SELECT id from roles where role='%s'))", user.email, user.password, user.role);
+            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, (SELECT id FROM roles WHERE role='%s'))", user.email, user.password, user.role);
             statement.execute(query);
+            user.id = (int)((StatementImpl) statement).getLastInsertID();
         } catch (SQLException se) {
             se.printStackTrace();
         }
     }
 
-    public static void deleteUser(String email) {
+    public static void deleteUser(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM users WHERE email='%s'", email);
+            String query = String.format("DELETE FROM users WHERE id=%d", id);
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
@@ -68,14 +70,12 @@ public class Users {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program='%d', role_id=(SELECT id from roles where role='%s') where id=(SELECT id FROM users where email='%s')", user.email, user.password, user.timeInProgram, user.role, user.email);
+            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program='%d', " +
+                    "role_id=(SELECT id from roles where role='%s') " +
+                    "where id=(SELECT id FROM users where id=%d)", user.email, user.password, user.timeInProgram, user.role, user.id);
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
         }
     }
-
-
-
-
 }

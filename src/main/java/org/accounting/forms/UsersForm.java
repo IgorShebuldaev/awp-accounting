@@ -2,12 +2,11 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import org.accounting.database.models.MainTableModel;
+import org.accounting.forms.models.MainTableModel;
 import org.accounting.database.models.Roles;
 import org.accounting.database.models.Users;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,33 +56,32 @@ public class UsersForm extends JFrame implements ActionListener {
     }
 
     private void addUser() {
-        DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
-        Users users = new Users(textFieldEmail.getText(), textFieldPassword.getText(), String.valueOf(comboBoxRole.getSelectedItem()), 0);
-        System.out.println(comboBoxRole.getSelectedItem());
+        MainTableModel model = (MainTableModel) tableUsers.getModel();
+        Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
+        model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
         Users.insertUser(users);
-        model.addRow(new Object[]{
-                users.email,
-                users.password,
-                users.role,
-                users.timeInProgram
-        });
     }
 
     private void deleteUser() {
         int row = tableUsers.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel) tableUsers.getModel();
-        String email = model.getValueAt(row, 0).toString();
+        MainTableModel model = (MainTableModel) tableUsers.getModel();
+        int id = (int) model.getRawValueAt(row, 0);
         model.removeRow(row);
-        Users.deleteUser(email);
+        Users.deleteUser(id);
     }
 
     private void editUser() {
         int row = tableUsers.getSelectedRow();
-        String email = tableUsers.getModel().getValueAt(row,0).toString();
-        String password = tableUsers.getModel().getValueAt(row,1).toString();
-        String role = tableUsers.getModel().getValueAt(row,2).toString();
-        int timeInProgram = Integer.parseInt(tableUsers.getModel().getValueAt(row,3).toString());
-        Users user = new Users(email,password,role,timeInProgram);
+        if (row < 0) {
+            return;
+        }
+        MainTableModel model = (MainTableModel) tableUsers.getModel();
+        int id = (int) model.getRawValueAt(row, 0);
+        String email = (String) model.getRawValueAt(row, 1);
+        String password = (String) model.getRawValueAt(row, 2);
+        String role = (String) model.getRawValueAt(row, 3);
+        int timeInProgram = (int) model.getRawValueAt(row, 4);
+        Users user = new Users(id, email, password, role, timeInProgram);
         Users.updateUser(user);
     }
 
@@ -115,6 +113,7 @@ public class UsersForm extends JFrame implements ActionListener {
         panelUsersForm = new JPanel();
         panelUsersForm.setLayout(new GridLayoutManager(8, 3, new Insets(0, 0, 0, 0), -1, -1));
         scrollPaneTableUsers = new JScrollPane();
+        scrollPaneTableUsers.setEnabled(true);
         panelUsersForm.add(scrollPaneTableUsers, new GridConstraints(0, 0, 8, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableUsers = new JTable();
         scrollPaneTableUsers.setViewportView(tableUsers);
@@ -145,6 +144,8 @@ public class UsersForm extends JFrame implements ActionListener {
         deleteButton.setText("Delete");
         panelUsersForm.add(deleteButton, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
+        editButton.setActionCommand("edit");
+        editButton.setEnabled(true);
         editButton.setText("Edit");
         panelUsersForm.add(editButton, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
@@ -158,5 +159,6 @@ public class UsersForm extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelUsersForm;
     }
+
 }
 
