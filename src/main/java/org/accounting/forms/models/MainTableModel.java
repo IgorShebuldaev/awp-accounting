@@ -1,6 +1,8 @@
 package org.accounting.forms.models;
 
 import java.util.ArrayList;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 
@@ -46,8 +48,8 @@ public class MainTableModel extends AbstractTableModel {
     return true;
   }
 
-  public void setValueAt(Object[] aValue, int rowIndex, int columnIndex) {
-      this.data.set(rowIndex,aValue);
-      fireTableCellUpdated(rowIndex, columnIndex);
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    data.get(rowIndex)[columnIndex + 1] = aValue;
+    fireTableRowsUpdated(rowIndex,rowIndex);
   }
 }

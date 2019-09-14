@@ -10,12 +10,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Users {
+    public int id;
     public String email;
     public String password;
     public String role;
     public int timeInProgram;
 
-     public Users(String email, String password, String role, int timeInProgram) {
+    public Users(int id, String email, String password, String role, int timeInProgram) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -23,24 +25,25 @@ public class Users {
     }
 
     public static ArrayList<Users> getUsers() {
-        ArrayList<Users> arrayListUsers = new ArrayList<>();
+        ArrayList<Users> results = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT u.email, u.password, r.role, u.time_in_program FROM users u INNER JOIN roles r ON u.role_id = r.id";
+            String query = "SELECT u.id, u.email, u.password, r.role, u.time_in_program FROM users u INNER JOIN roles r ON u.role_id = r.id";
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
-                arrayListUsers.add(new Users(
-                        resultSet.getString("email"),
-                        resultSet.getString("password"),
-                        resultSet.getString("role"),
-                        resultSet.getInt("time_in_program")
+                results.add(new Users(
+                    resultSet.getInt("id"),
+                    resultSet.getString("email"),
+                    resultSet.getString("password"),
+                    resultSet.getString("role"),
+                    resultSet.getInt("time_in_program")
                 ));
             }
         } catch (SQLException se) {
             se.printStackTrace();
         }
-        return arrayListUsers;
+        return results;
     }
 
     public static void insertUser(Users user) {

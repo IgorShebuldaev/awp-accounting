@@ -27,13 +27,17 @@ public class UsersForm extends JFrame implements ActionListener {
     private JButton deleteButton;
     private JButton editButton;
     private JButton cancelButton;
+    private MainTableModel model;
 
     void createUsersForm() {
         setContentPane(panelUsersForm);
         setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        model = new MainTableModel();
         fillTableUsers();
+        tableUsers.setModel(model);
 
         ArrayList<Roles> arrayListRoles = Roles.getRoles();
         for (Roles roles : arrayListRoles) {
@@ -46,17 +50,14 @@ public class UsersForm extends JFrame implements ActionListener {
     }
 
     private void fillTableUsers() {
-        MainTableModel model = new MainTableModel();
-        model.setColumnIdentifiers(new Object[]{"Email", "Password", "Role", "Time in program"}); // отвечает за количество столбцов которое будет отображатся
+        model.setColumnIdentifiers(new String[]{"Email", "Password", "Role", "Time in program"});
         ArrayList<Users> arrayList = Users.getUsers();
         for (Users users : arrayList) {
-            model.addRow(new Object[]{users.email, users.password, users.role, users.timeInProgram}); //здесь я могу добавить ещё один столбец,но
+            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
         }
-        tableUsers.setModel(model);
     }
 
     private void addUser() {
-        MainTableModel model = (MainTableModel) tableUsers.getModel();
         Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
         model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
         Users.insertUser(users);
@@ -64,7 +65,6 @@ public class UsersForm extends JFrame implements ActionListener {
 
     private void deleteUser() {
         int row = tableUsers.getSelectedRow();
-        MainTableModel model = (MainTableModel) tableUsers.getModel();
         int id = (int) model.getRawValueAt(row, 0);
         model.removeRow(row);
         Users.deleteUser(id);
@@ -75,7 +75,6 @@ public class UsersForm extends JFrame implements ActionListener {
         if (row < 0) {
             return;
         }
-        MainTableModel model = (MainTableModel) tableUsers.getModel();
         int id = (int) model.getRawValueAt(row, 0);
         String email = (String) model.getRawValueAt(row, 1);
         String password = (String) model.getRawValueAt(row, 2);
@@ -87,12 +86,20 @@ public class UsersForm extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if ("add".equals(e.getActionCommand()))
-            addUser();
-        if ("delete".equals(e.getActionCommand()))
-            deleteUser();
-        if ("edit".equals(e.getActionCommand()))
-            editUser();
+        if (tableUsers.isEditing()) {
+            tableUsers.getCellEditor().stopCellEditing();
+        }
+        switch (e.getActionCommand()) {
+            case "add":
+                addUser();
+                break;
+            case "delete":
+                deleteUser();
+                break;
+            case "edit":
+                editUser();
+                break;
+        }
     }
 
     {
@@ -159,6 +166,5 @@ public class UsersForm extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelUsersForm;
     }
-
 }
 
