@@ -25,8 +25,9 @@ public class UsersForm extends JFrame implements ActionListener {
     private JButton addButtonRoles;
     private JButton addButton;
     private JButton deleteButton;
-    private JButton editButton;
+    private JButton saveButton;
     private JButton cancelButton;
+    private JButton editButton;
     private MainTableModel model;
 
     void createUsersForm() {
@@ -45,8 +46,9 @@ public class UsersForm extends JFrame implements ActionListener {
         }
 
         addButton.addActionListener(this);
-        deleteButton.addActionListener(this);
         editButton.addActionListener(this);
+        saveButton.addActionListener(this);
+        deleteButton.addActionListener(this);
     }
 
     private void fillTableUsers() {
@@ -62,6 +64,8 @@ public class UsersForm extends JFrame implements ActionListener {
             Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
             model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
             Users.insertUser(users);
+            textFieldEmail.setText("");
+            textFieldPassword.setText("");
         }
     }
 
@@ -83,20 +87,37 @@ public class UsersForm extends JFrame implements ActionListener {
         }
     }
 
-    private void editUser() {
+    private void saveUser() {
         int row = tableUsers.getSelectedRow();
-        if (row < 0) {
-            return;
-        }
+        if (row < 0) { return; }
+
         if (checkEmptyFields()) {
-            int id = (int) model.getRawValueAt(row, 0);
-            String email = (String) model.getRawValueAt(row, 1);
-            String password = (String) model.getRawValueAt(row, 2);
-            String role = (String) model.getRawValueAt(row, 3);
-            int timeInProgram = (int) model.getRawValueAt(row, 4);
-            Users user = new Users(id, email, password, role, timeInProgram);
-            Users.updateUser(user);
+            Users user = new Users(
+                (int) model.getRawValueAt(row, 0),
+                textFieldEmail.getText(),
+                textFieldPassword.getText(),
+                (String) comboBoxRole.getSelectedItem(),
+                (int) model.getRawValueAt(row, 4));
+
+                Users.updateUser(user);
+
+            model.setValueAt(new Object[]{
+                model.getRawValueAt(row, 0),
+                textFieldEmail.getText(),
+                textFieldPassword.getText(),
+                comboBoxRole.getSelectedItem(),
+                model.getRawValueAt(row, 4)}, row);
         }
+        textFieldEmail.setText("");
+        textFieldPassword.setText("");
+    }
+
+    private void setTextFields () {
+        int row = tableUsers.getSelectedRow();
+        if (row < 0) { return; }
+        textFieldEmail.setText((String)model.getRawValueAt(row, 1));
+        textFieldPassword.setText((String)model.getRawValueAt(row, 2));
+        comboBoxRole.setSelectedItem(model.getRawValueAt(row, 3));
     }
 
     private boolean checkEmptyFields () {
@@ -121,7 +142,18 @@ public class UsersForm extends JFrame implements ActionListener {
                 deleteUser();
                 break;
             case "edit":
-                editUser();
+                editButton.setEnabled(false);
+                addButton.setEnabled(false);
+                deleteButton.setEnabled(false);
+                saveButton.setEnabled(true);
+                setTextFields();
+                break;
+            case "save":
+                addButton.setEnabled(true);
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+                saveButton.setEnabled(false);
+                saveUser();
                 break;
         }
     }
@@ -174,11 +206,11 @@ public class UsersForm extends JFrame implements ActionListener {
         deleteButton.setActionCommand("delete");
         deleteButton.setText("Delete");
         panelUsersForm.add(deleteButton, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        editButton = new JButton();
-        editButton.setActionCommand("edit");
-        editButton.setEnabled(true);
-        editButton.setText("Edit");
-        panelUsersForm.add(editButton, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setActionCommand("edit");
+        saveButton.setEnabled(true);
+        saveButton.setText("Edit");
+        panelUsersForm.add(saveButton, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
         cancelButton.setText("Cancel");
         panelUsersForm.add(cancelButton, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
