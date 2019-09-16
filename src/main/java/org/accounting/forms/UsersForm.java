@@ -58,16 +58,29 @@ public class UsersForm extends JFrame implements ActionListener {
     }
 
     private void addUser() {
-        Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
-        model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
-        Users.insertUser(users);
+        if (checkEmptyFields()) {
+            Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
+            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
+            Users.insertUser(users);
+        }
     }
 
     private void deleteUser() {
-        int row = tableUsers.getSelectedRow();
-        int id = (int) model.getRawValueAt(row, 0);
-        model.removeRow(row);
-        Users.deleteUser(id);
+        Object[] options = {"Yes", "No"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Are you sure you want to delete the record?",
+                "Message",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (n == JOptionPane.YES_OPTION) {
+            int row = tableUsers.getSelectedRow();
+            int id = (int) model.getRawValueAt(row, 0);
+            model.removeRow(row);
+            Users.deleteUser(id);
+        }
     }
 
     private void editUser() {
@@ -75,13 +88,24 @@ public class UsersForm extends JFrame implements ActionListener {
         if (row < 0) {
             return;
         }
-        int id = (int) model.getRawValueAt(row, 0);
-        String email = (String) model.getRawValueAt(row, 1);
-        String password = (String) model.getRawValueAt(row, 2);
-        String role = (String) model.getRawValueAt(row, 3);
-        int timeInProgram = (int) model.getRawValueAt(row, 4);
-        Users user = new Users(id, email, password, role, timeInProgram);
-        Users.updateUser(user);
+        if (checkEmptyFields()) {
+            int id = (int) model.getRawValueAt(row, 0);
+            String email = (String) model.getRawValueAt(row, 1);
+            String password = (String) model.getRawValueAt(row, 2);
+            String role = (String) model.getRawValueAt(row, 3);
+            int timeInProgram = (int) model.getRawValueAt(row, 4);
+            Users user = new Users(id, email, password, role, timeInProgram);
+            Users.updateUser(user);
+        }
+    }
+
+    private boolean checkEmptyFields () {
+        if (textFieldEmail.getText().equals("") || textFieldPassword.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Email or password cannot be empty!");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
