@@ -49,6 +49,7 @@ public class UsersForm extends JFrame implements ActionListener {
         editButton.addActionListener(this);
         saveButton.addActionListener(this);
         deleteButton.addActionListener(this);
+        cancelButton.addActionListener(this);
     }
 
     private void fillTableUsers() {
@@ -145,6 +146,8 @@ public class UsersForm extends JFrame implements ActionListener {
                 editButton.setEnabled(false);
                 addButton.setEnabled(false);
                 deleteButton.setEnabled(false);
+                tableUsers.setEnabled(false);
+                cancelButton.setEnabled(true);
                 saveButton.setEnabled(true);
                 setTextFields();
                 break;
@@ -152,9 +155,20 @@ public class UsersForm extends JFrame implements ActionListener {
                 addButton.setEnabled(true);
                 editButton.setEnabled(true);
                 deleteButton.setEnabled(true);
+                tableUsers.setEnabled(true);
                 saveButton.setEnabled(false);
+                cancelButton.setEnabled(false);
                 saveUser();
                 break;
+            case "cancel":
+                addButton.setEnabled(true);
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+                tableUsers.setEnabled(true);
+                saveButton.setEnabled(false);
+                cancelButton.setEnabled(false);
+                textFieldEmail.setText("");
+                textFieldPassword.setText("");
         }
     }
 
