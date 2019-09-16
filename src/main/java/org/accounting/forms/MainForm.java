@@ -105,6 +105,7 @@ public class MainForm implements ActionListener {
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
 
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
+        JMenuItem jMenuItemRoles = new JMenuItem("Roles");
 
         jMenuItemSuppliers.setActionCommand("suppliers");
         jMenuItemWorkers.setActionCommand("workers");
@@ -112,6 +113,7 @@ public class MainForm implements ActionListener {
         jMenuItemNotes.setActionCommand("notes");
 
         jMenuItemUsers.setActionCommand("users");
+        jMenuItemRoles.setActionCommand("roles");
 
         jMenuItemSuppliers.addActionListener(this);
         jMenuItemWorkers.addActionListener(this);
@@ -119,6 +121,7 @@ public class MainForm implements ActionListener {
         jMenuItemNotes.addActionListener(this);
 
         jMenuItemUsers.addActionListener(this);
+        jMenuItemRoles.addActionListener(this);
 
         menu.add(jMenuItemSuppliers);
         menu.addSeparator();
@@ -129,6 +132,8 @@ public class MainForm implements ActionListener {
         menu.add(jMenuItemNotes);
 
         settings.add(jMenuItemUsers);
+        settings.addSeparator();
+        settings.add(jMenuItemRoles);
 
         menuBar.add(menu);
         menuBar.add(settings);
@@ -149,18 +154,25 @@ public class MainForm implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if ("ok".equals(e.getActionCommand()))
-            validateUserAuthorization(textField, passwordField);
-        if ("exit".equals(e.getActionCommand())) {
-            try {
-                Database.closeConnection();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            }
-            System.exit(0);
+        switch (e.getActionCommand()) {
+            case "ok":
+                validateUserAuthorization(textField, passwordField);
+                break;
+            case "exit":
+                try {
+                    Database.closeConnection();
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                }
+                System.exit(0);
+                break;
+            case "users":
+                new UsersForm().createUsersForm();
+                break;
+            case "roles":
+                new RolesForm().createRolesForm();
+                break;
         }
-        if ("users".equals(e.getActionCommand()))
-            new UsersForm().createUsersForm();
     }
 
     private void validateUserAuthorization(JTextField login, JPasswordField password) {
