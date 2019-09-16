@@ -1,10 +1,7 @@
 package org.accounting.forms.models;
 
 import java.util.ArrayList;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-
 
 public class MainTableModel extends AbstractTableModel {
   private String[] columnNames = new String[0];
@@ -44,12 +41,8 @@ public class MainTableModel extends AbstractTableModel {
     fireTableRowsDeleted(row,row);
   }
 
-  public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return true;
-  }
-
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    data.get(rowIndex)[columnIndex + 1] = aValue;
+  public void setValueAt(Object[] aValue, int rowIndex) {
+    data.set(rowIndex, aValue);
     fireTableRowsUpdated(rowIndex,rowIndex);
   }
 }
