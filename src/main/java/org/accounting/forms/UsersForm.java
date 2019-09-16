@@ -34,6 +34,7 @@ public class UsersForm extends JFrame implements ActionListener {
         setContentPane(panelUsersForm);
         setSize(800, 600);
         setLocationRelativeTo(null);
+        setTitle("Users");
         setVisible(true);
 
         model = new MainTableModel();
@@ -50,6 +51,7 @@ public class UsersForm extends JFrame implements ActionListener {
         saveButton.addActionListener(this);
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
+        addButtonRoles.addActionListener(this);
     }
 
     private void fillTableUsers() {
@@ -130,6 +132,10 @@ public class UsersForm extends JFrame implements ActionListener {
         }
     }
 
+    private void addRolesForm () {
+        new RolesForm().createRolesForm();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (tableUsers.isEditing()) {
@@ -147,6 +153,7 @@ public class UsersForm extends JFrame implements ActionListener {
                 addButton.setEnabled(false);
                 deleteButton.setEnabled(false);
                 tableUsers.setEnabled(false);
+                addButtonRoles.setEnabled(false);
                 cancelButton.setEnabled(true);
                 saveButton.setEnabled(true);
                 setTextFields();
@@ -156,6 +163,7 @@ public class UsersForm extends JFrame implements ActionListener {
                 editButton.setEnabled(true);
                 deleteButton.setEnabled(true);
                 tableUsers.setEnabled(true);
+                addButtonRoles.setEnabled(true);
                 saveButton.setEnabled(false);
                 cancelButton.setEnabled(false);
                 saveUser();
@@ -165,10 +173,15 @@ public class UsersForm extends JFrame implements ActionListener {
                 editButton.setEnabled(true);
                 deleteButton.setEnabled(true);
                 tableUsers.setEnabled(true);
+                addButtonRoles.setEnabled(true);
                 saveButton.setEnabled(false);
                 cancelButton.setEnabled(false);
                 textFieldEmail.setText("");
                 textFieldPassword.setText("");
+                break;
+            case "addRoles":
+                addRolesForm();
+                break;
         }
     }
 
