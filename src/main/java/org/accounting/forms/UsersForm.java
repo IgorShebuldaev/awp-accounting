@@ -73,6 +73,11 @@ public class UsersForm extends JFrame implements ActionListener {
     }
 
     private void deleteUser() {
+        int row = tableUsers.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
         Object[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,
                 "Are you sure you want to delete the record?",
@@ -83,44 +88,54 @@ public class UsersForm extends JFrame implements ActionListener {
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            int row = tableUsers.getSelectedRow();
-            int id = (int) model.getRawValueAt(row, 0);
+            Users.deleteUser((int) model.getRawValueAt(row, 0));
             model.removeRow(row);
-            Users.deleteUser(id);
         }
     }
 
     private void saveUser() {
         int row = tableUsers.getSelectedRow();
-        if (row < 0) { return; }
-
         if (checkEmptyFields()) {
-            Users user = new Users(
+            Users.updateUser(new Users(
                 (int) model.getRawValueAt(row, 0),
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
                 (String) comboBoxRole.getSelectedItem(),
-                (int) model.getRawValueAt(row, 4));
-
-                Users.updateUser(user);
-
+                (int) model.getRawValueAt(row, 4)));
             model.setValueAt(new Object[]{
                 model.getRawValueAt(row, 0),
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
                 comboBoxRole.getSelectedItem(),
                 model.getRawValueAt(row, 4)}, row);
+            addButton.setEnabled(true);
+            editButton.setEnabled(true);
+            deleteButton.setEnabled(true);
+            tableUsers.setEnabled(true);
+            addButtonRoles.setEnabled(true);
+            saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            textFieldEmail.setText("");
+            textFieldPassword.setText("");
         }
-        textFieldEmail.setText("");
-        textFieldPassword.setText("");
     }
 
     private void setTextFields () {
         int row = tableUsers.getSelectedRow();
-        if (row < 0) { return; }
-        textFieldEmail.setText((String)model.getRawValueAt(row, 1));
-        textFieldPassword.setText((String)model.getRawValueAt(row, 2));
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
+        textFieldEmail.setText((String) model.getRawValueAt(row, 1));
+        textFieldPassword.setText((String) model.getRawValueAt(row, 2));
         comboBoxRole.setSelectedItem(model.getRawValueAt(row, 3));
+        editButton.setEnabled(false);
+        addButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+        tableUsers.setEnabled(false);
+        addButtonRoles.setEnabled(false);
+        cancelButton.setEnabled(true);
+        saveButton.setEnabled(true);
     }
 
     private boolean checkEmptyFields () {
@@ -138,9 +153,6 @@ public class UsersForm extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (tableUsers.isEditing()) {
-            tableUsers.getCellEditor().stopCellEditing();
-        }
         switch (e.getActionCommand()) {
             case "add":
                 addUser();
@@ -149,23 +161,9 @@ public class UsersForm extends JFrame implements ActionListener {
                 deleteUser();
                 break;
             case "edit":
-                editButton.setEnabled(false);
-                addButton.setEnabled(false);
-                deleteButton.setEnabled(false);
-                tableUsers.setEnabled(false);
-                addButtonRoles.setEnabled(false);
-                cancelButton.setEnabled(true);
-                saveButton.setEnabled(true);
                 setTextFields();
                 break;
             case "save":
-                addButton.setEnabled(true);
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-                tableUsers.setEnabled(true);
-                addButtonRoles.setEnabled(true);
-                saveButton.setEnabled(false);
-                cancelButton.setEnabled(false);
                 saveUser();
                 break;
             case "cancel":
