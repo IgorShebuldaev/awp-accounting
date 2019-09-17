@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class UsersForm extends JFrame implements ActionListener {
+public class UsersForm extends JDialog implements ActionListener {
     private JPanel panelUsersForm;
     private JScrollPane scrollPaneTableUsers;
     private JTextField textFieldEmail;
@@ -35,7 +35,7 @@ public class UsersForm extends JFrame implements ActionListener {
         setSize(800, 600);
         setLocationRelativeTo(null);
         setTitle("Users");
-        setVisible(true);
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         model = new MainTableModel();
         fillTableUsers();
@@ -52,6 +52,8 @@ public class UsersForm extends JFrame implements ActionListener {
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
         addButtonRoles.addActionListener(this);
+
+        setVisible(true);
     }
 
     private void fillTableUsers() {

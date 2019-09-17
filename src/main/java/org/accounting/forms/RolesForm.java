@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class RolesForm extends JFrame implements ActionListener {
+public class RolesForm extends JDialog implements ActionListener {
     private JPanel panaelRolesForm;
     private JTable tableRoles;
     private JTextField textFieldRole;
@@ -26,7 +26,7 @@ public class RolesForm extends JFrame implements ActionListener {
         setSize(450, 300);
         setLocationRelativeTo(null);
         setTitle("Roles");
-        setVisible(true);
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         model = new MainTableModel();
         fillTableRoles();
@@ -37,6 +37,8 @@ public class RolesForm extends JFrame implements ActionListener {
         saveButton.addActionListener(this);
         cancelButton.addActionListener(this);
         deleteButton.addActionListener(this);
+
+        setVisible(true);
     }
 
     private void fillTableRoles() {
