@@ -65,8 +65,8 @@ public class UsersForm extends JFrame implements ActionListener {
     private void addUser() {
         if (checkEmptyFields()) {
             Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
-            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
             Users.insertUser(users);
+            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
             textFieldEmail.setText("");
             textFieldPassword.setText("");
         }
