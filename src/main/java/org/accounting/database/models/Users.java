@@ -73,9 +73,9 @@ public class Users {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program='%d', " +
+            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
                     "role_id=(SELECT id from roles where role='%s') " +
-                    "where id=(SELECT id FROM users where id=%d)", user.email, user.password, user.timeInProgram, user.role, user.id);
+                    "where id=%d", user.email, user.password, user.timeInProgram, user.role, user.id);
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
