@@ -167,10 +167,10 @@ public class MainForm implements ActionListener {
                 System.exit(0);
                 break;
             case "users":
-                new UsersForm().createUsersForm();
+                new UsersForm();
                 break;
             case "roles":
-                new RolesForm().createRolesForm();
+                new RolesForm();
                 break;
         }
     }
