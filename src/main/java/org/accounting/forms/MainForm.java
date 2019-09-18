@@ -99,35 +99,25 @@ public class MainForm implements ActionListener {
         JMenu settings = new JMenu("Settings");
         JMenu about = new JMenu("About");
 
-        JMenuItem jMenuItemSuppliers = new JMenuItem("Suppliers");
-        JMenuItem jMenuItemWorkers = new JMenuItem("Workers");
-        JMenuItem jMenuItemPositions = new JMenuItem("Positions");
+        JMenuItem jMenuItemWorkBooks = new JMenuItem("Work Books");
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
 
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
         JMenuItem jMenuItemRoles = new JMenuItem("Roles");
 
-        jMenuItemSuppliers.setActionCommand("suppliers");
-        jMenuItemWorkers.setActionCommand("workers");
-        jMenuItemPositions.setActionCommand("positions");
+        jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
 
         jMenuItemUsers.setActionCommand("users");
         jMenuItemRoles.setActionCommand("roles");
 
-        jMenuItemSuppliers.addActionListener(this);
-        jMenuItemWorkers.addActionListener(this);
-        jMenuItemPositions.addActionListener(this);
+        jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
 
         jMenuItemUsers.addActionListener(this);
         jMenuItemRoles.addActionListener(this);
 
-        menu.add(jMenuItemSuppliers);
-        menu.addSeparator();
-        menu.add(jMenuItemWorkers);
-        menu.addSeparator();
-        menu.add(jMenuItemPositions);
+        menu.add(jMenuItemWorkBooks);
         menu.addSeparator();
         menu.add(jMenuItemNotes);
 
@@ -165,6 +155,9 @@ public class MainForm implements ActionListener {
                     se.printStackTrace();
                 }
                 System.exit(0);
+                break;
+            case "workBooks":
+                new WorkBooksForm().setVisible(true);
                 break;
             case "users":
                 new UsersForm();
