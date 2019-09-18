@@ -9,29 +9,31 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-class Workers {
-    int id;
-    String fullName;
-    Date dob;
-    String position;
+public class Workers {
+    public int id;
+    public String fullName;
+    public Date dob;
+    public String position;
 
-    private Workers(String fullName, Date dob, String position) {
+    public Workers(int id, String fullName, Date dob, String position) {
+        this.id = id;
         this.fullName = fullName;
         this.dob = dob;
         this.position = position;
     }
 
-    private ArrayList<Workers> getWorkers() {
+    public static ArrayList<Workers> getWorkers() {
         ArrayList<Workers> arrayList = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT wo.full_name, wo.dob, po.position FROM workers wo" +
-                    "INNER JOIN positions po ON wo.position_id = po.id";
+            String query = "SELECT wo.id, wo.full_name, wo.dob, po.position FROM " +
+                    "workers wo INNER JOIN positions po ON wo.position_id = po.id";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
                 arrayList.add(new Workers(
+                        resultSet.getInt("id"),
                         resultSet.getString("full_name"),
                         resultSet.getDate("dob"),
                         resultSet.getString("position")
