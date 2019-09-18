@@ -45,4 +45,10 @@ public class MainTableModel extends AbstractTableModel {
     data.set(rowIndex, aValue);
     fireTableRowsUpdated(rowIndex,rowIndex);
   }
+
+  @Override
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    data.get(rowIndex)[columnIndex + 1] = aValue;
+    fireTableRowsUpdated(rowIndex,rowIndex);
+  }
 }
