@@ -31,7 +31,11 @@ public class UsersForm extends JDialog implements ActionListener {
     private JButton editButton;
     private MainTableModel model;
 
-    void createUsersForm() {
+    UsersForm() {
+      createUsersForm();
+    }
+
+    private void createUsersForm() {
         setContentPane(panelUsersForm);
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -41,11 +45,7 @@ public class UsersForm extends JDialog implements ActionListener {
         model = new MainTableModel();
         fillTableUsers();
         tableUsers.setModel(model);
-
-        ArrayList<Roles> arrayListRoles = Roles.getRoles();
-        for (Roles roles : arrayListRoles) {
-            comboBoxRole.addItem(roles.role);
-        }
+        addItemComboBoxRoles();
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
@@ -150,8 +150,17 @@ public class UsersForm extends JDialog implements ActionListener {
         }
     }
 
+    private void addItemComboBoxRoles() {
+        ArrayList<Roles> arrayListRoles = Roles.getRoles();
+        comboBoxRole.removeAllItems();
+        for (Roles roles : arrayListRoles) {
+            comboBoxRole.addItem(roles.role);
+        }
+    }
+
     private void addRolesForm() {
-        new RolesForm().createRolesForm();
+        new RolesForm();
+        addItemComboBoxRoles();
     }
 
     @Override
@@ -219,7 +228,7 @@ public class UsersForm extends JDialog implements ActionListener {
         textFieldPassword = new JTextField();
         panelUsersForm.add(textFieldPassword, new GridConstraints(3, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panelUsersForm.add(spacer1, new GridConstraints(7, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 15), null, null, 0, false));
+        panelUsersForm.add(spacer1, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 15), null, null, 0, false));
         saveButton = new JButton();
         saveButton.setActionCommand("save");
         saveButton.setEnabled(false);
@@ -238,10 +247,6 @@ public class UsersForm extends JDialog implements ActionListener {
         panelUsersForm.add(addButton, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         comboBoxRole = new JComboBox();
         panelUsersForm.add(comboBoxRole, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        addButtonRoles = new JButton();
-        addButtonRoles.setActionCommand("addRoles");
-        addButtonRoles.setText("Add roles");
-        panelUsersForm.add(addButtonRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panelUsersForm.add(spacer2, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         editButton = new JButton();
@@ -253,6 +258,14 @@ public class UsersForm extends JDialog implements ActionListener {
         cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
         panelUsersForm.add(cancelButton, new GridConstraints(9, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        addButtonRoles = new JButton();
+        addButtonRoles.setActionCommand("addRoles");
+        addButtonRoles.setHorizontalTextPosition(11);
+        addButtonRoles.setMargin(new Insets(0, 0, 0, 0));
+        addButtonRoles.setText("...");
+        addButtonRoles.setToolTipText("");
+        addButtonRoles.setVerticalTextPosition(0);
+        panelUsersForm.add(addButtonRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
