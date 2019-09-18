@@ -24,7 +24,11 @@ public class RolesForm extends JDialog implements ActionListener {
     private JScrollPane scrolPaneTableRoles;
     private MainTableModel model;
 
-    public void createRolesForm() {
+    RolesForm() {
+        createRolesForm();
+    }
+
+    private void createRolesForm() {
         setContentPane(panaelRolesForm);
         setSize(450, 300);
         setLocationRelativeTo(null);
