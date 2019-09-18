@@ -59,7 +59,7 @@
       </component>
       <vspacer id="8c0a9">
         <constraints>
-          <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="15"/>
           </grid>
         </constraints>
@@ -106,15 +106,6 @@
         </constraints>
         <properties/>
       </component>
-      <component id="a9538" class="javax.swing.JButton" binding="addButtonRoles">
-        <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <actionCommand value="addRoles"/>
-          <text value="Add roles"/>
-        </properties>
-      </component>
       <vspacer id="e79ce">
         <constraints>
           <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
@@ -137,6 +128,19 @@
           <actionCommand value="cancel"/>
           <enabled value="false"/>
           <text value="Cancel"/>
+        </properties>
+      </component>
+      <component id="a9538" class="javax.swing.JButton" binding="addButtonRoles">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <actionCommand value="addRoles"/>
+          <horizontalTextPosition value="11"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value="..."/>
+          <toolTipText value=""/>
+          <verticalTextPosition value="0"/>
         </properties>
       </component>
     </children>
