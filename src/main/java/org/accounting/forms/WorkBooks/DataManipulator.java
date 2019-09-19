@@ -1,8 +1,8 @@
-package org.accounting.forms;
+package org.accounting.forms.WorkBooks;
 
 import org.accounting.forms.models.MainTableModel;
 
-public interface DataManipulation {
+public interface DataManipulator {
     MainTableModel fillTable(MainTableModel tableModel);
     MainTableModel insertData(Object aValue, MainTableModel tableModel, int rowIndex);
     MainTableModel deleteData(Object aValue, MainTableModel tableModel, int rowIndex);
