@@ -2,7 +2,7 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import org.accounting.database.models.Roles;
+import org.accounting.database.models.Role;
 import org.accounting.forms.models.MainTableModel;
 
 import javax.swing.*;
@@ -50,16 +50,16 @@ public class RolesForm extends JDialog implements ActionListener {
 
     private void fillTableRoles() {
         model.setColumnIdentifiers(new String[]{"Role"});
-        ArrayList<Roles> results = Roles.getRoles();
-        for (Roles role : results) {
+        ArrayList<Role> results = Role.getRoles();
+        for (Role role : results) {
             model.addRow(new Object[]{role.id, role.role});
         }
     }
 
     private void addRole() {
         if (checkEmptyFields()) {
-            Roles role = new Roles(0, textFieldRole.getText());
-            Roles.insertRole(role);
+            Role role = new Role(0, textFieldRole.getText());
+            Role.insertRole(role);
             model.addRow(new Object[]{role.id, role.role});
             textFieldRole.setText("");
         }
@@ -81,7 +81,7 @@ public class RolesForm extends JDialog implements ActionListener {
             options,
             options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            Roles.deleteRole((int) model.getRawValueAt(row, 0));
+            Role.deleteRole((int) model.getRawValueAt(row, 0));
             model.removeRow(row);
         }
     }
@@ -89,8 +89,10 @@ public class RolesForm extends JDialog implements ActionListener {
     private void saveRole() {
         int row = tableRoles.getSelectedRow();
         if (checkEmptyFields()) {
-            Roles.updateRole(new Roles((int) model.getRawValueAt(row, 0), textFieldRole.getText()));
-            model.setValueAt(new Object[]{model.getRawValueAt(row, 0), textFieldRole.getText()}, row);
+            Role role = new Role((int) model.getRawValueAt(row, 0), textFieldRole.getText());
+            Role.updateRole(role);
+            model.setValueAt(new Object[]{role.id, role.role}, row);
+
             addButton.setEnabled(true);
             editButton.setEnabled(true);
             deleteButton.setEnabled(true);

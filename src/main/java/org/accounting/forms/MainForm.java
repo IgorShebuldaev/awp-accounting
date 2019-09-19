@@ -2,7 +2,8 @@ package org.accounting.forms;
 
 import org.accounting.database.Authorization;
 import org.accounting.database.Database;
-import org.accounting.database.models.Deliveries;
+import org.accounting.database.models.Deliverie;
+import org.accounting.forms.WorkBooks.WorkBooksForm;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -135,8 +136,8 @@ public class MainForm implements ActionListener {
     private void fillTableDeliveries() {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Date delivery", "Company name", "Product", "Price", "Worker"});
-        ArrayList<Deliveries> arrayList = Deliveries.getDeliveries();
-        for (Deliveries deliveries : arrayList){
+        ArrayList<Deliverie> arrayList = Deliverie.getDeliveries();
+        for (Deliverie deliveries : arrayList){
             model.addRow(new Object[]{deliveries.deliveryDate, deliveries.supplier, deliveries.product, deliveries.price, deliveries.worker});
         }
         tableDeliveries.setModel(model);
