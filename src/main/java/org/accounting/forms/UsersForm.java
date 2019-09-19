@@ -4,8 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.forms.models.MainTableModel;
-import org.accounting.database.models.Roles;
-import org.accounting.database.models.Users;
+import org.accounting.database.models.Role;
+import org.accounting.database.models.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class UsersForm extends JDialog implements ActionListener {
         model = new MainTableModel();
         fillTableUsers();
         tableUsers.setModel(model);
-        addItemComboBoxRoles();
+        addItemComboBoxRole();
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
@@ -59,16 +59,16 @@ public class UsersForm extends JDialog implements ActionListener {
 
     private void fillTableUsers() {
         model.setColumnIdentifiers(new String[]{"Email", "Password", "Role", "Time in program"});
-        ArrayList<Users> arrayList = Users.getUsers();
-        for (Users users : arrayList) {
+        ArrayList<User> results = User.getUsers();
+        for (User users : results) {
             model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
         }
     }
 
     private void addUser() {
         if (checkEmptyFields()) {
-            Users users = new Users(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
-            Users.insertUser(users);
+            User users = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
+            User.insertUser(users);
             model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
             textFieldEmail.setText("");
             textFieldPassword.setText("");
@@ -91,7 +91,7 @@ public class UsersForm extends JDialog implements ActionListener {
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            Users.deleteUser((int) model.getRawValueAt(row, 0));
+            User.deleteUser((int) model.getRawValueAt(row, 0));
             model.removeRow(row);
         }
     }
@@ -99,18 +99,21 @@ public class UsersForm extends JDialog implements ActionListener {
     private void saveUser() {
         int row = tableUsers.getSelectedRow();
         if (checkEmptyFields()) {
-            Users.updateUser(new Users(
+            User user = new User(
                 (int) model.getRawValueAt(row, 0),
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
                 (String) comboBoxRole.getSelectedItem(),
-                (int) model.getRawValueAt(row, 4)));
+                (int) model.getRawValueAt(row, 4));
+
+            User.updateUser(user);
+
             model.setValueAt(new Object[]{
-                model.getRawValueAt(row, 0),
-                textFieldEmail.getText(),
-                textFieldPassword.getText(),
-                comboBoxRole.getSelectedItem(),
-                model.getRawValueAt(row, 4)}, row);
+                user.id, user.email,
+                user.password,
+                user.role,
+                user.timeInProgram}, row);
+
             addButton.setEnabled(true);
             editButton.setEnabled(true);
             deleteButton.setEnabled(true);
@@ -150,17 +153,17 @@ public class UsersForm extends JDialog implements ActionListener {
         }
     }
 
-    private void addItemComboBoxRoles() {
-        ArrayList<Roles> arrayListRoles = Roles.getRoles();
+    private void addItemComboBoxRole() {
         comboBoxRole.removeAllItems();
-        for (Roles roles : arrayListRoles) {
+        ArrayList<Role> results = Role.getRoles();
+        for (Role roles : results) {
             comboBoxRole.addItem(roles.role);
         }
     }
 
-    private void addRolesForm() {
+    private void showRolesForm() {
         new RolesForm();
-        addItemComboBoxRoles();
+        addItemComboBoxRole();
     }
 
     @Override
@@ -190,7 +193,7 @@ public class UsersForm extends JDialog implements ActionListener {
                 textFieldPassword.setText("");
                 break;
             case "addRoles":
-                addRolesForm();
+                showRolesForm();
                 break;
         }
     }
