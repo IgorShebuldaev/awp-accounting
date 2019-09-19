@@ -8,29 +8,31 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Position {
-    int id;
-    String position;
+public class Position {
+    public int id;
+    public String position;
 
-    private Position(String position) {
+    public Position(int id, String position) {
+        this.id = id;
         this.position = position;
     }
 
-    private ArrayList<Position> getPositions() {
-        ArrayList<Position> arrayList = new ArrayList<>();
+    public static ArrayList<Position> getPositions() {
+        ArrayList<Position> results = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT positions.position FROM positions";
+            String query = "SELECT * FROM positions";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
-                arrayList.add(new Position(
-                   resultSet.getString("positions")
+                results.add(new Position(
+                   resultSet.getInt("id"),
+                   resultSet.getString("position")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
         }
-        return arrayList;
+        return results;
     }
 }
