@@ -8,16 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Notes {
+class Note {
     int id;
     String note;
 
-    private Notes(String note) {
+    private Note(String note) {
         this.note = note;
     }
 
-    private ArrayList<Notes> getNotes() {
-        ArrayList<Notes> arrayList = new ArrayList<>();
+    private ArrayList<Note> getNotes() {
+        ArrayList<Note> arrayList = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -25,7 +25,7 @@ class Notes {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                arrayList.add(new Notes(
+                arrayList.add(new Note(
                         resultSet.getString("note")
                 ));
             }

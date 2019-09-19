@@ -9,21 +9,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Workers {
+public class Worker {
     public int id;
     public String fullName;
     public Date dob;
     public String position;
 
-    public Workers(int id, String fullName, Date dob, String position) {
+    public Worker(int id, String fullName, Date dob, String position) {
         this.id = id;
         this.fullName = fullName;
         this.dob = dob;
         this.position = position;
     }
 
-    public static ArrayList<Workers> getWorkers() {
-        ArrayList<Workers> arrayList = new ArrayList<>();
+    public static ArrayList<Worker> getWorkers() {
+        ArrayList<Worker> arrayList = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -32,7 +32,7 @@ public class Workers {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
-                arrayList.add(new Workers(
+                arrayList.add(new Worker(
                         resultSet.getInt("id"),
                         resultSet.getString("full_name"),
                         resultSet.getDate("dob"),

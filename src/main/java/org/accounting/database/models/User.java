@@ -9,14 +9,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Users {
+public class User {
     public int id;
     public String email;
     public String password;
     public String role;
     public int timeInProgram;
 
-    public Users(int id, String email, String password, String role, int timeInProgram) {
+    public User(int id, String email, String password, String role, int timeInProgram) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -24,15 +24,15 @@ public class Users {
         this.timeInProgram = timeInProgram;
     }
 
-    public static ArrayList<Users> getUsers() {
-        ArrayList<Users> results = new ArrayList<>();
+    public static ArrayList<User> getUsers() {
+        ArrayList<User> results = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
             String query = "SELECT u.id, u.email, u.password, r.role, u.time_in_program FROM users u INNER JOIN roles r ON u.role_id = r.id";
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
-                results.add(new Users(
+                results.add(new User(
                     resultSet.getInt("id"),
                     resultSet.getString("email"),
                     resultSet.getString("password"),
@@ -46,7 +46,7 @@ public class Users {
         return results;
     }
 
-    public static void insertUser(Users user) {
+    public static void insertUser(User user) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -69,7 +69,7 @@ public class Users {
         }
     }
 
-    public static void updateUser(Users user) {
+    public static void updateUser(User user) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

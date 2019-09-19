@@ -8,24 +8,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Suppliers {
+class Position {
     int id;
-    String supplier;
+    String position;
 
-    private Suppliers(String supplier) {
-        this.supplier = supplier;
+    private Position(String position) {
+        this.position = position;
     }
-    private ArrayList<Suppliers> getSuppliers() {
-        ArrayList<Suppliers> arrayList = new ArrayList<>();
+
+    private ArrayList<Position> getPositions() {
+        ArrayList<Position> arrayList = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT suppliers.supplier FROM suppliers";
+            String query = "SELECT positions.position FROM positions";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
-                arrayList.add(new Suppliers(
-                        resultSet.getString("supplier")
+                arrayList.add(new Position(
+                   resultSet.getString("positions")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();

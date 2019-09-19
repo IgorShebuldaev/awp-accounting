@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Deliveries {
+public class Deliverie {
     public int id;
     public Date deliveryDate;
     public String supplier;
@@ -17,7 +17,7 @@ public class Deliveries {
     public String price;
     public String worker;
 
-    private Deliveries(Date deliveryDate, String supplier, String product, String price, String worker) {
+    private Deliverie(Date deliveryDate, String supplier, String product, String price, String worker) {
         this.deliveryDate = deliveryDate;
         this.supplier = supplier;
         this.product = product;
@@ -25,8 +25,8 @@ public class Deliveries {
         this.worker = worker;
     }
 
-    public static ArrayList<Deliveries> getDeliveries() {
-        ArrayList<Deliveries> arrayList = new ArrayList<>();
+    public static ArrayList<Deliverie> getDeliveries() {
+        ArrayList<Deliverie> arrayList = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -37,7 +37,7 @@ public class Deliveries {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                arrayList.add(new Deliveries(
+                arrayList.add(new Deliverie(
                         resultSet.getDate("delivery_date"),
                         resultSet.getString("company_name"),
                         resultSet.getString("product"),
