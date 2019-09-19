@@ -12,13 +12,13 @@ import java.util.Date;
 public class Worker {
     public int id;
     public String fullName;
-    public Date dob;
+    public Date dateOfBirth;
     public String position;
 
-    public Worker(int id, String fullName, Date dob, String position) {
+    public Worker(int id, String fullName, Date dateOfBirth, String position) {
         this.id = id;
         this.fullName = fullName;
-        this.dob = dob;
+        this.dateOfBirth = dateOfBirth;
         this.position = position;
     }
 
@@ -27,7 +27,7 @@ public class Worker {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT wo.id, wo.full_name, wo.dob, po.position FROM " +
+            String query = "SELECT wo.id, wo.full_name, wo.date_of_birth, po.position FROM " +
                     "workers wo INNER JOIN positions po ON wo.position_id = po.id";
             ResultSet resultSet = statement.executeQuery(query);
 
@@ -35,7 +35,7 @@ public class Worker {
                 arrayList.add(new Worker(
                         resultSet.getInt("id"),
                         resultSet.getString("full_name"),
-                        resultSet.getDate("dob"),
+                        resultSet.getDate("date_of_birth"),
                         resultSet.getString("position")
                 ));
         } catch (SQLException se) {
