@@ -25,7 +25,7 @@ public class Worker extends Base {
     }
 
     public static ArrayList<Worker> getAll() {
-        ArrayList<Worker> arrayList = new ArrayList<>();
+        ArrayList<Worker> results = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -34,7 +34,7 @@ public class Worker extends Base {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
-                arrayList.add(new Worker(
+                results.add(new Worker(
                         resultSet.getInt("id"),
                         resultSet.getString("full_name"),
                         resultSet.getDate("date_of_birth"),
@@ -43,7 +43,7 @@ public class Worker extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
-        return arrayList;
+        return results;
     }
 
     public static void insertWorker(Worker worker) {

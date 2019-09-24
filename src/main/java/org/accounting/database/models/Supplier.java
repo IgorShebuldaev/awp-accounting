@@ -8,27 +8,29 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Supplier extends Base {
-    String supplier;
+public class Supplier extends Base {
+    public String supplier;
 
-    private Supplier(String supplier) {
+    public Supplier(int id, String supplier) {
+        this.id = id;
         this.supplier = supplier;
     }
     public static ArrayList<Supplier> getAll() {
-        ArrayList<Supplier> arrayList = new ArrayList<>();
+        ArrayList<Supplier> results = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT suppliers.supplier FROM suppliers";
+            String query = "SELECT * FROM suppliers";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
-                arrayList.add(new Supplier(
+                results.add(new Supplier(
+                        resultSet.getInt("id"),
                         resultSet.getString("supplier")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
         }
-        return arrayList;
+        return results;
     }
 }

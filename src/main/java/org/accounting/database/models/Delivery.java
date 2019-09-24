@@ -16,7 +16,8 @@ public class Delivery extends Base {
     public String price;
     public String worker;
 
-    private Delivery(Date deliveryDate, String supplier, String product, String price, String worker) {
+    public Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
+        this.id = id;
         this.deliveryDate = deliveryDate;
         this.supplier = supplier;
         this.product = product;
@@ -25,18 +26,19 @@ public class Delivery extends Base {
     }
 
     public static ArrayList<Delivery> getAll() {
-        ArrayList<Delivery> arrayList = new ArrayList<>();
+        ArrayList<Delivery> results = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT de.delivery_date, su.company_name, de.product, de.price, wo.full_name " +
+            String query = "SELECT de.id, de.delivery_date, su.company_name, de.product, de.price, wo.full_name " +
                     "FROM deliveries de " +
                     "INNER JOIN suppliers su ON de.supplier_id = su.id " +
                     "INNER JOIN workers wo ON de.worker_id = wo.id";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                arrayList.add(new Delivery(
+                results.add(new Delivery(
+                        resultSet.getInt("id"),
                         resultSet.getDate("delivery_date"),
                         resultSet.getString("company_name"),
                         resultSet.getString("product"),
@@ -47,6 +49,6 @@ public class Delivery extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
-        return arrayList;
+        return results;
     }
 }

@@ -22,7 +22,7 @@ public class Role extends Base {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT r.id, r.role FROM roles r";
+            String query = "SELECT * FROM roles";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
