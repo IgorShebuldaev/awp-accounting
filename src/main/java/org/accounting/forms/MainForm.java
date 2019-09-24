@@ -160,10 +160,10 @@ public class MainForm implements ActionListener {
                 new WorkBooksForm().setVisible(true);
                 break;
             case "users":
-                new UsersForm();
+                new UsersForm().setVisible(true);
                 break;
             case "roles":
-                new RolesForm();
+                new RolesForm().setVisible(true);
                 break;
         }
     }

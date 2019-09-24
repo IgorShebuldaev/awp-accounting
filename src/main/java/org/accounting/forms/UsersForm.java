@@ -3,7 +3,6 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.accounting.forms.models.MainTableModel;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
 import org.accounting.forms.models.UserTable;

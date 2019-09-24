@@ -4,12 +4,9 @@ import org.accounting.database.models.Base;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.models.MainTableModel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class WorkerImpl implements IDataManipulator {
-
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     @Override
     public void fillTable(MainTableModel tableModel) {
