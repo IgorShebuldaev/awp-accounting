@@ -1,4 +1,4 @@
-package org.accounting.forms.WorkBooks;
+package org.accounting.forms.workbooks;
 
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Worker;
@@ -17,18 +17,20 @@ public class WorkerImpl implements IDataManipulator {
     }
 
     @Override
-    public void insertData(Base base, MainTableModel tableModel) {
+    public void insertData(MainTableModel tableModel, Base base) {
         Worker.insertWorker((Worker) base);
         tableModel.addRecord(base);
     }
 
     @Override
-    public void deleteData(Base base, MainTableModel tableModel, int rowIndex) {
-
+    public void deleteData(MainTableModel tableModel, int rowIndex, int id) {
+        Worker.deleteWorker(id);
+        tableModel.removeRow(rowIndex);
     }
 
     @Override
-    public void updateData(Base base, MainTableModel tableModel, int rowIndex) {
-
+    public void updateData(MainTableModel tableModel, int rowIndex, Base base) {
+        Worker.updateWorker((Worker) base);
+        tableModel.setValueAt(base, rowIndex);
     }
 }
