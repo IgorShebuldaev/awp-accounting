@@ -1,12 +1,36 @@
 package org.accounting.forms.workbooks;
 
 import org.accounting.database.models.Base;
+import org.accounting.database.models.Position;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.models.MainComboBoxModel;
 import org.accounting.forms.models.MainTableModel;
 
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class WorkerImpl implements IDataManipulator {
+
+    SpinnerModel setCurrentDateWorkerSpinner() {
+        Calendar calendar = Calendar.getInstance();
+        Date initDate = calendar.getTime();
+        calendar.add(Calendar.YEAR, -100);
+        Date earliestDate = calendar.getTime();
+        calendar.add(Calendar.YEAR, 200);
+        Date latestDate = calendar.getTime();
+        return new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR);
+    }
+
+    MainComboBoxModel addItemComboBoxPosition() {
+        ArrayList<Position> results = Position.getAll();
+        String[] items = new String[results.size()];
+        for (int i = 0; i < results.size(); i++) {
+            items[i] = results.get(i).position;
+        }
+        return new MainComboBoxModel(items);
+    }
 
     @Override
     public void fillTable(MainTableModel tableModel) {

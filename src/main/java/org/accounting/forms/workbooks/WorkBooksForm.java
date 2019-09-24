@@ -57,34 +57,15 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         worker.fillTable(workerModel);
         tableWorker.setModel(workerModel);
 
-        setCurrentDateWorkerSpinner();
-        addItemComboBoxPosition();
+        spinnerWorkerDateOfBirth.setModel(worker.setCurrentDateWorkerSpinner());
+        spinnerWorkerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkerDateOfBirth, "dd.MM.yyyy"));
+        comboBoxWorkerPosition.setModel(worker.addItemComboBoxPosition());
 
         btnAddWorker.addActionListener(this);
         btnDeleteWorker.addActionListener(this);
         btnEditWorker.addActionListener(this);
         btnSaveWorker.addActionListener(this);
         btnCancelWorker.addActionListener(this);
-    }
-
-    private void setCurrentDateWorkerSpinner() {
-        Calendar calendar = Calendar.getInstance();
-        Date initDate = calendar.getTime();
-        calendar.add(Calendar.YEAR, -100);
-        Date earliestDate = calendar.getTime();
-        calendar.add(Calendar.YEAR, 200);
-        Date latestDate = calendar.getTime();
-        SpinnerModel dateModel = new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR);
-        spinnerWorkerDateOfBirth.setModel(dateModel);
-        spinnerWorkerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkerDateOfBirth, "dd.MM.yyyy"));
-    }
-
-    private void addItemComboBoxPosition() {
-        comboBoxWorkerPosition.removeAllItems();
-        ArrayList<Position> results = Position.getAll();
-        for (Position positions : results) {
-            comboBoxWorkerPosition.addItem(positions.position);
-        }
     }
 
     private void setValueFieldsWorker() {
