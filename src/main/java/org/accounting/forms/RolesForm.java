@@ -89,14 +89,7 @@ public class RolesForm extends JDialog implements ActionListener {
             Role role = new Role(model.getRecord(rowIndex).id, textFieldRole.getText());
             Role.updateRole(role);
             model.setValueAt(role, rowIndex);
-
-            addButton.setEnabled(true);
-            editButton.setEnabled(true);
-            deleteButton.setEnabled(true);
-            tableRoles.setEnabled(true);
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            textFieldRole.setText("");
+            turnComponents(true);
         }
     }
 
@@ -107,12 +100,7 @@ public class RolesForm extends JDialog implements ActionListener {
             return;
         }
         textFieldRole.setText(model.getRecord(row).role);
-        editButton.setEnabled(false);
-        addButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        tableRoles.setEnabled(false);
-        cancelButton.setEnabled(true);
-        saveButton.setEnabled(true);
+        turnComponents(false);
     }
 
     private boolean checkEmptyFields() {
@@ -121,6 +109,25 @@ public class RolesForm extends JDialog implements ActionListener {
             return false;
         } else {
             return true;
+        }
+    }
+
+    private void turnComponents(Boolean turn) {
+        if (!turn) {
+            addButton.setEnabled(false);
+            editButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+            tableRoles.setEnabled(false);
+            cancelButton.setEnabled(true);
+            saveButton.setEnabled(true);
+        } else {
+            addButton.setEnabled(true);
+            editButton.setEnabled(true);
+            deleteButton.setEnabled(true);
+            tableRoles.setEnabled(true);
+            cancelButton.setEnabled(false);
+            saveButton.setEnabled(false);
+            textFieldRole.setText("");
         }
     }
 

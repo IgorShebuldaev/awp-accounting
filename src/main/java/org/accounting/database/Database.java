@@ -35,4 +35,3 @@ public class Database {
         if (connection != null) connection.close();
     }
 }
-

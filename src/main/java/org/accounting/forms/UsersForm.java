@@ -104,18 +104,8 @@ public class UsersForm extends JDialog implements ActionListener {
                 model.getRecord(rowIndex).timeInProgram);
 
             User.updateUser(user);
-
             model.setValueAt(user, rowIndex);
-
-            addButton.setEnabled(true);
-            editButton.setEnabled(true);
-            deleteButton.setEnabled(true);
-            tableUsers.setEnabled(true);
-            addButtonRoles.setEnabled(true);
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            textFieldEmail.setText("");
-            textFieldPassword.setText("");
+            turnComponents(true);
         }
     }
 
@@ -128,13 +118,7 @@ public class UsersForm extends JDialog implements ActionListener {
         textFieldEmail.setText(model.getRecord(rowIndex).email);
         textFieldPassword.setText(model.getRecord(rowIndex).password);
         comboBoxRole.setSelectedItem(model.getRecord(rowIndex).role);
-        editButton.setEnabled(false);
-        addButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        tableUsers.setEnabled(false);
-        addButtonRoles.setEnabled(false);
-        cancelButton.setEnabled(true);
-        saveButton.setEnabled(true);
+        turnComponents(false);
     }
 
     private boolean checkEmptyFields() {
@@ -151,6 +135,28 @@ public class UsersForm extends JDialog implements ActionListener {
         ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
             comboBoxRole.addItem(role.role);
+        }
+    }
+
+    private void turnComponents(Boolean turn) {
+        if (!turn) {
+            addButton.setEnabled(false);
+            editButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+            tableUsers.setEnabled(false);
+            addButtonRoles.setEnabled(false);
+            cancelButton.setEnabled(true);
+            saveButton.setEnabled(true);
+        } else {
+            addButton.setEnabled(true);
+            editButton.setEnabled(true);
+            deleteButton.setEnabled(true);
+            tableUsers.setEnabled(true);
+            addButtonRoles.setEnabled(true);
+            cancelButton.setEnabled(false);
+            saveButton.setEnabled(false);
+            textFieldEmail.setText("");
+            textFieldPassword.setText("");
         }
     }
 
@@ -175,15 +181,7 @@ public class UsersForm extends JDialog implements ActionListener {
                 saveUser();
                 break;
             case "cancel":
-                addButton.setEnabled(true);
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-                tableUsers.setEnabled(true);
-                addButtonRoles.setEnabled(true);
-                saveButton.setEnabled(false);
-                cancelButton.setEnabled(false);
-                textFieldEmail.setText("");
-                textFieldPassword.setText("");
+                turnComponents(true);
                 break;
             case "addRoles":
                 showRolesForm();
@@ -271,4 +269,3 @@ public class UsersForm extends JDialog implements ActionListener {
         return panelUsersForm;
     }
 }
-
