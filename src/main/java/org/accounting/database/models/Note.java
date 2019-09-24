@@ -8,15 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-class Note {
-    int id;
+class Note extends Base {
     String note;
 
     private Note(String note) {
         this.note = note;
     }
 
-    private ArrayList<Note> getNotes() {
+    public static ArrayList<Note> getAll() {
         ArrayList<Note> arrayList = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();

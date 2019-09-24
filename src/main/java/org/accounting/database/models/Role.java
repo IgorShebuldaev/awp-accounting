@@ -9,8 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Role {
-    public int id;
+public class Role extends Base {
     public String role;
 
     public Role(int id, String role) {
@@ -18,7 +17,7 @@ public class Role {
         this.role = role;
     }
 
-    public static ArrayList<Role> getRoles() {
+    public static ArrayList<Role> getAll() {
         ArrayList<Role> results = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();

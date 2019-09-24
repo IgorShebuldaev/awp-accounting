@@ -11,8 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Worker {
-    public int id;
+public class Worker extends Base {
     public String fullName;
     public Date dateOfBirth;
     public String position;
@@ -25,7 +24,7 @@ public class Worker {
         this.position = position;
     }
 
-    public static ArrayList<Worker> getWorkers() {
+    public static ArrayList<Worker> getAll() {
         ArrayList<Worker> arrayList = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();

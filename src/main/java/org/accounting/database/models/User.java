@@ -9,8 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class User {
-    public int id;
+public class User extends Base {
     public String email;
     public String password;
     public String role;
@@ -24,7 +23,7 @@ public class User {
         this.timeInProgram = timeInProgram;
     }
 
-    public static ArrayList<User> getUsers() {
+    public static ArrayList<User> getAll() {
         ArrayList<User> results = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();

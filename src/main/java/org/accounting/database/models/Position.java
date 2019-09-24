@@ -8,8 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class Position {
-    public int id;
+public class Position extends Base {
     public String position;
 
     public Position(int id, String position) {
@@ -17,7 +16,7 @@ public class Position {
         this.position = position;
     }
 
-    public static ArrayList<Position> getPositions() {
+    public static ArrayList<Position> getAll() {
         ArrayList<Position> results = new ArrayList<>();
         try{
             Connection connection = Database.getConnection();

@@ -9,8 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Delivery {
-    public int id;
+public class Delivery extends Base {
     public Date deliveryDate;
     public String supplier;
     public String product;
@@ -25,7 +24,7 @@ public class Delivery {
         this.worker = worker;
     }
 
-    public static ArrayList<Delivery> getDeliveries() {
+    public static ArrayList<Delivery> getAll() {
         ArrayList<Delivery> arrayList = new ArrayList<>();
         try {
             Connection connection = Database.getConnection();
