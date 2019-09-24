@@ -1,22 +1,16 @@
 package org.accounting.forms.models;
 
+import org.accounting.database.models.Base;
+
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
-public class MainTableModel extends AbstractTableModel {
-  private String[] columnNames = new String[0];
-  private ArrayList<Object[]> data = new ArrayList<>();
+public abstract class MainTableModel extends AbstractTableModel {
+  protected String[] columnNames = new String[0];
+  protected ArrayList<Base> data = new ArrayList<>();
 
   public void setColumnIdentifiers(String[] columns) {
     this.columnNames = columns;
-  }
-
-  public Object getValueAt(int row, int column) {
-    return data.get(row)[column + 1];
-  }
-
-  public Object getRawValueAt(int row, int column) {
-    return this.getValueAt(row, column - 1);
   }
 
   public String getColumnName(int column) {
@@ -31,8 +25,12 @@ public class MainTableModel extends AbstractTableModel {
     return data.size();
   }
 
-  public void addRow(Object[] row) {
-    data.add(row);
+  public Base getRecord(int rowIndex) {
+    return data.get(rowIndex);
+  }
+
+  public void addRecord(Base record) {
+    data.add(record);
     fireTableRowsInserted(data.size()-1, data.size()-1);
   }
 
@@ -41,14 +39,8 @@ public class MainTableModel extends AbstractTableModel {
     fireTableRowsDeleted(row,row);
   }
 
-  public void setValueAt(Object[] aValue, int rowIndex) {
-    data.set(rowIndex, aValue);
-    fireTableRowsUpdated(rowIndex,rowIndex);
-  }
-
-  @Override
-  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-    data.get(rowIndex)[columnIndex + 1] = aValue;
+  public void setValueAt(Base record, int rowIndex) {
+    data.set(rowIndex, record);
     fireTableRowsUpdated(rowIndex,rowIndex);
   }
 }
