@@ -6,6 +6,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.forms.models.MainTableModel;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
+import org.accounting.forms.models.UserTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +30,7 @@ public class UsersForm extends JDialog implements ActionListener {
     private JButton saveButton;
     private JButton cancelButton;
     private JButton editButton;
-    private MainTableModel model;
+    private UserTable model;
 
     UsersForm() {
       createUsersForm();
@@ -42,7 +43,7 @@ public class UsersForm extends JDialog implements ActionListener {
         setTitle("Users");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        model = new MainTableModel();
+        model = new UserTable();
         fillTableUsers();
         tableUsers.setModel(model);
         addItemComboBoxRole();
@@ -53,31 +54,28 @@ public class UsersForm extends JDialog implements ActionListener {
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
         addButtonRoles.addActionListener(this);
-
-        setVisible(true);
     }
 
     private void fillTableUsers() {
-        model.setColumnIdentifiers(new String[]{"Email", "Password", "Role", "Time in program"});
-        ArrayList<User> results = User.getUsers();
-        for (User users : results) {
-            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
+        ArrayList<User> results = User.getAll();
+        for (User user : results) {
+            model.addRecord(user);
         }
     }
 
     private void addUser() {
         if (checkEmptyFields()) {
-            User users = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
-            User.insertUser(users);
-            model.addRow(new Object[]{users.id, users.email, users.password, users.role, users.timeInProgram});
+            User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
+            User.insertUser(user);
+            model.addRecord(user);
             textFieldEmail.setText("");
             textFieldPassword.setText("");
         }
     }
 
     private void deleteUser() {
-        int row = tableUsers.getSelectedRow();
-        if (row < 0) {
+        int rowIndex = tableUsers.getSelectedRow();
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
@@ -91,28 +89,24 @@ public class UsersForm extends JDialog implements ActionListener {
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            User.deleteUser((int) model.getRawValueAt(row, 0));
-            model.removeRow(row);
+            User.deleteUser(model.getRecord(rowIndex).id);
+            model.removeRow(rowIndex);
         }
     }
 
     private void saveUser() {
-        int row = tableUsers.getSelectedRow();
+        int rowIndex = tableUsers.getSelectedRow();
         if (checkEmptyFields()) {
             User user = new User(
-                (int) model.getRawValueAt(row, 0),
+                model.getRecord(rowIndex).id,
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
                 (String) comboBoxRole.getSelectedItem(),
-                (int) model.getRawValueAt(row, 4));
+                model.getRecord(rowIndex).timeInProgram);
 
             User.updateUser(user);
 
-            model.setValueAt(new Object[]{
-                user.id, user.email,
-                user.password,
-                user.role,
-                user.timeInProgram}, row);
+            model.setValueAt(user, rowIndex);
 
             addButton.setEnabled(true);
             editButton.setEnabled(true);
@@ -127,14 +121,14 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void setTextFields() {
-        int row = tableUsers.getSelectedRow();
-        if (row < 0) {
+        int rowIndex = tableUsers.getSelectedRow();
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldEmail.setText((String) model.getRawValueAt(row, 1));
-        textFieldPassword.setText((String) model.getRawValueAt(row, 2));
-        comboBoxRole.setSelectedItem(model.getRawValueAt(row, 3));
+        textFieldEmail.setText(model.getRecord(rowIndex).email);
+        textFieldPassword.setText(model.getRecord(rowIndex).password);
+        comboBoxRole.setSelectedItem(model.getRecord(rowIndex).role);
         editButton.setEnabled(false);
         addButton.setEnabled(false);
         deleteButton.setEnabled(false);
@@ -155,14 +149,14 @@ public class UsersForm extends JDialog implements ActionListener {
 
     private void addItemComboBoxRole() {
         comboBoxRole.removeAllItems();
-        ArrayList<Role> results = Role.getRoles();
-        for (Role roles : results) {
-            comboBoxRole.addItem(roles.role);
+        ArrayList<Role> results = Role.getAll();
+        for (Role role : results) {
+            comboBoxRole.addItem(role.role);
         }
     }
 
     private void showRolesForm() {
-        new RolesForm();
+        new RolesForm().setVisible(true);
         addItemComboBoxRole();
     }
 

@@ -3,7 +3,7 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Role;
-import org.accounting.forms.models.MainTableModel;
+import org.accounting.forms.models.RoleTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,7 @@ public class RolesForm extends JDialog implements ActionListener {
     private JButton deleteButton;
     private JLabel labelRole;
     private JScrollPane scrolPaneTableRoles;
-    private MainTableModel model;
+    private RoleTable model;
 
     RolesForm() {
         createRolesForm();
@@ -35,7 +35,7 @@ public class RolesForm extends JDialog implements ActionListener {
         setTitle("Roles");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        model = new MainTableModel();
+        model = new RoleTable();
         fillTableRoles();
         tableRoles.setModel(model);
 
@@ -44,15 +44,12 @@ public class RolesForm extends JDialog implements ActionListener {
         saveButton.addActionListener(this);
         cancelButton.addActionListener(this);
         deleteButton.addActionListener(this);
-
-        setVisible(true);
     }
 
     private void fillTableRoles() {
-        model.setColumnIdentifiers(new String[]{"Role"});
-        ArrayList<Role> results = Role.getRoles();
+        ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
-            model.addRow(new Object[]{role.id, role.role});
+            model.addRecord(role);
         }
     }
 
@@ -60,14 +57,14 @@ public class RolesForm extends JDialog implements ActionListener {
         if (checkEmptyFields()) {
             Role role = new Role(0, textFieldRole.getText());
             Role.insertRole(role);
-            model.addRow(new Object[]{role.id, role.role});
+            model.addRecord(role);
             textFieldRole.setText("");
         }
     }
 
     private void deleteRole() {
-        int row = tableRoles.getSelectedRow();
-        if (row < 0) {
+        int rowIndex = tableRoles.getSelectedRow();
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
@@ -81,17 +78,17 @@ public class RolesForm extends JDialog implements ActionListener {
             options,
             options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            Role.deleteRole((int) model.getRawValueAt(row, 0));
-            model.removeRow(row);
+            Role.deleteRole(model.getRecord(rowIndex).id);
+            model.removeRow(rowIndex);
         }
     }
 
     private void saveRole() {
-        int row = tableRoles.getSelectedRow();
+        int rowIndex = tableRoles.getSelectedRow();
         if (checkEmptyFields()) {
-            Role role = new Role((int) model.getRawValueAt(row, 0), textFieldRole.getText());
+            Role role = new Role(model.getRecord(rowIndex).id, textFieldRole.getText());
             Role.updateRole(role);
-            model.setValueAt(new Object[]{role.id, role.role}, row);
+            model.setValueAt(role, rowIndex);
 
             addButton.setEnabled(true);
             editButton.setEnabled(true);
@@ -109,7 +106,7 @@ public class RolesForm extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldRole.setText((String) model.getRawValueAt(row, 1));
+        textFieldRole.setText(model.getRecord(row).role);
         editButton.setEnabled(false);
         addButton.setEnabled(false);
         deleteButton.setEnabled(false);
