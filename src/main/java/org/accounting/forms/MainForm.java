@@ -4,9 +4,9 @@ import org.accounting.database.Authorization;
 import org.accounting.database.Database;
 import org.accounting.database.models.Delivery;
 import org.accounting.forms.WorkBooks.WorkBooksForm;
+import org.accounting.forms.models.DeliveryTable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -134,11 +134,10 @@ public class MainForm implements ActionListener {
     }
 
     private void fillTableDeliveries() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Date delivery", "Company name", "Product", "Price", "Worker"});
-        ArrayList<Delivery> arrayList = Delivery.getDeliveries();
-        for (Delivery deliveries : arrayList){
-            model.addRow(new Object[]{deliveries.deliveryDate, deliveries.supplier, deliveries.product, deliveries.price, deliveries.worker});
+        DeliveryTable model = new DeliveryTable();
+        ArrayList<Delivery> results = Delivery.getAll();
+        for (Delivery delivery : results){
+            model.addRecord(delivery);
         }
         tableDeliveries.setModel(model);
     }
