@@ -3,7 +3,7 @@ package org.accounting.forms;
 import org.accounting.database.Authorization;
 import org.accounting.database.Database;
 import org.accounting.database.models.Delivery;
-import org.accounting.forms.WorkBooks.WorkBooksForm;
+import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.forms.models.DeliveryTable;
 
 import javax.swing.*;

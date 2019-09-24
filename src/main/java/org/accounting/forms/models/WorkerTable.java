@@ -2,7 +2,10 @@ package org.accounting.forms.models;
 
 import org.accounting.database.models.Worker;
 
+import java.text.SimpleDateFormat;
+
 public class WorkerTable extends MainTableModel {
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     public WorkerTable() {
         columnNames = new String[]{"Full Name", "Date of birth", "Position"};
@@ -17,12 +20,17 @@ public class WorkerTable extends MainTableModel {
                 result = worker.fullName;
                 break;
             case 1:
-                result = worker.dateOfBirth;
+                result = dateFormat.format(worker.dateOfBirth);
                 break;
             case 2:
                 result = worker.position;
                 break;
         }
         return result;
+    }
+
+    @Override
+    public Worker getRecord(int rowIndex) {
+        return (Worker) super.getRecord(rowIndex);
     }
 }
