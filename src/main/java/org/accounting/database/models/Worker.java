@@ -58,4 +58,27 @@ public class Worker extends Base {
             se.printStackTrace();
         }
     }
+
+    public static void deleteWorker(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM workers WHERE id=%d", id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void updateWorker(Worker worker) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=(SELECT id FROM positions WHERE position='%s') WHERE id=%d",
+                worker.fullName, dateFormat.format(worker.dateOfBirth), worker.position, worker.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
 }
