@@ -1,6 +1,7 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+import org.accounting.database.Authorization;
 import org.accounting.database.Database;
 
 import java.sql.Connection;
@@ -75,6 +76,17 @@ public class User extends Base {
             String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
                     "role_id=(SELECT id from roles where role='%s') " +
                     "where id=%d", user.email, user.password, user.timeInProgram, user.role, user.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void updateTimeUser(Authorization currentUser) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE users SET email='%s', time_in_program=%d where id=%d", currentUser.email, currentUser.timeInProgram, currentUser.id);
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
