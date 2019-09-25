@@ -1,5 +1,6 @@
 package org.accounting.database.models;
 
+import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
 
 import java.sql.Connection;
@@ -9,11 +10,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Supplier extends Base {
-    public String supplier;
+    public String companyName;
 
-    public Supplier(int id, String supplier) {
+    public Supplier(int id, String companyName) {
         this.id = id;
-        this.supplier = supplier;
+        this.companyName = companyName;
     }
     public static ArrayList<Supplier> getAll() {
         ArrayList<Supplier> results = new ArrayList<>();
@@ -26,11 +27,45 @@ public class Supplier extends Base {
             while (resultSet.next())
                 results.add(new Supplier(
                         resultSet.getInt("id"),
-                        resultSet.getString("supplier")
+                        resultSet.getString("company_name")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
         }
         return results;
+    }
+
+    public static void insertSupplier(Supplier supplier) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("INSERT INTO suppliers VALUES(null,'%s')", supplier.companyName);
+            statement.execute(query);
+            supplier.id = (int)((StatementImpl) statement).getLastInsertID();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void updateSupplier(Supplier supplier) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE suppliers SET company_name='%s' WHERE id=%d", supplier.companyName, supplier.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void deleteSupplier(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM suppliers WHERE id=%d", id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
 }
