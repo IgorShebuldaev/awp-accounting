@@ -3,16 +3,15 @@ package org.accounting.forms.workbooks;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.accounting.database.models.Position;
+import org.accounting.database.models.Supplier;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.models.SupplierTable;
 import org.accounting.forms.models.WorkerTable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class WorkBooksForm extends JDialog implements ActionListener {
@@ -43,8 +42,10 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     private JButton btnCancelSupplier;
     private JButton btnDeleteSupplier;
     private JLabel labelSupplierCompanyName;
-    private WorkerTable workerModel;
+    private SupplierImpl supplier;
     private WorkerImpl worker;
+    private SupplierTable supplierTableModel;
+    private WorkerTable workerTableModel;
 
     public WorkBooksForm() {
         setContentPane(panelWorkBooks);
@@ -52,10 +53,15 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         setLocationRelativeTo(null);
         setTitle("Work Books");
 
-        workerModel = new WorkerTable();
+        supplierTableModel = new SupplierTable();
+        supplier = new SupplierImpl();
+        supplier.fillTable(supplierTableModel);
+        tableSupplier.setModel(supplierTableModel);
+
+        workerTableModel = new WorkerTable();
         worker = new WorkerImpl();
-        worker.fillTable(workerModel);
-        tableWorker.setModel(workerModel);
+        worker.fillTable(workerTableModel);
+        tableWorker.setModel(workerTableModel);
 
         spinnerWorkerDateOfBirth.setModel(worker.setCurrentDateWorkerSpinner());
         spinnerWorkerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkerDateOfBirth, "dd.MM.yyyy"));
@@ -66,6 +72,22 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         btnEditWorker.addActionListener(this);
         btnSaveWorker.addActionListener(this);
         btnCancelWorker.addActionListener(this);
+
+        btnAddSupplier.addActionListener(this);
+        btnDeleteSupplier.addActionListener(this);
+        btnEditSupplier.addActionListener(this);
+        btnSaveSupplier.addActionListener(this);
+        btnCancelSupplier.addActionListener(this);
+    }
+
+    private void setValueFieldsSupplier() {
+        int rowIndex = tableSupplier.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
+        textFieldSupplierCompanyName.setText(supplierTableModel.getRecord(rowIndex).companyName);
+        turnComponentsSupplier(false);
     }
 
     private void setValueFieldsWorker() {
@@ -74,10 +96,29 @@ public class WorkBooksForm extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldWorkerFullName.setText(workerModel.getRecord(rowIndex).fullName);
-        spinnerWorkerDateOfBirth.setValue((workerModel.getRecord(rowIndex).dateOfBirth));
-        comboBoxWorkerPosition.setSelectedItem(workerModel.getRecord(rowIndex).position);
+        textFieldWorkerFullName.setText(workerTableModel.getRecord(rowIndex).fullName);
+        spinnerWorkerDateOfBirth.setValue((workerTableModel.getRecord(rowIndex).dateOfBirth));
+        comboBoxWorkerPosition.setSelectedItem(workerTableModel.getRecord(rowIndex).position);
         turnComponentsWorker(false);
+    }
+
+    private void turnComponentsSupplier(Boolean turn) {
+        if (!turn) {
+            btnAddSupplier.setEnabled(false);
+            btnEditSupplier.setEnabled(false);
+            btnDeleteSupplier.setEnabled(false);
+            tableSupplier.setEnabled(false);
+            btnCancelSupplier.setEnabled(true);
+            btnSaveSupplier.setEnabled(true);
+        } else {
+            btnAddSupplier.setEnabled(true);
+            btnEditSupplier.setEnabled(true);
+            btnDeleteSupplier.setEnabled(true);
+            tableSupplier.setEnabled(true);
+            btnCancelSupplier.setEnabled(false);
+            btnSaveSupplier.setEnabled(false);
+            textFieldSupplierCompanyName.setText("");
+        }
     }
 
     private void turnComponentsWorker(Boolean turn) {
@@ -104,8 +145,31 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
+            // Suppliers <------------------------------------------------------------------------------------------------------------------------>
+            case "btnAddSupplier":
+                supplier.insertData(supplierTableModel, new Supplier(
+                        0,
+                        textFieldSupplierCompanyName.getText()));
+                break;
+            case "btnEditSupplier":
+                setValueFieldsSupplier();
+                break;
+            case "btnSaveSupplier":
+                supplier.updateData(supplierTableModel, tableSupplier.getSelectedRow(),
+                        new Supplier(
+                                supplierTableModel.getRecord(tableSupplier.getSelectedRow()).id,
+                                textFieldSupplierCompanyName.getText()));
+                turnComponentsSupplier(true);
+                break;
+            case "btnCancelSupplier":
+                turnComponentsSupplier(true);
+                break;
+            case "btnDeleteSupplier":
+                supplier.deleteData(supplierTableModel, tableSupplier.getSelectedRow(), supplierTableModel.getRecord(tableSupplier.getSelectedRow()).id);
+                break;
+            // Workers <------------------------------------------------------------------------------------------------------------------------>
             case "btnAddWorker":
-                worker.insertData(workerModel, new Worker(
+                worker.insertData(workerTableModel, new Worker(
                         0,
                         textFieldWorkerFullName.getText(),
                         (Date) spinnerWorkerDateOfBirth.getValue(),
@@ -113,12 +177,11 @@ public class WorkBooksForm extends JDialog implements ActionListener {
                 break;
             case "btnEditWorker":
                 setValueFieldsWorker();
-                turnComponentsWorker(false);
                 break;
             case "btnSaveWorker":
-                worker.updateData(workerModel, tableWorker.getSelectedRow(),
+                worker.updateData(workerTableModel, tableWorker.getSelectedRow(),
                         new Worker(
-                                workerModel.getRecord(tableWorker.getSelectedRow()).id,
+                                workerTableModel.getRecord(tableWorker.getSelectedRow()).id,
                                 textFieldWorkerFullName.getText(),
                                 (Date) spinnerWorkerDateOfBirth.getValue(),
                                 (String) comboBoxWorkerPosition.getSelectedItem()));
@@ -128,7 +191,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
                 turnComponentsWorker(true);
                 break;
             case "btnDeleteWorker":
-                worker.deleteData(workerModel, tableWorker.getSelectedRow(), workerModel.getRecord(tableWorker.getSelectedRow()).id);
+                worker.deleteData(workerTableModel, tableWorker.getSelectedRow(), workerTableModel.getRecord(tableWorker.getSelectedRow()).id);
                 break;
         }
     }
@@ -165,27 +228,29 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         labelSupplierCompanyName.setText("Company name");
         panelSupplier.add(labelSupplierCompanyName, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnAddSupplier = new JButton();
-        btnAddSupplier.setActionCommand("addSupplier");
+        btnAddSupplier.setActionCommand("btnAddSupplier");
         btnAddSupplier.setText("Add");
         panelSupplier.add(btnAddSupplier, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnEditSupplier = new JButton();
-        btnEditSupplier.setActionCommand("editSupplier");
+        btnEditSupplier.setActionCommand("btnEditSupplier");
         btnEditSupplier.setText("Edit");
         panelSupplier.add(btnEditSupplier, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnSaveSupplier = new JButton();
-        btnSaveSupplier.setActionCommand("saveSupplier");
+        btnSaveSupplier.setActionCommand("btnSaveSupplier");
+        btnSaveSupplier.setEnabled(false);
         btnSaveSupplier.setText("Save");
         panelSupplier.add(btnSaveSupplier, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnCancelSupplier = new JButton();
-        btnCancelSupplier.setActionCommand("cancelSupplier");
+        btnCancelSupplier.setActionCommand("btnCancelSupplier");
+        btnCancelSupplier.setEnabled(false);
         btnCancelSupplier.setText("Cancel");
         panelSupplier.add(btnCancelSupplier, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnDeleteSupplier = new JButton();
-        btnDeleteSupplier.setActionCommand("deleteSupplier");
+        btnDeleteSupplier.setActionCommand("btnDeleteSupplier");
         btnDeleteSupplier.setText("Delete");
         panelSupplier.add(btnDeleteSupplier, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panelSupplier.add(spacer1, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panelSupplier.add(spacer1, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(22, 11), null, 0, false));
         final Spacer spacer2 = new Spacer();
         panelSupplier.add(spacer2, new GridConstraints(3, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
