@@ -6,10 +6,7 @@ import org.accounting.database.models.Worker;
 import org.accounting.forms.models.MainComboBoxModel;
 import org.accounting.forms.models.MainTableModel;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class WorkerImpl implements IDataManipulator {
 
@@ -32,19 +29,19 @@ public class WorkerImpl implements IDataManipulator {
 
     @Override
     public void insertData(MainTableModel tableModel, Base base) {
-        Worker.insertWorker((Worker) base);
+        Worker.insertData((Worker) base);
         tableModel.addRecord(base);
     }
 
     @Override
     public void deleteData(MainTableModel tableModel, int rowIndex, int id) {
-        Worker.deleteWorker(id);
+        Worker.deleteData(id);
         tableModel.removeRow(rowIndex);
     }
 
     @Override
     public void updateData(MainTableModel tableModel, int rowIndex, Base base) {
-        Worker.updateWorker((Worker) base);
+        Worker.updateData((Worker) base);
         tableModel.setValueAt(base, rowIndex);
     }
 }

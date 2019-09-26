@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class MainForm extends JFrame implements ActionListener, IDataManipulator {
-    private JFrame authorizationFrame = new JFrame("Log in");
-    private JTextField textField = new JTextField(20);
+    private JFrame authorizationForm = new JFrame("Log in");
+    private JTextField textFieldEmail = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
 
-    private JTable tableDelivery;
+    private JTable tableDeliveries;
     private JPanel panelMain;
     private JScrollPane scrollPaneMain;
     private JButton addButton;
@@ -33,13 +33,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private JButton saveButton;
     private JButton cancelButton;
     private JButton deleteButton;
-    private JSpinner spinnerDelivery;
-    private JComboBox<String> comboBoxSupplier;
+    private JSpinner spinnerDeliveries;
+    private JComboBox<String> comboBoxSuppliers;
     private JTextField textFieldProduct;
     private JTextField textFieldPrice;
-    private JComboBox<String> comboBoxWorker;
+    private JComboBox<String> comboBoxWorkers;
     private JLabel labelBar;
-
     private DeliveryTable deliveryTableModel;
 
     public void createUserAuthorizationForm() {
@@ -51,16 +50,16 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         JButton exitButton = new JButton("Exit");
         exitButton.setActionCommand("exit");
 
-        jPanel.add(textField);
+        jPanel.add(textFieldEmail);
         jPanel.add(passwordField);
         jPanel.add(okButton);
         jPanel.add(exitButton);
 
-        authorizationFrame.setSize(250, 130);
-        authorizationFrame.setLocationRelativeTo(null);
-        authorizationFrame.add(jPanel);
-        authorizationFrame.setVisible(true);
-        authorizationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        authorizationForm.setSize(250, 130);
+        authorizationForm.setLocationRelativeTo(null);
+        authorizationForm.add(jPanel);
+        authorizationForm.setVisible(true);
+        authorizationForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         passwordField.addKeyListener(new KeyListener() {
             @Override
@@ -71,7 +70,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-                    validateUserAuthorization(textField, passwordField);
+                    validateUserAuthorization(textFieldEmail, passwordField);
                 }
             }
 
@@ -90,16 +89,15 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         setContentPane(panelMain);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        setVisible(true);
 
         deliveryTableModel = new DeliveryTable();
-        fillTableDeliveries();
-        tableDelivery.setModel(deliveryTableModel);
+        fillTable();
+        tableDeliveries.setModel(deliveryTableModel);
 
-        spinnerDelivery.setModel(setCurrentDateSpinner());
-        spinnerDelivery.setEditor(new JSpinner.DateEditor(spinnerDelivery, "dd.MM.yyyy"));
+        spinnerDeliveries.setModel(setCurrentDateSpinner());
+        spinnerDeliveries.setEditor(new JSpinner.DateEditor(spinnerDeliveries, "dd.MM.yyyy"));
 
-        addWindowListener(new WindowAdapter() {
+        this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int x = JOptionPane.showConfirmDialog(
                         null,
@@ -107,12 +105,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                         "Confirm Exit", JOptionPane.YES_NO_OPTION);
 
                 if (x == JOptionPane.YES_OPTION) {
+                    User.updateDataTimeInProgram(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
                     try {
                         Database.closeConnection();
                     } catch (SQLException se) {
                         se.printStackTrace();
                     }
-                    User.updateTimeUser(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -137,6 +135,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         saveButton.addActionListener(this);
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
+
+        setVisible(true);
     }
 
     private JMenuBar creatMenuBar() {
@@ -154,9 +154,6 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
 
-        jMenuItemUsers.setActionCommand("users");
-        jMenuItemRoles.setActionCommand("roles");
-
         jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
 
@@ -172,30 +169,42 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         settings.add(jMenuItemRoles);
 
         menuBar.add(menu);
-        menuBar.add(settings);
+        if ((CurrentUser.role.equals("admin"))) {
+            menuBar.add(settings);
+        }
         menuBar.add(about);
 
         return menuBar;
     }
 
-    private void fillTableDeliveries() {
+    private void validateUserAuthorization(JTextField login, JPasswordField password) {
+        Authorization currentUser = new Authorization();
+        if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
+            authorizationForm.dispose();
+            createMainForm();
+        } else {
+            JOptionPane.showMessageDialog(authorizationForm, "Invalid login or password! Try again.");
+        }
+    }
+
+    private void fillTable() {
         ArrayList<Delivery> results = Delivery.getAll();
         for (Delivery delivery : results) {
             deliveryTableModel.addRecord(delivery);
         }
-        tableDelivery.setModel(deliveryTableModel);
+        tableDeliveries.setModel(deliveryTableModel);
     }
 
     private void insertData() {
         if (checkEmptyFields()) {
             Delivery delivery = new Delivery(
                     0,
-                    (Date) spinnerDelivery.getValue(),
-                    (String) comboBoxSupplier.getSelectedItem(),
+                    (Date) spinnerDeliveries.getValue(),
+                    (String) comboBoxSuppliers.getSelectedItem(),
                     textFieldProduct.getText(),
                     textFieldPrice.getText(),
-                    (String) comboBoxWorker.getSelectedItem());
-            Delivery.insertDelivery(delivery);
+                    (String) comboBoxWorkers.getSelectedItem());
+            Delivery.insertData(delivery);
             deliveryTableModel.addRecord(delivery);
             textFieldProduct.setText("");
             textFieldPrice.setText("");
@@ -203,7 +212,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void deleteData() {
-        int rowIndex = tableDelivery.getSelectedRow();
+        int rowIndex = tableDeliveries.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
@@ -218,39 +227,39 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            User.deleteUser(deliveryTableModel.getRecord(rowIndex).id);
+            User.deleteData(deliveryTableModel.getRecord(rowIndex).id);
             deliveryTableModel.removeRow(rowIndex);
         }
     }
 
     private void updateData() {
-        int rowIndex = tableDelivery.getSelectedRow();
+        int rowIndex = tableDeliveries.getSelectedRow();
         if (checkEmptyFields()) {
             Delivery delivery = new Delivery(
                     deliveryTableModel.getRecord(rowIndex).id,
-                    (Date) spinnerDelivery.getValue(),
-                    (String) comboBoxSupplier.getSelectedItem(),
+                    (Date) spinnerDeliveries.getValue(),
+                    (String) comboBoxSuppliers.getSelectedItem(),
                     textFieldProduct.getText(),
                     textFieldPrice.getText(),
-                    (String) comboBoxWorker.getSelectedItem());
+                    (String) comboBoxWorkers.getSelectedItem());
 
-            Delivery.updateDelivery(delivery);
+            Delivery.updateData(delivery);
             deliveryTableModel.setValueAt(delivery, rowIndex);
             turnComponents(true);
         }
     }
 
-    private void setValuesFields() {
-        int rowIndex = tableDelivery.getSelectedRow();
+    private void setValuesComponents() {
+        int rowIndex = tableDeliveries.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        spinnerDelivery.setValue(deliveryTableModel.getRecord(rowIndex).deliveryDate);
-        comboBoxSupplier.setSelectedItem(deliveryTableModel.getRecord(rowIndex).supplier);
+        spinnerDeliveries.setValue(deliveryTableModel.getRecord(rowIndex).deliveryDate);
+        comboBoxSuppliers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).supplier);
         textFieldProduct.setText(deliveryTableModel.getRecord(rowIndex).product);
         textFieldPrice.setText(deliveryTableModel.getRecord(rowIndex).price);
-        comboBoxWorker.setSelectedItem(deliveryTableModel.getRecord(rowIndex).worker);
+        comboBoxWorkers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).worker);
         turnComponents(false);
     }
 
@@ -264,18 +273,18 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void addItemComboBoxSupplier() {
-        comboBoxSupplier.removeAllItems();
+        comboBoxSuppliers.removeAllItems();
         ArrayList<Supplier> results = Supplier.getAll();
         for (Supplier supplier : results) {
-            comboBoxSupplier.addItem(supplier.companyName);
+            comboBoxSuppliers.addItem(supplier.companyName);
         }
     }
 
     private void addItemComboBoxWorker() {
-        comboBoxWorker.removeAllItems();
+        comboBoxWorkers.removeAllItems();
         ArrayList<Worker> results = Worker.getAll();
         for (Worker worker : results) {
-            comboBoxWorker.addItem(worker.fullName);
+            comboBoxWorkers.addItem(worker.fullName);
         }
     }
 
@@ -283,17 +292,17 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         if (!turn) {
             addButton.setEnabled(false);
             editButton.setEnabled(false);
-            deleteButton.setEnabled(false);
-            tableDelivery.setEnabled(false);
-            cancelButton.setEnabled(true);
             saveButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+            deleteButton.setEnabled(false);
+            tableDeliveries.setEnabled(false);
         } else {
             addButton.setEnabled(true);
             editButton.setEnabled(true);
-            deleteButton.setEnabled(true);
-            tableDelivery.setEnabled(true);
-            cancelButton.setEnabled(false);
             saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            deleteButton.setEnabled(true);
+            tableDeliveries.setEnabled(true);
             textFieldProduct.setText("");
             textFieldPrice.setText("");
         }
@@ -303,7 +312,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "ok":
-                validateUserAuthorization(textField, passwordField);
+                validateUserAuthorization(textFieldEmail, passwordField);
                 break;
             case "exit":
                 try {
@@ -325,31 +334,21 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             case "roles":
                 new RolesForm().setVisible(true);
                 break;
-            case "insertData":
+            case "addButton":
                 insertData();
+                break;
+            case "editButton":
+                setValuesComponents();
+                break;
+            case "saveButton":
+                updateData();
+                break;
+            case "cancelButton":
+                turnComponents(true);
                 break;
             case "deleteData":
                 deleteData();
                 break;
-            case "editData":
-                setValuesFields();
-                break;
-            case "saveData":
-                updateData();
-                break;
-            case "cancelChanges":
-                turnComponents(true);
-                break;
-        }
-    }
-
-    private void validateUserAuthorization(JTextField login, JPasswordField password) {
-        Authorization currentUser = new Authorization();
-        if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
-            authorizationFrame.dispose();
-            createMainForm();
-        } else {
-            JOptionPane.showMessageDialog(authorizationFrame, "Invalid login or password! Try again.");
         }
     }
 
@@ -372,43 +371,43 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         panelMain.setLayout(new GridLayoutManager(4, 5, new Insets(0, 0, 0, 0), -1, -1));
         scrollPaneMain = new JScrollPane();
         panelMain.add(scrollPaneMain, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        tableDelivery = new JTable();
-        scrollPaneMain.setViewportView(tableDelivery);
+        tableDeliveries = new JTable();
+        scrollPaneMain.setViewportView(tableDeliveries);
         labelBar = new JLabel();
         labelBar.setText("                     ");
         panelMain.add(labelBar, new GridConstraints(3, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
-        addButton.setActionCommand("insertData");
+        addButton.setActionCommand("addButton");
         addButton.setText("Add");
         panelMain.add(addButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
-        editButton.setActionCommand("editData");
+        editButton.setActionCommand("addButton");
         editButton.setText("Edit");
         panelMain.add(editButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
-        saveButton.setActionCommand("saveData");
+        saveButton.setActionCommand("saveButton");
         saveButton.setEnabled(false);
         saveButton.setText("Save");
         panelMain.add(saveButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
-        cancelButton.setActionCommand("cancelChanges");
+        cancelButton.setActionCommand("cancelButton");
         cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
         panelMain.add(cancelButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
-        deleteButton.setActionCommand("deleteData");
+        deleteButton.setActionCommand("deleteButton");
         deleteButton.setText("Delete");
         panelMain.add(deleteButton, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        spinnerDelivery = new JSpinner();
-        panelMain.add(spinnerDelivery, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxSupplier = new JComboBox();
-        panelMain.add(comboBoxSupplier, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        spinnerDeliveries = new JSpinner();
+        panelMain.add(spinnerDeliveries, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBoxSuppliers = new JComboBox();
+        panelMain.add(comboBoxSuppliers, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textFieldProduct = new JTextField();
         panelMain.add(textFieldProduct, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         textFieldPrice = new JTextField();
         panelMain.add(textFieldPrice, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        comboBoxWorker = new JComboBox();
-        panelMain.add(comboBoxWorker, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBoxWorkers = new JComboBox();
+        panelMain.add(comboBoxWorkers, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

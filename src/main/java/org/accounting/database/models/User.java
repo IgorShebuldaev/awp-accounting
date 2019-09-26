@@ -45,7 +45,7 @@ public class User extends Base {
         return results;
     }
 
-    public static void insertUser(User user) {
+    public static void insertData(User user) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -57,7 +57,7 @@ public class User extends Base {
         }
     }
 
-    public static void deleteUser(int id) {
+    public static void deleteData(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -68,7 +68,7 @@ public class User extends Base {
         }
     }
 
-    public static void updateUser(User user) {
+    public static void updateData(User user) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -81,7 +81,7 @@ public class User extends Base {
         }
     }
 
-    public static void updateTimeUser(int id, String email, int timeInProgram) {
+    public static void updateDataTimeInProgram(int id, String email, int timeInProgram) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

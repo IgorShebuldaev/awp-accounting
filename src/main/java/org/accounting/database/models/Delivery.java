@@ -53,7 +53,7 @@ public class Delivery extends Base {
         return results;
     }
 
-    public static void insertDelivery(Delivery delivery) {
+    public static void insertData(Delivery delivery) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -67,7 +67,7 @@ public class Delivery extends Base {
         }
     }
 
-    public static void deleteDelivery(int id) {
+    public static void deleteData(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -78,7 +78,7 @@ public class Delivery extends Base {
         }
     }
 
-    public static void updateDelivery(Delivery delivery) {
+    public static void updateData(Delivery delivery) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

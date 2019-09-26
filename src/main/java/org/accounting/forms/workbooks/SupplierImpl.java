@@ -18,19 +18,19 @@ public class SupplierImpl implements IDataManipulator {
 
     @Override
     public void insertData(MainTableModel tableModel, Base base) {
-        Supplier.insertSupplier((Supplier) base);
+        Supplier.insertData((Supplier) base);
         tableModel.addRecord(base);
     }
 
     @Override
     public void deleteData(MainTableModel tableModel, int rowIndex, int id) {
-        Supplier.deleteSupplier(id);
+        Supplier.deleteData(id);
         tableModel.removeRow(rowIndex);
     }
 
     @Override
     public void updateData(MainTableModel tableModel, int rowIndex, Base base) {
-        Supplier.updateSupplier((Supplier) base);
+        Supplier.updateData((Supplier) base);
         tableModel.setValueAt(base, rowIndex);
     }
 }

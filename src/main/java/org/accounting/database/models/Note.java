@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 public class Note extends Base {
     public String note;
@@ -36,7 +35,7 @@ public class Note extends Base {
         return results;
     }
 
-    public static void updateNote(int id, String note) {
+    public static void updateNoteCurrentUser(int id, String note) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

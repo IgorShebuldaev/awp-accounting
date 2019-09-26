@@ -36,7 +36,7 @@ public class Role extends Base {
         return results;
     }
 
-    public static void insertRole(Role role) {
+    public static void insertData(Role role) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -48,7 +48,7 @@ public class Role extends Base {
         }
     }
 
-    public static void updateRole(Role role) {
+    public static void updateData(Role role) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -59,7 +59,7 @@ public class Role extends Base {
         }
     }
 
-    public static void deleteRole(int id) {
+    public static void deleteData(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

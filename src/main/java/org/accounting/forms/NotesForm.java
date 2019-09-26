@@ -6,8 +6,6 @@ import org.accounting.database.models.Note;
 import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -18,18 +16,22 @@ public class NotesForm extends JDialog {
     private JPanel panelNotes;
 
     NotesForm() {
+        createNotesForm();
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                Note.updateNoteCurrentUser(CurrentUser.id, textAreaNotes.getText());
+            }
+        });
+    }
+
+    private void createNotesForm() {
         setContentPane(panelNotes);
         setSize(800, 600);
         setLocationRelativeTo(null);
         setTitle("Notes");
 
         textAreaNotes.setText(Note.getNoteCurrentUser(CurrentUser.id).note);
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                Note.updateNote(CurrentUser.id, textAreaNotes.getText());
-            }
-        });
     }
 
     {

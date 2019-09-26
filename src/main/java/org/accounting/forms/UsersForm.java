@@ -20,16 +20,16 @@ public class UsersForm extends JDialog implements ActionListener {
     private JLabel labelEmail;
     private JTable tableUsers;
     private JTextField textFieldPassword;
-    private JComboBox<String> comboBoxRole;
+    private JComboBox<String> comboBoxRoles;
     private JLabel labelPassword;
     private JLabel labelRole;
-    private JButton addButtonRoles;
+    private JButton showRolesFormButton;
     private JButton addButton;
     private JButton deleteButton;
     private JButton saveButton;
     private JButton cancelButton;
     private JButton editButton;
-    private UserTable model;
+    private UserTable userTableModel;
 
     UsersForm() {
       createUsersForm();
@@ -42,9 +42,9 @@ public class UsersForm extends JDialog implements ActionListener {
         setTitle("Users");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        model = new UserTable();
-        fillTableUsers();
-        tableUsers.setModel(model);
+        userTableModel = new UserTable();
+        fillTable();
+        tableUsers.setModel(userTableModel);
         addItemComboBoxRole();
 
         addButton.addActionListener(this);
@@ -52,27 +52,27 @@ public class UsersForm extends JDialog implements ActionListener {
         saveButton.addActionListener(this);
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
-        addButtonRoles.addActionListener(this);
+        showRolesFormButton.addActionListener(this);
     }
 
-    private void fillTableUsers() {
+    private void fillTable() {
         ArrayList<User> results = User.getAll();
         for (User user : results) {
-            model.addRecord(user);
+            userTableModel.addRecord(user);
         }
     }
 
-    private void addUser() {
+    private void insertData() {
         if (checkEmptyFields()) {
-            User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRole.getSelectedItem(), 0);
-            User.insertUser(user);
-            model.addRecord(user);
+            User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRoles.getSelectedItem(), 0);
+            User.insertData(user);
+            userTableModel.addRecord(user);
             textFieldEmail.setText("");
             textFieldPassword.setText("");
         }
     }
 
-    private void deleteUser() {
+    private void deleteData() {
         int rowIndex = tableUsers.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -88,36 +88,36 @@ public class UsersForm extends JDialog implements ActionListener {
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            User.deleteUser(model.getRecord(rowIndex).id);
-            model.removeRow(rowIndex);
+            User.deleteData(userTableModel.getRecord(rowIndex).id);
+            userTableModel.removeRow(rowIndex);
         }
     }
 
-    private void saveUser() {
+    private void updateData() {
         int rowIndex = tableUsers.getSelectedRow();
         if (checkEmptyFields()) {
             User user = new User(
-                model.getRecord(rowIndex).id,
+                userTableModel.getRecord(rowIndex).id,
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
-                (String) comboBoxRole.getSelectedItem(),
-                model.getRecord(rowIndex).timeInProgram);
+                (String) comboBoxRoles.getSelectedItem(),
+                userTableModel.getRecord(rowIndex).timeInProgram);
 
-            User.updateUser(user);
-            model.setValueAt(user, rowIndex);
+            User.updateData(user);
+            userTableModel.setValueAt(user, rowIndex);
             turnComponents(true);
         }
     }
 
-    private void setTextFields() {
+    private void setValuesComponents() {
         int rowIndex = tableUsers.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldEmail.setText(model.getRecord(rowIndex).email);
-        textFieldPassword.setText(model.getRecord(rowIndex).password);
-        comboBoxRole.setSelectedItem(model.getRecord(rowIndex).role);
+        textFieldEmail.setText(userTableModel.getRecord(rowIndex).email);
+        textFieldPassword.setText(userTableModel.getRecord(rowIndex).password);
+        comboBoxRoles.setSelectedItem(userTableModel.getRecord(rowIndex).role);
         turnComponents(false);
     }
 
@@ -131,10 +131,10 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void addItemComboBoxRole() {
-        comboBoxRole.removeAllItems();
+        comboBoxRoles.removeAllItems();
         ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
-            comboBoxRole.addItem(role.role);
+            comboBoxRoles.addItem(role.role);
         }
     }
 
@@ -142,49 +142,45 @@ public class UsersForm extends JDialog implements ActionListener {
         if (!turn) {
             addButton.setEnabled(false);
             editButton.setEnabled(false);
-            deleteButton.setEnabled(false);
-            tableUsers.setEnabled(false);
-            addButtonRoles.setEnabled(false);
-            cancelButton.setEnabled(true);
             saveButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+            deleteButton.setEnabled(false);
+            showRolesFormButton.setEnabled(false);
+            tableUsers.setEnabled(false);
         } else {
             addButton.setEnabled(true);
             editButton.setEnabled(true);
-            deleteButton.setEnabled(true);
-            tableUsers.setEnabled(true);
-            addButtonRoles.setEnabled(true);
-            cancelButton.setEnabled(false);
             saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            deleteButton.setEnabled(true);
+            showRolesFormButton.setEnabled(true);
+            tableUsers.setEnabled(true);
             textFieldEmail.setText("");
             textFieldPassword.setText("");
         }
-    }
-
-    private void showRolesForm() {
-        new RolesForm().setVisible(true);
-        addItemComboBoxRole();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "add":
-                addUser();
+                insertData();
                 break;
             case "delete":
-                deleteUser();
+                deleteData();
                 break;
             case "edit":
-                setTextFields();
+                setValuesComponents();
                 break;
             case "save":
-                saveUser();
+                updateData();
                 break;
             case "cancel":
                 turnComponents(true);
                 break;
             case "addRoles":
-                showRolesForm();
+                new RolesForm().setVisible(true);
+                addItemComboBoxRole();
                 break;
         }
     }
@@ -239,8 +235,8 @@ public class UsersForm extends JDialog implements ActionListener {
         addButton.setActionCommand("add");
         addButton.setText("Add");
         panelUsersForm.add(addButton, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxRole = new JComboBox();
-        panelUsersForm.add(comboBoxRole, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBoxRoles = new JComboBox();
+        panelUsersForm.add(comboBoxRoles, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panelUsersForm.add(spacer2, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         editButton = new JButton();
@@ -252,14 +248,14 @@ public class UsersForm extends JDialog implements ActionListener {
         cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
         panelUsersForm.add(cancelButton, new GridConstraints(9, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        addButtonRoles = new JButton();
-        addButtonRoles.setActionCommand("addRoles");
-        addButtonRoles.setHorizontalTextPosition(11);
-        addButtonRoles.setMargin(new Insets(0, 0, 0, 0));
-        addButtonRoles.setText("...");
-        addButtonRoles.setToolTipText("");
-        addButtonRoles.setVerticalTextPosition(0);
-        panelUsersForm.add(addButtonRoles, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showRolesFormButton = new JButton();
+        showRolesFormButton.setActionCommand("addRoles");
+        showRolesFormButton.setHorizontalTextPosition(11);
+        showRolesFormButton.setMargin(new Insets(0, 0, 0, 0));
+        showRolesFormButton.setText("...");
+        showRolesFormButton.setToolTipText("");
+        showRolesFormButton.setVerticalTextPosition(0);
+        panelUsersForm.add(showRolesFormButton, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

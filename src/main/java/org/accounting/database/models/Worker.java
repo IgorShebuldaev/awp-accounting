@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -45,7 +44,7 @@ public class Worker extends Base {
         return results;
     }
 
-    public static void insertWorker(Worker worker) {
+    public static void insertData(Worker worker) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -58,7 +57,7 @@ public class Worker extends Base {
         }
     }
 
-    public static void deleteWorker(int id) {
+    public static void deleteData(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -69,7 +68,7 @@ public class Worker extends Base {
         }
     }
 
-    public static void updateWorker(Worker worker) {
+    public static void updateData(Worker worker) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

@@ -17,7 +17,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="666f9" binding="panelSupplier" layout-manager="GridLayoutManager" row-count="4" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="666f9" binding="panelSuppliers" layout-manager="GridLayoutManager" row-count="4" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Suppliers"/>
@@ -25,20 +25,20 @@
             <properties/>
             <border type="none"/>
             <children>
-              <scrollpane id="90797" binding="scrollPaneSupplier">
+              <scrollpane id="90797" binding="scrollPaneSuppliers">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="8" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="f048b" class="javax.swing.JTable" binding="tableSupplier">
+                  <component id="f048b" class="javax.swing.JTable" binding="tableSuppliers">
                     <constraints/>
                     <properties/>
                   </component>
                 </children>
               </scrollpane>
-              <component id="6702a" class="javax.swing.JTextField" binding="textFieldSupplierCompanyName">
+              <component id="6702a" class="javax.swing.JTextField" binding="textFieldSuppliersCompanyName">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -46,7 +46,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="cd116" class="javax.swing.JLabel" binding="labelSupplierCompanyName">
+              <component id="cd116" class="javax.swing.JLabel" binding="labelSuppliersCompanyName">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -54,7 +54,7 @@
                   <text value="Company name"/>
                 </properties>
               </component>
-              <component id="c0ab" class="javax.swing.JButton" binding="btnAddSupplier">
+              <component id="c0ab" class="javax.swing.JButton" binding="btnAddSuppliers">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -63,7 +63,7 @@
                   <text value="Add"/>
                 </properties>
               </component>
-              <component id="fefd2" class="javax.swing.JButton" binding="btnEditSupplier">
+              <component id="fefd2" class="javax.swing.JButton" binding="btnEditSuppliers">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -72,7 +72,7 @@
                   <text value="Edit"/>
                 </properties>
               </component>
-              <component id="160d8" class="javax.swing.JButton" binding="btnSaveSupplier">
+              <component id="160d8" class="javax.swing.JButton" binding="btnSaveSuppliers">
                 <constraints>
                   <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -82,7 +82,7 @@
                   <text value="Save"/>
                 </properties>
               </component>
-              <component id="74f6e" class="javax.swing.JButton" binding="btnCancelSupplier">
+              <component id="74f6e" class="javax.swing.JButton" binding="btnCancelSuppliers">
                 <constraints>
                   <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -92,7 +92,7 @@
                   <text value="Cancel"/>
                 </properties>
               </component>
-              <component id="483f4" class="javax.swing.JButton" binding="btnDeleteSupplier">
+              <component id="483f4" class="javax.swing.JButton" binding="btnDeleteSuppliers">
                 <constraints>
                   <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -120,7 +120,7 @@
               </hspacer>
             </children>
           </grid>
-          <grid id="db7ce" binding="panelWorker" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="db7ce" binding="panelWorkers" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Workers"/>
@@ -128,20 +128,20 @@
             <properties/>
             <border type="none"/>
             <children>
-              <scrollpane id="975ba" binding="scrollPaneWorker">
+              <scrollpane id="975ba" binding="scrollPaneWorkers">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="72428" class="javax.swing.JTable" binding="tableWorker">
+                  <component id="72428" class="javax.swing.JTable" binding="tableWorkers">
                     <constraints/>
                     <properties/>
                   </component>
                 </children>
               </scrollpane>
-              <component id="494ca" class="javax.swing.JButton" binding="btnAddWorker">
+              <component id="494ca" class="javax.swing.JButton" binding="btnAddWorkers">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -150,7 +150,7 @@
                   <text value="Add"/>
                 </properties>
               </component>
-              <component id="f3e42" class="javax.swing.JTextField" binding="textFieldWorkerFullName">
+              <component id="f3e42" class="javax.swing.JTextField" binding="textFieldWorkersFullName">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -158,19 +158,19 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="bfe4" class="javax.swing.JSpinner" binding="spinnerWorkerDateOfBirth">
+              <component id="bfe4" class="javax.swing.JSpinner" binding="spinnerWorkersDateOfBirth">
                 <constraints>
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="2f59c" class="javax.swing.JComboBox" binding="comboBoxWorkerPosition">
+              <component id="2f59c" class="javax.swing.JComboBox" binding="comboBoxWorkersPositions">
                 <constraints>
                   <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="f6391" class="javax.swing.JButton" binding="btnSaveWorker">
+              <component id="f6391" class="javax.swing.JButton" binding="btnSaveWorkers">
                 <constraints>
                   <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -180,7 +180,7 @@
                   <text value="Save"/>
                 </properties>
               </component>
-              <component id="c7269" class="javax.swing.JButton" binding="btnEditWorker">
+              <component id="c7269" class="javax.swing.JButton" binding="btnEditWorkers">
                 <constraints>
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -189,7 +189,7 @@
                   <text value="Edit"/>
                 </properties>
               </component>
-              <component id="c44da" class="javax.swing.JLabel" binding="labelWorkerFullName">
+              <component id="c44da" class="javax.swing.JLabel" binding="labelWorkersFullName">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -197,7 +197,7 @@
                   <text value="Full name"/>
                 </properties>
               </component>
-              <component id="4cf27" class="javax.swing.JLabel" binding="labelWorkerDateOfBirth">
+              <component id="4cf27" class="javax.swing.JLabel" binding="labelWorkersDateOfBirth">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -205,7 +205,7 @@
                   <text value="Date of birth"/>
                 </properties>
               </component>
-              <component id="2a061" class="javax.swing.JLabel" binding="labelWorkerPosition">
+              <component id="2a061" class="javax.swing.JLabel" binding="labelWorkersPosition">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -218,10 +218,11 @@
                   <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <actionCommand value="btnShowPositionsForm"/>
                   <text value=". . ."/>
                 </properties>
               </component>
-              <component id="61612" class="javax.swing.JButton" binding="btnDeleteWorker">
+              <component id="61612" class="javax.swing.JButton" binding="btnDeleteWorkers">
                 <constraints>
                   <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -230,7 +231,7 @@
                   <text value="Delete"/>
                 </properties>
               </component>
-              <component id="62a91" class="javax.swing.JButton" binding="btnCancelWorker">
+              <component id="62a91" class="javax.swing.JButton" binding="btnCancelWorkers">
                 <constraints>
                   <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>

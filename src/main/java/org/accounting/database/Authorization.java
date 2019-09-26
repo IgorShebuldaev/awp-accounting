@@ -17,7 +17,7 @@ public class Authorization {
             preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next() && resultSet.getString(2).equals(password)){
+            if (resultSet.next() && resultSet.getString(3).equals(password)){
                 CurrentUser.setCurrentUser(resultSet.getInt("id"), resultSet.getString("email"),
                         resultSet.getString("role"), resultSet.getInt("time_in_program"));
                 return true;

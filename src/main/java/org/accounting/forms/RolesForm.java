@@ -22,7 +22,7 @@ public class RolesForm extends JDialog implements ActionListener {
     private JButton deleteButton;
     private JLabel labelRole;
     private JScrollPane scrollPaneTableRoles;
-    private RoleTable model;
+    private RoleTable roleTableModel;
 
     RolesForm() {
         createRolesForm();
@@ -35,9 +35,9 @@ public class RolesForm extends JDialog implements ActionListener {
         setTitle("Roles");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        model = new RoleTable();
-        fillTableRoles();
-        tableRoles.setModel(model);
+        roleTableModel = new RoleTable();
+        fillTable();
+        tableRoles.setModel(roleTableModel);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
@@ -46,23 +46,23 @@ public class RolesForm extends JDialog implements ActionListener {
         deleteButton.addActionListener(this);
     }
 
-    private void fillTableRoles() {
+    private void fillTable() {
         ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
-            model.addRecord(role);
+            roleTableModel.addRecord(role);
         }
     }
 
-    private void addRole() {
+    private void insertData() {
         if (checkEmptyFields()) {
             Role role = new Role(0, textFieldRole.getText());
-            Role.insertRole(role);
-            model.addRecord(role);
+            Role.insertData(role);
+            roleTableModel.addRecord(role);
             textFieldRole.setText("");
         }
     }
 
-    private void deleteRole() {
+    private void deleteData() {
         int rowIndex = tableRoles.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -70,36 +70,36 @@ public class RolesForm extends JDialog implements ActionListener {
         }
         Object[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,
-            "Are you sure you want to delete the record?",
-            "Message",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            options,
-            options[0]);
+                "Are you sure you want to delete the record?",
+                "Message",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
         if (n == JOptionPane.YES_OPTION) {
-            Role.deleteRole(model.getRecord(rowIndex).id);
-            model.removeRow(rowIndex);
+            Role.deleteData(roleTableModel.getRecord(rowIndex).id);
+            roleTableModel.removeRow(rowIndex);
         }
     }
 
-    private void saveRole() {
+    private void updateData() {
         int rowIndex = tableRoles.getSelectedRow();
         if (checkEmptyFields()) {
-            Role role = new Role(model.getRecord(rowIndex).id, textFieldRole.getText());
-            Role.updateRole(role);
-            model.setValueAt(role, rowIndex);
+            Role role = new Role(roleTableModel.getRecord(rowIndex).id, textFieldRole.getText());
+            Role.updateData(role);
+            roleTableModel.setValueAt(role, rowIndex);
             turnComponents(true);
         }
     }
 
-    private void setTextFields() {
+    private void setValuesComponents() {
         int row = tableRoles.getSelectedRow();
         if (row < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldRole.setText(model.getRecord(row).role);
+        textFieldRole.setText(roleTableModel.getRecord(row).role);
         turnComponents(false);
     }
 
@@ -116,17 +116,17 @@ public class RolesForm extends JDialog implements ActionListener {
         if (!turn) {
             addButton.setEnabled(false);
             editButton.setEnabled(false);
+            saveButton.setEnabled(true);
+            cancelButton.setEnabled(true);
             deleteButton.setEnabled(false);
             tableRoles.setEnabled(false);
-            cancelButton.setEnabled(true);
-            saveButton.setEnabled(true);
         } else {
             addButton.setEnabled(true);
             editButton.setEnabled(true);
+            saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
             deleteButton.setEnabled(true);
             tableRoles.setEnabled(true);
-            cancelButton.setEnabled(false);
-            saveButton.setEnabled(false);
             textFieldRole.setText("");
         }
     }
@@ -134,26 +134,20 @@ public class RolesForm extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
-            case "add":
-                addRole();
+            case "addButton":
+                insertData();
                 break;
-            case "delete":
-                deleteRole();
+            case "editButton":
+                setValuesComponents();
                 break;
-            case "edit":
-                setTextFields();
+            case "saveButton":
+                updateData();
                 break;
-            case "save":
-                saveRole();
+            case "cancelButton":
+                turnComponents(true);
                 break;
-            case "cancel":
-                addButton.setEnabled(true);
-                editButton.setEnabled(true);
-                deleteButton.setEnabled(true);
-                tableRoles.setEnabled(true);
-                saveButton.setEnabled(false);
-                cancelButton.setEnabled(false);
-                textFieldRole.setText("");
+            case "deleteButton":
+                deleteData();
                 break;
         }
     }
@@ -185,25 +179,25 @@ public class RolesForm extends JDialog implements ActionListener {
         labelRole.setText("Role");
         panelRolesForm.add(labelRole, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
-        addButton.setActionCommand("add");
+        addButton.setActionCommand("addButton");
         addButton.setText("Add");
         panelRolesForm.add(addButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
-        editButton.setActionCommand("edit");
+        editButton.setActionCommand("editButton");
         editButton.setText("Edit");
         panelRolesForm.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
-        saveButton.setActionCommand("save");
+        saveButton.setActionCommand("saveButton");
         saveButton.setEnabled(false);
         saveButton.setText("Save");
         panelRolesForm.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
-        cancelButton.setActionCommand("cancel");
+        cancelButton.setActionCommand("cancelButton");
         cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
         panelRolesForm.add(cancelButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
-        deleteButton.setActionCommand("delete");
+        deleteButton.setActionCommand("deleteButton");
         deleteButton.setText("Delete");
         panelRolesForm.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
@@ -214,4 +208,5 @@ public class RolesForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelRolesForm;
     }
+
 }

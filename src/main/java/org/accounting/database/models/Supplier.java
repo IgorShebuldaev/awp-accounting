@@ -35,7 +35,7 @@ public class Supplier extends Base {
         return results;
     }
 
-    public static void insertSupplier(Supplier supplier) {
+    public static void insertData(Supplier supplier) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -47,7 +47,7 @@ public class Supplier extends Base {
         }
     }
 
-    public static void updateSupplier(Supplier supplier) {
+    public static void updateData(Supplier supplier) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -58,7 +58,7 @@ public class Supplier extends Base {
         }
     }
 
-    public static void deleteSupplier(int id) {
+    public static void deleteData(int id) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
