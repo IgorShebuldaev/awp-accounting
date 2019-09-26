@@ -1,5 +1,6 @@
 package org.accounting.database.models;
 
+import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
 
 import java.sql.Connection;
@@ -50,5 +51,44 @@ public class Delivery extends Base {
             se.printStackTrace();
         }
         return results;
+    }
+
+    public static void insertDelivery(Delivery delivery) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("INSERT INTO deliveries " +
+                    "VALUES(null,'%s',(SELECT id FROM suppliers WHERE company_name='%s'),'%s','%s'," +
+                    "(SELECT id FROM workers WHERE full_name='%s'))", dateFormat.format(delivery.deliveryDate), delivery.supplier, delivery.product, delivery.price, delivery.worker);
+            statement.execute(query);
+            delivery.id = (int)((StatementImpl) statement).getLastInsertID();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void deleteDelivery(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM deliveries WHERE id=%d", id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void updateDelivery(Delivery delivery) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE deliveries SET " +
+                    "delivery_date='%s', supplier_id=(SELECT id FROM suppliers WHERE company_name='%s'), " +
+                    "product='%s', price='%s', worker_id=(SELECT id FROM workers WHERE full_name='%s') " +
+                    "WHERE id=%d", dateFormat.format(delivery.deliveryDate), delivery.supplier, delivery.product, delivery.price, delivery.worker, delivery.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
 }

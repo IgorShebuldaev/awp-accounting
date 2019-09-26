@@ -15,7 +15,6 @@ public class Worker extends Base {
     public String fullName;
     public Date dateOfBirth;
     public String position;
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public Worker(int id, String fullName, Date dateOfBirth, String position) {
         this.id = id;
