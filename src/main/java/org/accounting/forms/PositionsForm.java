@@ -1,0 +1,207 @@
+package org.accounting.forms;
+
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.Position;
+import org.accounting.forms.models.PositionTable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+public class PositionsForm extends JDialog implements ActionListener {
+    private JTable tablePositions;
+    private JButton addButton;
+    private JButton editButton;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JButton deleteButton;
+    private JTextField textFieldPosition;
+    private JLabel labelPosition;
+    private JScrollPane scrollPanePositions;
+    private JPanel panelPositions;
+    private PositionTable positionTableModel;
+
+    public PositionsForm() {
+        createPositionForm();
+    }
+
+    private void createPositionForm() {
+        setContentPane(panelPositions);
+        setSize(450, 300);
+        setLocationRelativeTo(null);
+        setTitle("Roles");
+        setModalityType(ModalityType.APPLICATION_MODAL);
+
+        positionTableModel = new PositionTable();
+        fillTable();
+        tablePositions.setModel(positionTableModel);
+
+        addButton.addActionListener(this);
+        editButton.addActionListener(this);
+        saveButton.addActionListener(this);
+        cancelButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+    }
+
+    private void fillTable() {
+        ArrayList<Position> results = Position.getAll();
+        for (Position role : results) {
+            positionTableModel.addRecord(role);
+        }
+    }
+
+    private void insertData() {
+        if (checkEmptyFields()) {
+            Position position = new Position(0, textFieldPosition.getText());
+            Position.insertData(position);
+            positionTableModel.addRecord(position);
+            textFieldPosition.setText("");
+        }
+    }
+
+    private void deleteRole() {
+        int rowIndex = tablePositions.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
+        Object[] options = {"Yes", "No"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Are you sure you want to delete the record?",
+                "Message",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (n == JOptionPane.YES_OPTION) {
+            Position.deleteData(positionTableModel.getRecord(rowIndex).id);
+            positionTableModel.removeRow(rowIndex);
+        }
+    }
+
+    private void updateData() {
+        int rowIndex = tablePositions.getSelectedRow();
+        if (checkEmptyFields()) {
+            Position position = new Position(positionTableModel.getRecord(rowIndex).id, textFieldPosition.getText());
+            Position.updateData(position);
+            positionTableModel.setValueAt(position, rowIndex);
+            turnComponents(true);
+        }
+    }
+
+    private void setValuesComponents() {
+        int row = tablePositions.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
+        textFieldPosition.setText(positionTableModel.getRecord(row).position);
+        turnComponents(false);
+    }
+
+    private boolean checkEmptyFields() {
+        if (textFieldPosition.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void turnComponents(Boolean turn) {
+        if (!turn) {
+            addButton.setEnabled(false);
+            editButton.setEnabled(false);
+            saveButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+            deleteButton.setEnabled(false);
+        } else {
+            addButton.setEnabled(true);
+            editButton.setEnabled(true);
+            saveButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+            deleteButton.setEnabled(true);
+            textFieldPosition.setText("");
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case "addButton":
+                insertData();
+                break;
+            case "editButton":
+                setValuesComponents();
+                break;
+            case "saveButton":
+                updateData();
+                break;
+            case "cancelButton":
+                turnComponents(true);
+                break;
+            case "deleteButton":
+                deleteRole();
+                break;
+        }
+    }
+
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        panelPositions = new JPanel();
+        panelPositions.setLayout(new GridLayoutManager(4, 5, new Insets(0, 0, 0, 0), -1, -1));
+        scrollPanePositions = new JScrollPane();
+        panelPositions.add(scrollPanePositions, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        tablePositions = new JTable();
+        scrollPanePositions.setViewportView(tablePositions);
+        addButton = new JButton();
+        addButton.setActionCommand("addButton");
+        addButton.setText("Add");
+        panelPositions.add(addButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        editButton = new JButton();
+        editButton.setActionCommand("editButton");
+        editButton.setText("Edit");
+        panelPositions.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setActionCommand("saveButton");
+        saveButton.setText("Save");
+        panelPositions.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cancelButton = new JButton();
+        cancelButton.setActionCommand("cancelButton");
+        cancelButton.setText("Cancel");
+        panelPositions.add(cancelButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        deleteButton = new JButton();
+        deleteButton.setActionCommand("deleteButton");
+        deleteButton.setText("Delete");
+        panelPositions.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textFieldPosition = new JTextField();
+        panelPositions.add(textFieldPosition, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        labelPosition = new JLabel();
+        labelPosition.setText("Position");
+        panelPositions.add(labelPosition, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return panelPositions;
+    }
+}

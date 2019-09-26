@@ -19,4 +19,9 @@ public class PositionTable extends MainTableModel {
         }
         return result;
     }
+
+    @Override
+    public Position getRecord(int rowIndex) {
+        return (Position) super.getRecord(rowIndex);
+    }
 }
