@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class NotesForm extends JDialog {
     private JTextArea textAreaNotes;
@@ -23,19 +25,9 @@ public class NotesForm extends JDialog {
 
         textAreaNotes.setText(Note.getNoteCurrentUser(CurrentUser.id).note);
 
-        textAreaNotes.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 Note.updateNote(CurrentUser.id, textAreaNotes.getText());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                Note.updateNote(CurrentUser.id, textAreaNotes.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
             }
         });
     }

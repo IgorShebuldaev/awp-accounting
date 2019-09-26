@@ -123,7 +123,7 @@ public class UsersForm extends JDialog implements ActionListener {
 
     private boolean checkEmptyFields() {
         if (textFieldEmail.getText().equals("") || textFieldPassword.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Email or password cannot be empty!");
+            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
             return false;
         } else {
             return true;

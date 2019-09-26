@@ -99,7 +99,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         spinnerDelivery.setModel(setCurrentDateSpinner());
         spinnerDelivery.setEditor(new JSpinner.DateEditor(spinnerDelivery, "dd.MM.yyyy"));
 
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 int x = JOptionPane.showConfirmDialog(
                         null,
@@ -112,6 +112,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                     } catch (SQLException se) {
                         se.printStackTrace();
                     }
+                    User.updateTimeUser(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -121,7 +122,6 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
         Timer timer = new Timer(1000, e -> {
             CurrentUser.timeInProgram += 1;
-            User.updateTimeUser(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
             int seconds = CurrentUser.timeInProgram % 60;
             int minutes = CurrentUser.timeInProgram / 60 % 60;
             int days = CurrentUser.timeInProgram / 86400;
@@ -256,7 +256,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
     private boolean checkEmptyFields() {
         if (textFieldProduct.getText().equals("") || textFieldPrice.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Email or password cannot be empty!");
+            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
             return false;
         } else {
             return true;
@@ -333,11 +333,9 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                 break;
             case "editData":
                 setValuesFields();
-                turnComponents(false);
                 break;
             case "saveData":
                 updateData();
-                turnComponents(true);
                 break;
             case "cancelChanges":
                 turnComponents(true);
