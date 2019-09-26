@@ -1,0 +1,2 @@
+# Automated workplace: Accounting
+
