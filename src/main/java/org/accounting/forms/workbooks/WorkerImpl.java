@@ -13,16 +13,6 @@ import java.util.Date;
 
 public class WorkerImpl implements IDataManipulator {
 
-    SpinnerModel setCurrentDateWorkerSpinner() {
-        Calendar calendar = Calendar.getInstance();
-        Date initDate = calendar.getTime();
-        calendar.add(Calendar.YEAR, -100);
-        Date earliestDate = calendar.getTime();
-        calendar.add(Calendar.YEAR, 200);
-        Date latestDate = calendar.getTime();
-        return new SpinnerDateModel(initDate, earliestDate, latestDate, Calendar.YEAR);
-    }
-
     MainComboBoxModel addItemComboBoxPosition() {
         ArrayList<Position> results = Position.getAll();
         String[] items = new String[results.size()];

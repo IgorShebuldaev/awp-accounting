@@ -63,7 +63,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         worker.fillTable(workerTableModel);
         tableWorker.setModel(workerTableModel);
 
-        spinnerWorkerDateOfBirth.setModel(worker.setCurrentDateWorkerSpinner());
+        spinnerWorkerDateOfBirth.setModel(worker.setCurrentDateSpinner());
         spinnerWorkerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkerDateOfBirth, "dd.MM.yyyy"));
         comboBoxWorkerPosition.setModel(worker.addItemComboBoxPosition());
 
