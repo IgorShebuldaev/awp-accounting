@@ -8,6 +8,7 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.User;
 import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.forms.models.DeliveryTable;
+import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,12 +81,12 @@ public class MainForm extends JFrame implements ActionListener {
         exitButton.addActionListener(this);
     }
 
-    private void createMainForm(Authorization currentUser) {
-        this.setJMenuBar(creatMenuBar());
-        this.setContentPane(panelMain);
-        this.setSize(800, 600);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+    private void createMainForm() {
+        setJMenuBar(creatMenuBar());
+        setContentPane(panelMain);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setVisible(true);
 
         deliveryTableModel = new DeliveryTable();
         fillTableDeliveries();
@@ -112,12 +113,12 @@ public class MainForm extends JFrame implements ActionListener {
         });
 
         Timer timer = new Timer(1000, e -> {
-            currentUser.timeInProgram += 1;
-            User.updateTimeUser(currentUser);
-            int seconds = currentUser.timeInProgram % 60;
-            int minutes = currentUser.timeInProgram / 60 % 60;
-            int days = currentUser.timeInProgram / 86400;
-            labelBar.setText("User: " + currentUser.email + ". Role: " + currentUser.role + ". Time in program = " + days + ":" + minutes + ":" + seconds);
+            CurrentUser.timeInProgram += 1;
+            User.updateTimeUser(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
+            int seconds = CurrentUser.timeInProgram % 60;
+            int minutes = CurrentUser.timeInProgram / 60 % 60;
+            int days = CurrentUser.timeInProgram / 86400;
+            labelBar.setText("User: " + CurrentUser.email + ". Role: " + CurrentUser.role + ". Time in program = " + days + ":" + minutes + ":" + seconds);
         });
         timer.start();
     }
@@ -186,6 +187,9 @@ public class MainForm extends JFrame implements ActionListener {
             case "workBooks":
                 new WorkBooksForm().setVisible(true);
                 break;
+            case "notes":
+                new NotesForm().setVisible(true);
+                break;
             case "users":
                 new UsersForm().setVisible(true);
                 break;
@@ -199,7 +203,7 @@ public class MainForm extends JFrame implements ActionListener {
         Authorization currentUser = new Authorization();
         if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
             authorizationFrame.dispose();
-            createMainForm(currentUser);
+            createMainForm();
         } else {
             JOptionPane.showMessageDialog(authorizationFrame, "Invalid login or password! Try again.");
         }

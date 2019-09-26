@@ -6,7 +6,7 @@ import org.accounting.forms.models.MainTableModel;
 
 import java.util.ArrayList;
 
-public class SupplierImpl implements IDataManipulator{
+public class SupplierImpl implements IDataManipulator {
 
     @Override
     public void fillTable(MainTableModel tableModel) {
