@@ -142,6 +142,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private JMenuBar creatMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("Menu");
+        JMenu reports = new JMenu("Reports");
+        JMenu graphics = new JMenu("Graphics");
         JMenu settings = new JMenu("Settings");
         JMenu about = new JMenu("About");
 
@@ -153,6 +155,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
+
+        jMenuItemUsers.setActionCommand("users");
+        jMenuItemRoles.setActionCommand("roles");
+
+        reports.setActionCommand("reports");
+        graphics.setActionCommand("graphics");
 
         jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
@@ -169,6 +177,9 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         settings.add(jMenuItemRoles);
 
         menuBar.add(menu);
+        menuBar.add(reports);
+        menuBar.add(graphics);
+
         if ((CurrentUser.role.equals("admin"))) {
             menuBar.add(settings);
         }
