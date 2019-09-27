@@ -1,15 +1,39 @@
 package org.accounting.user;
 
-public class CurrentUser {
-    public static int id;
-    public static String email;
-    public static String role;
-    public static int timeInProgram;
+import org.accounting.database.Database;
+import org.accounting.database.models.User;
 
-    public static void setCurrentUser(int id, String email, String role, int timeInProgram){
-        CurrentUser.id = id;
-        CurrentUser.email = email;
-        CurrentUser.role = role;
-        CurrentUser.timeInProgram = timeInProgram;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class CurrentUser {
+    private static User user;
+
+    public static void setCurrentUser(int id){
+        CurrentUser.user = new User(id);
+    }
+
+    public static void setCurrentUser(User user) {
+        CurrentUser.user = user;
+    }
+
+    public static User getUser() {
+        return CurrentUser.user;
+    }
+
+    public static void updateDataTimeInProgram() {
+        if (CurrentUser.user == null) {
+            return;
+        }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE users SET time_in_program=%d where id=%d", user.timeInProgram, user.id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
 }
