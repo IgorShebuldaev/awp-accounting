@@ -105,7 +105,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                         "Confirm Exit", JOptionPane.YES_NO_OPTION);
 
                 if (x == JOptionPane.YES_OPTION) {
-                    User.updateDataTimeInProgram(CurrentUser.id, CurrentUser.email, CurrentUser.timeInProgram);
+                    CurrentUser.updateDataTimeInProgram();
                     try {
                         Database.closeConnection();
                     } catch (SQLException se) {
@@ -118,12 +118,11 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             }
         });
 
+
+        updateStatusBar();
+
         Timer timer = new Timer(1000, e -> {
-            CurrentUser.timeInProgram += 1;
-            int seconds = CurrentUser.timeInProgram % 60;
-            int minutes = CurrentUser.timeInProgram / 60 % 60;
-            int days = CurrentUser.timeInProgram / 86400;
-            labelBar.setText("User: " + CurrentUser.email + ". Role: " + CurrentUser.role + ". Time in program: " + days + ":" + minutes + ":" + seconds);
+            updateStatusBar();
         });
         timer.start();
 
@@ -137,6 +136,24 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         cancelButton.addActionListener(this);
 
         setVisible(true);
+    }
+
+    private void updateStatusBar() {
+        User currentUser = CurrentUser.getUser();
+
+        currentUser.timeInProgram += 1;
+        int seconds = currentUser.timeInProgram % 60;
+        int minutes = currentUser.timeInProgram / 60 % 60;
+        int days = currentUser.timeInProgram / 86400;
+        labelBar.setText(
+            String.format("User: %s. Role: %s. Time in program: %02d:%02d:%02d",
+                currentUser.email,
+                currentUser.getRole().role,
+                days,
+                minutes,
+                seconds
+            )
+        );
     }
 
     private JMenuBar creatMenuBar() {
@@ -180,7 +197,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         menuBar.add(reports);
         menuBar.add(graphics);
 
-        if ((CurrentUser.role.equals("admin"))) {
+        if ((CurrentUser.getUser().getRole().isAdmin())) {
             menuBar.add(settings);
         }
         menuBar.add(about);

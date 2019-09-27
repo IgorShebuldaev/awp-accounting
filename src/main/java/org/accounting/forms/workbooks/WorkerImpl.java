@@ -7,16 +7,15 @@ import org.accounting.forms.models.MainComboBoxModel;
 import org.accounting.forms.models.MainTableModel;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class WorkerImpl implements IDataManipulator {
 
     MainComboBoxModel addItemComboBoxPosition() {
-        ArrayList<Position> results = Position.getAll();
-        String[] items = new String[results.size()];
-        for (int i = 0; i < results.size(); i++) {
-            items[i] = results.get(i).position;
-        }
-        return new MainComboBoxModel(items);
+        MainComboBoxModel model = new MainComboBoxModel();
+        Position.getAll().forEach(model::addRecord);
+
+        return model;
     }
 
     @Override

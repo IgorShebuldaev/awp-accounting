@@ -20,7 +20,7 @@ public class NotesForm extends JDialog {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                Note.updateNoteCurrentUser(CurrentUser.id, textAreaNotes.getText());
+                Note.updateNoteCurrentUser(CurrentUser.getUser().id, textAreaNotes.getText());
             }
         });
     }
@@ -31,7 +31,11 @@ public class NotesForm extends JDialog {
         setLocationRelativeTo(null);
         setTitle("Notes");
 
-        textAreaNotes.setText(Note.getNoteCurrentUser(CurrentUser.id).note);
+        Note note = Note.getNoteCurrentUser(CurrentUser.getUser().id);
+
+        if (note != null) {
+            textAreaNotes.setText(note.note);
+        }
     }
 
     {
