@@ -1,4 +1,4 @@
-package org.accounting.forms.models;
+package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Delivery;
 

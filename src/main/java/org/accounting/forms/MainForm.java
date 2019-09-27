@@ -10,7 +10,7 @@ import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.workbooks.IDataManipulator;
 import org.accounting.forms.workbooks.WorkBooksForm;
-import org.accounting.forms.models.DeliveryTable;
+import org.accounting.forms.models.tablemodels.DeliveryTable;
 import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
@@ -121,9 +121,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
         updateStatusBar();
 
-        Timer timer = new Timer(1000, e -> {
-            updateStatusBar();
-        });
+        Timer timer = new Timer(1000, e -> updateStatusBar());
         timer.start();
 
         addItemComboBoxSupplier();

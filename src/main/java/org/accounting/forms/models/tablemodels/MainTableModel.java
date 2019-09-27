@@ -1,4 +1,4 @@
-package org.accounting.forms.models;
+package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Base;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 public abstract class MainTableModel extends AbstractTableModel {
-  protected String[] columnNames = new String[0];
-  protected ArrayList<Base> data = new ArrayList<>();
+  String[] columnNames = new String[0];
+  ArrayList<Base> data = new ArrayList<>();
 
   public void setColumnIdentifiers(String[] columns) {
     this.columnNames = columns;

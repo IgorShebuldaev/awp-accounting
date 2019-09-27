@@ -8,13 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Note extends Base {
-    public String note;
-
-    public Note(int id, String note) {
-        this.id = id;
-        this.note = note;
-    }
-
     public static Note getNoteCurrentUser(int id) {
         Note results = null;
         try {
@@ -44,5 +37,12 @@ public class Note extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public String note;
+
+    public Note(int id, String note) {
+        this.id = id;
+        this.note = note;
     }
 }

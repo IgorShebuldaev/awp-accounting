@@ -10,13 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Position extends Base {
-    public String position;
-
-    public Position(int id, String position) {
-        this.id = id;
-        this.position = position;
-    }
-
     public static ArrayList<Position> getAll() {
         ArrayList<Position> results = new ArrayList<>();
         try{
@@ -68,5 +61,12 @@ public class Position extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public String position;
+
+    public Position(int id, String position) {
+        this.id = id;
+        this.position = position;
     }
 }

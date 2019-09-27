@@ -11,21 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Delivery extends Base {
-    public Date deliveryDate;
-    public String supplier;
-    public String product;
-    public String price;
-    public String worker;
-
-    public Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
-        this.id = id;
-        this.deliveryDate = deliveryDate;
-        this.supplier = supplier;
-        this.product = product;
-        this.price = price;
-        this.worker = worker;
-    }
-
     public static ArrayList<Delivery> getAll() {
         ArrayList<Delivery> results = new ArrayList<>();
         try {
@@ -90,5 +75,20 @@ public class Delivery extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public Date deliveryDate;
+    public String supplier;
+    public String product;
+    public String price;
+    public String worker;
+
+    public Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
+        this.id = id;
+        this.deliveryDate = deliveryDate;
+        this.supplier = supplier;
+        this.product = product;
+        this.price = price;
+        this.worker = worker;
     }
 }

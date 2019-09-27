@@ -3,7 +3,7 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Position;
-import org.accounting.forms.models.PositionTable;
+import org.accounting.forms.models.tablemodels.PositionTable;
 
 import javax.swing.*;
 import java.awt.*;

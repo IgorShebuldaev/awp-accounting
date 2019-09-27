@@ -6,8 +6,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
-import org.accounting.forms.models.MainComboBoxModel;
-import org.accounting.forms.models.UserTable;
+import org.accounting.forms.models.comboboxmodels.MainComboBoxModel;
+import org.accounting.forms.models.tablemodels.UserTable;
 
 import javax.swing.*;
 import java.awt.*;

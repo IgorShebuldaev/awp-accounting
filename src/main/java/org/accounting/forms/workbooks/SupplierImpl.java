@@ -2,7 +2,7 @@ package org.accounting.forms.workbooks;
 
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Supplier;
-import org.accounting.forms.models.MainTableModel;
+import org.accounting.forms.models.tablemodels.MainTableModel;
 
 import java.util.ArrayList;
 

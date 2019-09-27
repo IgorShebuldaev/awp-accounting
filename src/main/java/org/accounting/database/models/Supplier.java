@@ -10,12 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Supplier extends Base {
-    public String companyName;
-
-    public Supplier(int id, String companyName) {
-        this.id = id;
-        this.companyName = companyName;
-    }
     public static ArrayList<Supplier> getAll() {
         ArrayList<Supplier> results = new ArrayList<>();
         try{
@@ -67,5 +61,12 @@ public class Supplier extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public String companyName;
+
+    public Supplier(int id, String companyName) {
+        this.id = id;
+        this.companyName = companyName;
     }
 }

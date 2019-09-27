@@ -3,11 +3,10 @@ package org.accounting.forms.workbooks;
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Position;
 import org.accounting.database.models.Worker;
-import org.accounting.forms.models.MainComboBoxModel;
-import org.accounting.forms.models.MainTableModel;
+import org.accounting.forms.models.comboboxmodels.MainComboBoxModel;
+import org.accounting.forms.models.tablemodels.MainTableModel;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class WorkerImpl implements IDataManipulator {
 

@@ -87,12 +87,13 @@ public class User extends Base {
     public String email;
     public String password;
     public int roleId;
-    private Role role;
     public int timeInProgram;
+    private Role role;
 
     public User(int id) {
         try {
             PreparedStatement preparedStatement = buildQuery("id", id, Integer.class);
+            assert preparedStatement != null;
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next()) { return; }
@@ -106,6 +107,7 @@ public class User extends Base {
     public User(String email) {
         try {
             PreparedStatement preparedStatement = buildQuery("email", email, String.class);
+            assert preparedStatement != null;
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (!resultSet.next()) { return; }

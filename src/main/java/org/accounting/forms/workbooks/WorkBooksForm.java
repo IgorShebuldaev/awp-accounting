@@ -6,8 +6,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.PositionsForm;
-import org.accounting.forms.models.SupplierTable;
-import org.accounting.forms.models.WorkerTable;
+import org.accounting.forms.models.tablemodels.SupplierTable;
+import org.accounting.forms.models.tablemodels.WorkerTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +52,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         createWorkBooksForm();
     }
 
-    public void createWorkBooksForm() {
+    private void createWorkBooksForm() {
         setContentPane(panelWorkBooks);
         setSize(800, 600);
         setLocationRelativeTo(null);

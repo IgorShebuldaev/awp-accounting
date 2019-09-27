@@ -10,10 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Role extends Base {
-    public final String ADMIN_LOOKUP_CODE = "admin";
-
-    public String role;
-    public String lookupCode;
+    private final String ADMIN_LOOKUP_CODE = "admin";
 
     public static ArrayList<Role> getAll() {
         ArrayList<Role> results = new ArrayList<>();
@@ -70,6 +67,9 @@ public class Role extends Base {
         }
     }
 
+    public String role;
+    public String lookupCode;
+
     public Role(int id) {
         try {
             Connection connection = Database.getConnection();
@@ -88,7 +88,6 @@ public class Role extends Base {
             se.printStackTrace();
         }
     }
-
 
     public Role(int id, String role, String lookupCode) {
         this.id = id;

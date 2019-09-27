@@ -3,7 +3,7 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Role;
-import org.accounting.forms.models.RoleTable;
+import org.accounting.forms.models.tablemodels.RoleTable;
 
 import javax.swing.*;
 import java.awt.*;

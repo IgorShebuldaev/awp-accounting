@@ -1,7 +1,7 @@
 package org.accounting.forms.workbooks;
 
 import org.accounting.database.models.Base;
-import org.accounting.forms.models.MainTableModel;
+import org.accounting.forms.models.tablemodels.MainTableModel;
 
 import javax.swing.*;
 import java.util.Calendar;

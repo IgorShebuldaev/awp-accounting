@@ -1,4 +1,4 @@
-package org.accounting.forms.models;
+package org.accounting.forms.models.comboboxmodels;
 
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
@@ -8,13 +8,12 @@ import java.util.ArrayList;
 
 public class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
-    protected ArrayList<Base> records = new ArrayList<>();
-    protected Base selection = null;
+    private ArrayList<Base> records = new ArrayList<>();
+    private Base selection = null;
 
     @Override
     public void setSelectedItem(Object anItem) {
-        Base tmp = records.stream().filter(r -> ((Role)r).role.equals((String)anItem)).findFirst().get();
-        selection = tmp;
+        selection = records.stream().filter(r -> ((Role)r).role.equals(anItem)).findFirst().get();
     }
 
     @Override

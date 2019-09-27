@@ -11,17 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Worker extends Base {
-    public String fullName;
-    public Date dateOfBirth;
-    public String position;
-
-    public Worker(int id, String fullName, Date dateOfBirth, String position) {
-        this.id = id;
-        this.fullName = fullName;
-        this.dateOfBirth = dateOfBirth;
-        this.position = position;
-    }
-
     public static ArrayList<Worker> getAll() {
         ArrayList<Worker> results = new ArrayList<>();
         try{
@@ -78,5 +67,16 @@ public class Worker extends Base {
         } catch (SQLException se) {
             se.printStackTrace();
         }
+    }
+
+    public String fullName;
+    public Date dateOfBirth;
+    public String position;
+
+    public Worker(int id, String fullName, Date dateOfBirth, String position) {
+        this.id = id;
+        this.fullName = fullName;
+        this.dateOfBirth = dateOfBirth;
+        this.position = position;
     }
 }
