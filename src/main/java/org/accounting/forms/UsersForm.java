@@ -3,8 +3,10 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
+import org.accounting.forms.models.MainComboBoxModel;
 import org.accounting.forms.models.UserTable;
 
 import javax.swing.*;
@@ -20,7 +22,8 @@ public class UsersForm extends JDialog implements ActionListener {
     private JLabel labelEmail;
     private JTable tableUsers;
     private JTextField textFieldPassword;
-    private JComboBox<String> comboBoxRoles;
+    private JComboBox<Base> comboBoxRoles;
+    private MainComboBoxModel roleModel;
     private JLabel labelPassword;
     private JLabel labelRole;
     private JButton showRolesFormButton;
@@ -45,7 +48,9 @@ public class UsersForm extends JDialog implements ActionListener {
         userTableModel = new UserTable();
         fillTable();
         tableUsers.setModel(userTableModel);
+        roleModel = new MainComboBoxModel();
         addItemComboBoxRole();
+        comboBoxRoles.setModel(roleModel);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
@@ -64,7 +69,7 @@ public class UsersForm extends JDialog implements ActionListener {
 
     private void insertData() {
         if (checkEmptyFields()) {
-            User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (String) comboBoxRoles.getSelectedItem(), 0);
+            User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (int) comboBoxRoles.getSelectedItem(), 0);
             User.insertData(user);
             userTableModel.addRecord(user);
             textFieldEmail.setText("");
@@ -100,7 +105,7 @@ public class UsersForm extends JDialog implements ActionListener {
                 userTableModel.getRecord(rowIndex).id,
                 textFieldEmail.getText(),
                 textFieldPassword.getText(),
-                (String) comboBoxRoles.getSelectedItem(),
+                ((Role) roleModel.getSelection()).id,
                 userTableModel.getRecord(rowIndex).timeInProgram);
 
             User.updateData(user);
@@ -117,7 +122,7 @@ public class UsersForm extends JDialog implements ActionListener {
         }
         textFieldEmail.setText(userTableModel.getRecord(rowIndex).email);
         textFieldPassword.setText(userTableModel.getRecord(rowIndex).password);
-        comboBoxRoles.setSelectedItem(userTableModel.getRecord(rowIndex).role);
+        comboBoxRoles.setSelectedItem(userTableModel.getRecord(rowIndex).getRole().role);
         turnComponents(false);
     }
 
@@ -131,10 +136,9 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void addItemComboBoxRole() {
-        comboBoxRoles.removeAllItems();
         ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
-            comboBoxRoles.addItem(role.role);
+            roleModel.addRecord(role);
         }
     }
 
