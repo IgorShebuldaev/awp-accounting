@@ -20,7 +20,7 @@ public class UserTable extends MainTableModel {
                 result = user.password;
                 break;
             case 2:
-                result = user.role;
+                result = user.getRole().role;
                 break;
             case 3:
                 result = user.timeInProgram;

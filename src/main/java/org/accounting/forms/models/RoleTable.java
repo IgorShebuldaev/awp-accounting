@@ -5,7 +5,7 @@ import org.accounting.database.models.Role;
 public class RoleTable extends MainTableModel {
 
     public RoleTable() {
-        columnNames = new String[]{"Role"};
+        columnNames = new String[]{"Role", "Lookup Code"};
     }
 
     @Override
@@ -16,6 +16,8 @@ public class RoleTable extends MainTableModel {
             case 0:
                 result = role.role;
                 break;
+            case 1:
+                return role.lookupCode;
         }
         return result;
     }
