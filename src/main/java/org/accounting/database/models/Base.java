@@ -8,4 +8,8 @@ public abstract class Base {
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static ArrayList<?> getAll() { return null; }
+
+    public boolean isValid() {
+        return id != 0;
+    }
 }
