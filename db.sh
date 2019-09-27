@@ -42,4 +42,8 @@ function create() {
   mysql -h$host -u $user -p$pass -P$port -e "create database $database;"
 }
 
+function seed() {
+  mysql -h$host -u $user -p$pass -P$port $database < seed.sql
+}
+
 $1

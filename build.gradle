@@ -3,7 +3,7 @@ plugins {
 }
 
 application {
-  mainClassName = 'org.accounting.forms.Main'
+  mainClassName = 'org.accounting.Main'
 }
 
 group 'wannaasbird'
@@ -49,9 +49,16 @@ task create(type: Exec) {
   commandLine 'sh', './db.sh', 'create'
 }
 
+task seed(type: Exec) {
+    group 'Database'
+    description 'Applies seeds to database'
+
+    commandLine 'sh', './db.sh', 'seed'
+}
+
 task setup_db {
   group 'Database'
   description 'Creates new database and applies schema'
 }
-setup_db.dependsOn create, load
+setup_db.dependsOn create, load, seed
 
