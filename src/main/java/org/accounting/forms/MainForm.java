@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class MainForm extends JFrame implements ActionListener, IDataManipulator {
@@ -35,12 +36,17 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private JButton saveButton;
     private JButton cancelButton;
     private JButton deleteButton;
-    private JSpinner spinnerDeliveries;
+    private JSpinner spinnerDeliveriesDeliveryDate;
     private JComboBox<String> comboBoxSuppliers;
     private JTextField textFieldProduct;
     private JTextField textFieldPrice;
     private JComboBox<String> comboBoxWorkers;
     private JLabel labelBar;
+    private JLabel labelDeliveryDate;
+    private JLabel labelSupplier;
+    private JLabel labelProduct;
+    private JLabel labelPrice;
+    private JLabel labelWorker;
     private DeliveryTable deliveryTableModel;
     private SupplierComboBoxModel supplierComboBoxModel;
     private WorkerComboBoxModel workerComboBoxModel;
@@ -98,8 +104,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         fillTable();
         tableDeliveries.setModel(deliveryTableModel);
 
-        spinnerDeliveries.setModel(setCurrentDateSpinner());
-        spinnerDeliveries.setEditor(new JSpinner.DateEditor(spinnerDeliveries, "dd.MM.yyyy"));
+        spinnerDeliveriesDeliveryDate.setModel(setCurrentDateSpinner());
+        spinnerDeliveriesDeliveryDate.setEditor(new JSpinner.DateEditor(spinnerDeliveriesDeliveryDate, "dd.MM.yyyy"));
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -150,13 +156,13 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         int minutes = currentUser.timeInProgram / 60 % 60;
         int days = currentUser.timeInProgram / 86400;
         labelBar.setText(
-            String.format("User: %s. Role: %s. Time in program: %02d:%02d:%02d",
-                currentUser.email,
-                currentUser.getRole().role,
-                days,
-                minutes,
-                seconds
-            )
+                String.format("User: %s. Role: %s. Time in program: %02d:%02d:%02d",
+                        currentUser.email,
+                        currentUser.getRole().role,
+                        days,
+                        minutes,
+                        seconds
+                )
         );
     }
 
@@ -228,10 +234,10 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void insertData() {
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             Delivery delivery = new Delivery(
                     0,
-                    (Date) spinnerDeliveries.getValue(),
+                    (Date) spinnerDeliveriesDeliveryDate.getValue(),
                     (String) comboBoxSuppliers.getSelectedItem(),
                     textFieldProduct.getText(),
                     textFieldPrice.getText(),
@@ -266,10 +272,10 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
     private void updateData() {
         int rowIndex = tableDeliveries.getSelectedRow();
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             Delivery delivery = new Delivery(
                     deliveryTableModel.getRecord(rowIndex).id,
-                    (Date) spinnerDeliveries.getValue(),
+                    (Date) spinnerDeliveriesDeliveryDate.getValue(),
                     (String) comboBoxSuppliers.getSelectedItem(),
                     textFieldProduct.getText(),
                     textFieldPrice.getText(),
@@ -277,7 +283,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
             Delivery.updateData(delivery);
             deliveryTableModel.setValueAt(delivery, rowIndex);
-            turnComponents(true);
+            setDefaultMode();
         }
     }
 
@@ -287,16 +293,24 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        spinnerDeliveries.setValue(deliveryTableModel.getRecord(rowIndex).deliveryDate);
+        spinnerDeliveriesDeliveryDate.setValue(deliveryTableModel.getRecord(rowIndex).deliveryDate);
         comboBoxSuppliers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).supplier);
         textFieldProduct.setText(deliveryTableModel.getRecord(rowIndex).product);
         textFieldPrice.setText(deliveryTableModel.getRecord(rowIndex).price);
         comboBoxWorkers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).worker);
-        turnComponents(false);
+        setEditMode();
     }
 
-    private boolean checkEmptyFields() {
-        if (textFieldProduct.getText().equals("") || textFieldPrice.getText().equals("")) {
+    private boolean isAnyEmptyField() {
+        String[] values = new String[]{
+                spinnerDeliveriesDeliveryDate.getValue().toString(),
+                (String) comboBoxSuppliers.getSelectedItem(),
+                textFieldProduct.getText(),
+                textFieldPrice.getText(),
+                (String) comboBoxWorkers.getSelectedItem()
+        };
+
+        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
             JOptionPane.showMessageDialog(this, "Field cannot be empty!");
             return false;
         } else {
@@ -305,6 +319,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void addItemComboBoxSupplier() {
+        supplierComboBoxModel.removeAllElements();
         ArrayList<Supplier> results = Supplier.getAll();
         for (Supplier supplier : results) {
             supplierComboBoxModel.addRecord(supplier);
@@ -313,6 +328,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void addItemComboBoxWorker() {
+        workerComboBoxModel.removeAllElements();
         ArrayList<Worker> results = Worker.getAll();
         for (Worker worker : results) {
             workerComboBoxModel.addRecord(worker);
@@ -320,24 +336,24 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         comboBoxWorkers.setModel(workerComboBoxModel);
     }
 
-    private void turnComponents(Boolean turn) {
-        if (!turn) {
-            addButton.setEnabled(false);
-            editButton.setEnabled(false);
-            saveButton.setEnabled(true);
-            cancelButton.setEnabled(true);
-            deleteButton.setEnabled(false);
-            tableDeliveries.setEnabled(false);
-        } else {
-            addButton.setEnabled(true);
-            editButton.setEnabled(true);
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            deleteButton.setEnabled(true);
-            tableDeliveries.setEnabled(true);
-            textFieldProduct.setText("");
-            textFieldPrice.setText("");
-        }
+    private void setDefaultMode() {
+        addButton.setEnabled(true);
+        editButton.setEnabled(true);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        deleteButton.setEnabled(true);
+        tableDeliveries.setEnabled(true);
+        textFieldProduct.setText("");
+        textFieldPrice.setText("");
+    }
+
+    private void setEditMode() {
+        addButton.setEnabled(false);
+        editButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+        deleteButton.setEnabled(false);
+        tableDeliveries.setEnabled(false);
     }
 
     @Override
@@ -356,6 +372,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                 break;
             case "workBooks":
                 new WorkBooksForm().setVisible(true);
+                addItemComboBoxWorker();
+                addItemComboBoxSupplier();
                 break;
             case "notes":
                 new NotesForm().setVisible(true);
@@ -376,9 +394,9 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                 updateData();
                 break;
             case "cancelButton":
-                turnComponents(true);
+                setDefaultMode();
                 break;
-            case "deleteData":
+            case "deleteButton":
                 deleteData();
                 break;
         }
@@ -400,46 +418,61 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
      */
     private void $$$setupUI$$$() {
         panelMain = new JPanel();
-        panelMain.setLayout(new GridLayoutManager(4, 5, new Insets(0, 0, 0, 0), -1, -1));
+        panelMain.setLayout(new GridLayoutManager(5, 5, new Insets(5, 5, 5, 5), -1, -1));
         scrollPaneMain = new JScrollPane();
         panelMain.add(scrollPaneMain, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableDeliveries = new JTable();
         scrollPaneMain.setViewportView(tableDeliveries);
         labelBar = new JLabel();
         labelBar.setText("                     ");
-        panelMain.add(labelBar, new GridConstraints(3, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(labelBar, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
         addButton.setActionCommand("addButton");
         addButton.setText("Add");
-        panelMain.add(addButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(addButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
-        editButton.setActionCommand("addButton");
+        editButton.setActionCommand("editButton");
         editButton.setText("Edit");
-        panelMain.add(editButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setActionCommand("saveButton");
         saveButton.setEnabled(false);
         saveButton.setText("Save");
-        panelMain.add(saveButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
         cancelButton.setActionCommand("cancelButton");
         cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
-        panelMain.add(cancelButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(cancelButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
         deleteButton.setActionCommand("deleteButton");
         deleteButton.setText("Delete");
-        panelMain.add(deleteButton, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        spinnerDeliveries = new JSpinner();
-        panelMain.add(spinnerDeliveries, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        spinnerDeliveriesDeliveryDate = new JSpinner();
+        panelMain.add(spinnerDeliveriesDeliveryDate, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         comboBoxSuppliers = new JComboBox();
-        panelMain.add(comboBoxSuppliers, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(comboBoxSuppliers, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textFieldProduct = new JTextField();
-        panelMain.add(textFieldProduct, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panelMain.add(textFieldProduct, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         textFieldPrice = new JTextField();
-        panelMain.add(textFieldPrice, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panelMain.add(textFieldPrice, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         comboBoxWorkers = new JComboBox();
-        panelMain.add(comboBoxWorkers, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(comboBoxWorkers, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelDeliveryDate = new JLabel();
+        labelDeliveryDate.setText("Delivery date");
+        panelMain.add(labelDeliveryDate, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelSupplier = new JLabel();
+        labelSupplier.setText("Supplier");
+        panelMain.add(labelSupplier, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelProduct = new JLabel();
+        labelProduct.setText("Product");
+        panelMain.add(labelProduct, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelPrice = new JLabel();
+        labelPrice.setText("Price");
+        panelMain.add(labelPrice, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelWorker = new JLabel();
+        labelWorker.setText("Worker");
+        panelMain.add(labelWorker, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -448,4 +481,5 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
+
 }

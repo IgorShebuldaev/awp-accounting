@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PositionsForm extends JDialog implements ActionListener {
     private JTable tablePositions;
@@ -32,7 +33,7 @@ public class PositionsForm extends JDialog implements ActionListener {
         setContentPane(panelPositions);
         setSize(450, 300);
         setLocationRelativeTo(null);
-        setTitle("Roles");
+        setTitle("Positions");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
         positionTableModel = new PositionTable();
@@ -54,7 +55,7 @@ public class PositionsForm extends JDialog implements ActionListener {
     }
 
     private void insertData() {
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             Position position = new Position(0, textFieldPosition.getText());
             Position.insertData(position);
             positionTableModel.addRecord(position);
@@ -85,11 +86,11 @@ public class PositionsForm extends JDialog implements ActionListener {
 
     private void updateData() {
         int rowIndex = tablePositions.getSelectedRow();
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             Position position = new Position(positionTableModel.getRecord(rowIndex).id, textFieldPosition.getText());
             Position.updateData(position);
             positionTableModel.setValueAt(position, rowIndex);
-            turnComponents(true);
+            setDefaultMode();
         }
     }
 
@@ -100,10 +101,10 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
         textFieldPosition.setText(positionTableModel.getRecord(row).position);
-        turnComponents(false);
+        setEditMode();
     }
 
-    private boolean checkEmptyFields() {
+    private boolean isAnyEmptyField() {
         if (textFieldPosition.getText().equals("")) {
             JOptionPane.showMessageDialog(this, "Field cannot be empty!");
             return false;
@@ -112,21 +113,23 @@ public class PositionsForm extends JDialog implements ActionListener {
         }
     }
 
-    private void turnComponents(Boolean turn) {
-        if (!turn) {
-            addButton.setEnabled(false);
-            editButton.setEnabled(false);
-            saveButton.setEnabled(true);
-            cancelButton.setEnabled(true);
-            deleteButton.setEnabled(false);
-        } else {
-            addButton.setEnabled(true);
-            editButton.setEnabled(true);
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            deleteButton.setEnabled(true);
-            textFieldPosition.setText("");
-        }
+    private void setDefaultMode() {
+        addButton.setEnabled(true);
+        editButton.setEnabled(true);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        deleteButton.setEnabled(true);
+        tablePositions.setEnabled(true);
+        textFieldPosition.setText("");
+    }
+
+    private void setEditMode() {
+        addButton.setEnabled(false);
+        editButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+        deleteButton.setEnabled(false);
+        tablePositions.setEnabled(false);
     }
 
     @Override
@@ -142,7 +145,7 @@ public class PositionsForm extends JDialog implements ActionListener {
                 updateData();
                 break;
             case "cancelButton":
-                turnComponents(true);
+                setDefaultMode();
                 break;
             case "deleteButton":
                 deleteRole();
@@ -166,7 +169,7 @@ public class PositionsForm extends JDialog implements ActionListener {
      */
     private void $$$setupUI$$$() {
         panelPositions = new JPanel();
-        panelPositions.setLayout(new GridLayoutManager(4, 5, new Insets(0, 0, 0, 0), -1, -1));
+        panelPositions.setLayout(new GridLayoutManager(4, 5, new Insets(5, 5, 5, 5), -1, -1));
         scrollPanePositions = new JScrollPane();
         panelPositions.add(scrollPanePositions, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tablePositions = new JTable();
@@ -181,10 +184,12 @@ public class PositionsForm extends JDialog implements ActionListener {
         panelPositions.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setActionCommand("saveButton");
+        saveButton.setEnabled(false);
         saveButton.setText("Save");
         panelPositions.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
         cancelButton.setActionCommand("cancelButton");
+        cancelButton.setEnabled(false);
         cancelButton.setText("Cancel");
         panelPositions.add(cancelButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
@@ -204,4 +209,5 @@ public class PositionsForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelPositions;
     }
+
 }

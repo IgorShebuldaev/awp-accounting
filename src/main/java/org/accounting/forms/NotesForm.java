@@ -30,6 +30,7 @@ public class NotesForm extends JDialog {
         setSize(800, 600);
         setLocationRelativeTo(null);
         setTitle("Notes");
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         Note note = Note.getNoteCurrentUser(CurrentUser.getUser().id);
 
@@ -54,7 +55,7 @@ public class NotesForm extends JDialog {
      */
     private void $$$setupUI$$$() {
         panelNotes = new JPanel();
-        panelNotes.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panelNotes.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
         scrollPaneNotes = new JScrollPane();
         panelNotes.add(scrollPaneNotes, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         textAreaNotes = new JTextArea();
@@ -67,4 +68,5 @@ public class NotesForm extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return panelNotes;
     }
+
 }

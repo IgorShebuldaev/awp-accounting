@@ -4,9 +4,10 @@ import org.accounting.database.models.Base;
 import org.accounting.database.models.Supplier;
 import org.accounting.forms.models.tablemodels.MainTableModel;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
-public class SupplierImpl implements IDataManipulator {
+public class SupplierImpl extends JDialog implements IDataManipulator {
 
     @Override
     public void fillTable(MainTableModel tableModel) {

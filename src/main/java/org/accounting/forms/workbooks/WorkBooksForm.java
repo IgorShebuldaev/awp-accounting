@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Date;
 
 public class WorkBooksForm extends JDialog implements ActionListener {
@@ -57,6 +58,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         setSize(800, 600);
         setLocationRelativeTo(null);
         setTitle("Work Books");
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         supplierTableModel = new SupplierTable();
         supplier = new SupplierImpl();
@@ -83,6 +85,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         btnEditWorkers.addActionListener(this);
         btnSaveWorkers.addActionListener(this);
         btnCancelWorkers.addActionListener(this);
+        btnShowPositionsForm.addActionListener(this);
     }
 
     private void setValuesComponentsSupplier() {
@@ -92,7 +95,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
             return;
         }
         textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).companyName);
-        turnComponentsSupplier(false);
+        setEditModeSuppliers();
     }
 
     private void setValuesComponentsWorker() {
@@ -104,47 +107,84 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         textFieldWorkersFullName.setText(workerTableModel.getRecord(rowIndex).fullName);
         spinnerWorkersDateOfBirth.setValue((workerTableModel.getRecord(rowIndex).dateOfBirth));
         comboBoxWorkersPositions.setSelectedItem(workerTableModel.getRecord(rowIndex).position);
-        turnComponentsWorker(false);
+        setEditModeWorkers();
     }
 
-    private void turnComponentsSupplier(Boolean turn) {
-        if (!turn) {
-            btnAddSuppliers.setEnabled(false);
-            btnEditSuppliers.setEnabled(false);
-            btnDeleteSuppliers.setEnabled(false);
-            tableSuppliers.setEnabled(false);
-            btnCancelSuppliers.setEnabled(true);
-            btnSaveSuppliers.setEnabled(true);
+    private boolean isAnyEmptyFieldSuppliers() {
+        if (textFieldSuppliersCompanyName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
+            return false;
         } else {
-            btnAddSuppliers.setEnabled(true);
-            btnEditSuppliers.setEnabled(true);
-            btnDeleteSuppliers.setEnabled(true);
-            tableSuppliers.setEnabled(true);
-            btnCancelSuppliers.setEnabled(false);
-            btnSaveSuppliers.setEnabled(false);
-            textFieldSuppliersCompanyName.setText("");
+            return true;
         }
     }
 
-    private void turnComponentsWorker(Boolean turn) {
-        if (!turn) {
-            btnAddWorkers.setEnabled(false);
-            btnEditWorkers.setEnabled(false);
-            btnSaveWorkers.setEnabled(true);
-            btnCancelWorkers.setEnabled(true);
-            btnDeleteWorkers.setEnabled(false);
-            btnShowPositionsForm.setEnabled(false);
-            tableWorkers.setEnabled(false);
+    private boolean isAnyEmptyFieldWorkers() {
+        String[] values = new String[]{
+                textFieldWorkersFullName.getText(),
+                 spinnerWorkersDateOfBirth.getValue().toString(),
+                (String) comboBoxWorkersPositions.getSelectedItem()};
+
+        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
+            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
+            return false;
         } else {
-            btnAddWorkers.setEnabled(true);
-            btnEditWorkers.setEnabled(true);
-            btnSaveWorkers.setEnabled(false);
-            btnCancelWorkers.setEnabled(false);
-            btnDeleteWorkers.setEnabled(true);
-            btnShowPositionsForm.setEnabled(true);
-            tableWorkers.setEnabled(true);
-            textFieldWorkersFullName.setText("");
+            return true;
         }
+    }
+
+    private void setDefaultModeSuppliers() {
+        btnAddSuppliers.setEnabled(true);
+        btnEditSuppliers.setEnabled(true);
+        btnDeleteSuppliers.setEnabled(true);
+        tableSuppliers.setEnabled(true);
+        btnCancelSuppliers.setEnabled(false);
+        btnSaveSuppliers.setEnabled(false);
+        textFieldSuppliersCompanyName.setText("");
+    }
+
+    private void setEditModeSuppliers() {
+        btnAddSuppliers.setEnabled(false);
+        btnEditSuppliers.setEnabled(false);
+        btnDeleteSuppliers.setEnabled(false);
+        tableSuppliers.setEnabled(false);
+        btnCancelSuppliers.setEnabled(true);
+        btnSaveSuppliers.setEnabled(true);
+    }
+
+
+    private void setDefaultModeWorkers() {
+        btnAddWorkers.setEnabled(true);
+        btnEditWorkers.setEnabled(true);
+        btnSaveWorkers.setEnabled(false);
+        btnCancelWorkers.setEnabled(false);
+        btnDeleteWorkers.setEnabled(true);
+        btnShowPositionsForm.setEnabled(true);
+        tableWorkers.setEnabled(true);
+        textFieldWorkersFullName.setText("");
+    }
+
+    private void setEditModeWorkers() {
+        btnAddWorkers.setEnabled(false);
+        btnEditWorkers.setEnabled(false);
+        btnSaveWorkers.setEnabled(true);
+        btnCancelWorkers.setEnabled(true);
+        btnDeleteWorkers.setEnabled(false);
+        btnShowPositionsForm.setEnabled(false);
+        tableWorkers.setEnabled(false);
+    }
+
+    private boolean showAskDialog() {
+        Object[] options = {"Yes", "No"};
+        int n = JOptionPane.showOptionDialog(this,
+                "Are you sure you want to delete the record?",
+                "Message",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        return n == JOptionPane.YES_OPTION;
     }
 
     @Override
@@ -152,54 +192,78 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         switch (e.getActionCommand()) {
             // Suppliers <------------------------------------------------------------------------------------------------------------------------>
             case "btnAddSupplier":
-                supplier.insertData(supplierTableModel, new Supplier(
-                        0,
-                        textFieldSuppliersCompanyName.getText()));
+                if (isAnyEmptyFieldSuppliers()) {
+                    supplier.insertData(supplierTableModel, new Supplier(
+                            0,
+                            textFieldSuppliersCompanyName.getText()));
+                    textFieldSuppliersCompanyName.setText("");
+                }
                 break;
             case "btnEditSupplier":
                 setValuesComponentsSupplier();
                 break;
             case "btnSaveSupplier":
-                supplier.updateData(supplierTableModel, tableSuppliers.getSelectedRow(),
-                        new Supplier(
-                                supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id,
-                                textFieldSuppliersCompanyName.getText()));
-                turnComponentsSupplier(true);
+                if (isAnyEmptyFieldSuppliers()) {
+                    supplier.updateData(supplierTableModel, tableSuppliers.getSelectedRow(),
+                            new Supplier(
+                                    supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id,
+                                    textFieldSuppliersCompanyName.getText()));
+                    textFieldSuppliersCompanyName.setText("");
+                    setDefaultModeSuppliers();
+                }
                 break;
             case "btnCancelSupplier":
-                turnComponentsSupplier(true);
+                setDefaultModeSuppliers();
                 break;
             case "btnDeleteSupplier":
-                supplier.deleteData(supplierTableModel, tableSuppliers.getSelectedRow(), supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id);
+                if (tableSuppliers.getSelectedRow() < 0) {
+                    JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+                    return;
+                } else if (showAskDialog()) {
+                    supplier.deleteData(supplierTableModel, tableSuppliers.getSelectedRow(), supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id);
+                }
                 break;
             // Workers <------------------------------------------------------------------------------------------------------------------------>
             case "btnAddWorker":
-                worker.insertData(workerTableModel, new Worker(
-                        0,
-                        textFieldWorkersFullName.getText(),
-                        (Date) spinnerWorkersDateOfBirth.getValue(),
-                        (String) comboBoxWorkersPositions.getSelectedItem()));
+                if (isAnyEmptyFieldWorkers()) {
+                    worker.insertData(workerTableModel, new Worker(
+                            0,
+                            textFieldWorkersFullName.getText(),
+                            (Date) spinnerWorkersDateOfBirth.getValue(),
+                            (String) comboBoxWorkersPositions.getSelectedItem()));
+                    textFieldWorkersFullName.setText("");
+                }
                 break;
             case "btnEditWorker":
                 setValuesComponentsWorker();
                 break;
             case "btnSaveWorker":
-                worker.updateData(workerTableModel, tableWorkers.getSelectedRow(),
-                        new Worker(
-                                workerTableModel.getRecord(tableWorkers.getSelectedRow()).id,
-                                textFieldWorkersFullName.getText(),
-                                (Date) spinnerWorkersDateOfBirth.getValue(),
-                                (String) comboBoxWorkersPositions.getSelectedItem()));
-                turnComponentsWorker(true);
+                if (isAnyEmptyFieldWorkers()) {
+                    worker.updateData(workerTableModel, tableWorkers.getSelectedRow(),
+                            new Worker(
+                                    workerTableModel.getRecord(tableWorkers.getSelectedRow()).id,
+                                    textFieldWorkersFullName.getText(),
+                                    (Date) spinnerWorkersDateOfBirth.getValue(),
+                                    (String) comboBoxWorkersPositions.getSelectedItem()));
+                    textFieldWorkersFullName.setText("");
+                    setDefaultModeWorkers();
+                }
                 break;
             case "btnCancelWorker":
-                turnComponentsWorker(true);
+                setDefaultModeWorkers();
                 break;
             case "btnDeleteWorker":
-                worker.deleteData(workerTableModel, tableWorkers.getSelectedRow(), workerTableModel.getRecord(tableWorkers.getSelectedRow()).id);
+                if (tableWorkers.getSelectedRow() < 0) {
+                    JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+                    return;
+                }
+                if (showAskDialog()) {
+                    worker.deleteData(workerTableModel, tableWorkers.getSelectedRow(), workerTableModel.getRecord(tableWorkers.getSelectedRow()).id);
+                }
                 break;
             case "btnShowPositionsForm":
                 new PositionsForm().setVisible(true);
+                comboBoxWorkersPositions.setModel(worker.addItemComboBoxPosition());
                 break;
         }
     }
@@ -220,7 +284,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
      */
     private void $$$setupUI$$$() {
         panelWorkBooks = new JPanel();
-        panelWorkBooks.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panelWorkBooks.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPaneWorkBooks = new JTabbedPane();
         panelWorkBooks.add(tabbedPaneWorkBooks, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         panelSuppliers = new JPanel();
@@ -319,5 +383,4 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelWorkBooks;
     }
-
 }

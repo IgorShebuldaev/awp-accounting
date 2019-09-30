@@ -56,15 +56,13 @@ public class RolesForm extends JDialog implements ActionListener {
     }
 
     private void insertData() {
-        if (!isAnyEmptyField()) {
-            return;
+        if (isAnyEmptyField()) {
+            Role role = new Role(0, textFieldRole.getText(), lookupCode.getText());
+            Role.insertData(role);
+            roleTableModel.addRecord(role);
+            textFieldRole.setText("");
+            lookupCode.setText("");
         }
-
-        Role role = new Role(0, textFieldRole.getText(), lookupCode.getText());
-        Role.insertData(role);
-        roleTableModel.addRecord(role);
-        textFieldRole.setText("");
-        lookupCode.setText("");
     }
 
     private void deleteData() {
@@ -90,14 +88,12 @@ public class RolesForm extends JDialog implements ActionListener {
 
     private void updateData() {
         int rowIndex = tableRoles.getSelectedRow();
-        if (!isAnyEmptyField() || rowIndex < 0) {
-            return;
+        if (isAnyEmptyField() || rowIndex < 0) {
+            Role role = new Role(roleTableModel.getRecord(rowIndex).id, textFieldRole.getText(), lookupCode.getText());
+            Role.updateData(role);
+            roleTableModel.setValueAt(role, rowIndex);
+            setDefaultMode();
         }
-
-        Role role = new Role(roleTableModel.getRecord(rowIndex).id, textFieldRole.getText(), lookupCode.getText());
-        Role.updateData(role);
-        roleTableModel.setValueAt(role, rowIndex);
-        setDefaultMode();
     }
 
     private void setValuesComponents() {
@@ -222,5 +218,4 @@ public class RolesForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelRolesForm;
     }
-
 }

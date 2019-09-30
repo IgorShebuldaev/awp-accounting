@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UsersForm extends JDialog implements ActionListener {
     private JPanel panelUsersForm;
@@ -69,7 +70,7 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void insertData() {
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             User user = new User(0, textFieldEmail.getText(), textFieldPassword.getText(), (int) comboBoxRoles.getSelectedItem(), 0);
             User.insertData(user);
             userTableModel.addRecord(user);
@@ -101,7 +102,7 @@ public class UsersForm extends JDialog implements ActionListener {
 
     private void updateData() {
         int rowIndex = tableUsers.getSelectedRow();
-        if (checkEmptyFields()) {
+        if (isAnyEmptyField()) {
             User user = new User(
                 userTableModel.getRecord(rowIndex).id,
                 textFieldEmail.getText(),
@@ -111,7 +112,7 @@ public class UsersForm extends JDialog implements ActionListener {
 
             User.updateData(user);
             userTableModel.setValueAt(user, rowIndex);
-            turnComponents(true);
+            setDefaultMode();
         }
     }
 
@@ -124,11 +125,16 @@ public class UsersForm extends JDialog implements ActionListener {
         textFieldEmail.setText(userTableModel.getRecord(rowIndex).email);
         textFieldPassword.setText(userTableModel.getRecord(rowIndex).password);
         comboBoxRoles.setSelectedItem(userTableModel.getRecord(rowIndex).getRole().role);
-        turnComponents(false);
+        setEditMode();
     }
 
-    private boolean checkEmptyFields() {
-        if (textFieldEmail.getText().equals("") || textFieldPassword.getText().equals("")) {
+    private boolean isAnyEmptyField() {
+        String[] values = new String[]{
+                textFieldEmail.getText(),
+                textFieldPassword.getText(),
+                (String) comboBoxRoles.getSelectedItem()};
+
+        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
             JOptionPane.showMessageDialog(this, "Field cannot be empty!");
             return false;
         } else {
@@ -137,32 +143,31 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void addItemComboBoxRole() {
+        roleModel.removeAllElements();
         ArrayList<Role> results = Role.getAll();
         for (Role role : results) {
             roleModel.addRecord(role);
         }
     }
 
-    private void turnComponents(Boolean turn) {
-        if (!turn) {
-            addButton.setEnabled(false);
-            editButton.setEnabled(false);
-            saveButton.setEnabled(true);
-            cancelButton.setEnabled(true);
-            deleteButton.setEnabled(false);
-            showRolesFormButton.setEnabled(false);
-            tableUsers.setEnabled(false);
-        } else {
-            addButton.setEnabled(true);
-            editButton.setEnabled(true);
-            saveButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            deleteButton.setEnabled(true);
-            showRolesFormButton.setEnabled(true);
-            tableUsers.setEnabled(true);
-            textFieldEmail.setText("");
-            textFieldPassword.setText("");
-        }
+    private void setDefaultMode() {
+        addButton.setEnabled(true);
+        editButton.setEnabled(true);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        deleteButton.setEnabled(true);
+        tableUsers.setEnabled(true);
+        textFieldEmail.setText("");
+        textFieldPassword.setText("");
+    }
+
+    private void setEditMode() {
+        addButton.setEnabled(false);
+        editButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+        deleteButton.setEnabled(false);
+        tableUsers.setEnabled(false);
     }
 
     @Override
@@ -181,7 +186,7 @@ public class UsersForm extends JDialog implements ActionListener {
                 updateData();
                 break;
             case "cancel":
-                turnComponents(true);
+                setDefaultMode();
                 break;
             case "addRoles":
                 new RolesForm().setVisible(true);
