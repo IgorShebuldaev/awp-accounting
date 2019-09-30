@@ -10,14 +10,12 @@ public class SupplierTable extends MainTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
         Supplier supplier = (Supplier) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                result = supplier.companyName;
-                break;
+                return supplier.companyName;
         }
-        return result;
+        return "";
     }
 
     @Override

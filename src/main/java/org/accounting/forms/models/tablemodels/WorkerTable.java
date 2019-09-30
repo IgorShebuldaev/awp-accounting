@@ -13,20 +13,17 @@ public class WorkerTable extends MainTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
         Worker worker = (Worker) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                result = worker.fullName;
-                break;
+                return worker.fullName;
             case 1:
-                result = dateFormat.format(worker.dateOfBirth);
-                break;
+                return dateFormat.format(worker.dateOfBirth);
             case 2:
-                result = worker.position;
-                break;
+                return worker.position;
+
         }
-        return result;
+        return "";
     }
 
     @Override

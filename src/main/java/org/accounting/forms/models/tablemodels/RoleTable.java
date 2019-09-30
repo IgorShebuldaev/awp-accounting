@@ -10,16 +10,14 @@ public class RoleTable extends MainTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
         Role role = (Role) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                result = role.role;
-                break;
+                return role.role;
             case 1:
                 return role.lookupCode;
         }
-        return result;
+        return "";
     }
 
     @Override

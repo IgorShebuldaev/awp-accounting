@@ -1,19 +1,18 @@
 package org.accounting.forms.models.comboboxmodels;
 
 import org.accounting.database.models.Base;
-import org.accounting.database.models.Role;
 
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
+public abstract class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
-    private ArrayList<Base> records = new ArrayList<>();
-    private Base selection = null;
+    protected ArrayList<Base> records = new ArrayList<>();
+    protected Base selection = null;
 
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(r -> ((Role)r).role.equals(anItem)).findFirst().get();
+        selection = (Base) anItem;
     }
 
     @Override
@@ -21,7 +20,7 @@ public class MainComboBoxModel extends AbstractListModel implements ComboBoxMode
         selection = getSelection();
         if (selection == null) { return ""; }
 
-        return ((Role)selection).role;
+        return selection;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class MainComboBoxModel extends AbstractListModel implements ComboBoxMode
 
     @Override
     public Object getElementAt(int index) {
-        return ((Role)records.get(index)).role;
+        return records.get(index);
     }
 
     public void addRecord(Base record) {

@@ -13,26 +13,20 @@ public class DeliveryTable extends MainTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
         Delivery delivery = (Delivery) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                result = dateFormat.format(delivery.deliveryDate);
-                break;
+                return dateFormat.format(delivery.deliveryDate);
             case 1:
-                result = delivery.supplier;
-                break;
+                return delivery.supplier;
             case 2:
-                result = delivery.product;
-                break;
+                return delivery.product;
             case 3:
-                result = delivery.price;
-                break;
+                return delivery.price;
             case 4:
-                result = delivery.worker;
-                break;
+                return delivery.worker;
         }
-        return result;
+        return "";
     }
 
     @Override

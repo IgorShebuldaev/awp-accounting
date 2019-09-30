@@ -10,23 +10,18 @@ public class UserTable extends MainTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object result = null;
         User user = (User) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                result = user.email;
-                break;
+                return user.email;
             case 1:
-                result = user.password;
-                break;
+                return user.password;
             case 2:
-                result = user.getRole().role;
-                break;
+                return user.getRole().role;
             case 3:
-                result = user.timeInProgram;
-                break;
+                return user.timeInProgram;
         }
-        return result;
+        return "";
     }
 
     @Override
