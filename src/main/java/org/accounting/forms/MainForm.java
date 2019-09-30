@@ -8,6 +8,8 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
+import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
 import org.accounting.forms.workbooks.IDataManipulator;
 import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.forms.models.tablemodels.DeliveryTable;
@@ -40,6 +42,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private JComboBox<String> comboBoxWorkers;
     private JLabel labelBar;
     private DeliveryTable deliveryTableModel;
+    private SupplierComboBoxModel supplierComboBoxModel;
+    private WorkerComboBoxModel workerComboBoxModel;
 
     public void createUserAuthorizationForm() {
         JPanel jPanel = new JPanel();
@@ -124,6 +128,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         Timer timer = new Timer(1000, e -> updateStatusBar());
         timer.start();
 
+        supplierComboBoxModel = new SupplierComboBoxModel();
+        workerComboBoxModel = new WorkerComboBoxModel();
         addItemComboBoxSupplier();
         addItemComboBoxWorker();
 
@@ -299,19 +305,19 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     }
 
     private void addItemComboBoxSupplier() {
-        comboBoxSuppliers.removeAllItems();
         ArrayList<Supplier> results = Supplier.getAll();
         for (Supplier supplier : results) {
-            comboBoxSuppliers.addItem(supplier.companyName);
+            supplierComboBoxModel.addRecord(supplier);
         }
+        comboBoxSuppliers.setModel(supplierComboBoxModel);
     }
 
     private void addItemComboBoxWorker() {
-        comboBoxWorkers.removeAllItems();
         ArrayList<Worker> results = Worker.getAll();
         for (Worker worker : results) {
-            comboBoxWorkers.addItem(worker.fullName);
+            workerComboBoxModel.addRecord(worker);
         }
+        comboBoxWorkers.setModel(workerComboBoxModel);
     }
 
     private void turnComponents(Boolean turn) {
@@ -442,5 +448,4 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
-
 }

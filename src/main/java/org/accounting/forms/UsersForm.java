@@ -7,6 +7,7 @@ import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
 import org.accounting.forms.models.comboboxmodels.MainComboBoxModel;
+import org.accounting.forms.models.comboboxmodels.RoleComboBoxModel;
 import org.accounting.forms.models.tablemodels.UserTable;
 
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class UsersForm extends JDialog implements ActionListener {
         userTableModel = new UserTable();
         fillTable();
         tableUsers.setModel(userTableModel);
-        roleModel = new MainComboBoxModel();
+        roleModel = new RoleComboBoxModel();
         addItemComboBoxRole();
         comboBoxRoles.setModel(roleModel);
 
