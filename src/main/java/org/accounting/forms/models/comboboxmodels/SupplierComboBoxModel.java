@@ -5,7 +5,7 @@ import org.accounting.database.models.Supplier;
 public class SupplierComboBoxModel extends MainComboBoxModel {
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(r -> ((Supplier)r).companyName.equals(anItem)).findFirst().get();
+        selection = records.stream().filter(s -> ((Supplier)s).companyName.equals(anItem)).findFirst().get();
     }
 
     @Override

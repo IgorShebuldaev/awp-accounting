@@ -5,7 +5,7 @@ import org.accounting.database.models.Worker;
 public class WorkerComboBoxModel extends MainComboBoxModel {
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(r -> ((Worker)r).position.equals(anItem)).findFirst().get();
+        selection = records.stream().filter(w -> ((Worker)w).fullName.equals(anItem)).findFirst().get();
     }
 
     @Override

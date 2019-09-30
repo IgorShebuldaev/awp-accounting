@@ -42,4 +42,8 @@ public abstract class MainComboBoxModel extends AbstractListModel implements Com
 
         return records.get(0);
     }
+
+    public void removeAllElements() {
+        records.clear();
+    }
 }

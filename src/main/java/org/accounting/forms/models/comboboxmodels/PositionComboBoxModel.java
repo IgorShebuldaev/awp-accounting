@@ -5,7 +5,7 @@ import org.accounting.database.models.Position;
 public class PositionComboBoxModel extends MainComboBoxModel {
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(r -> ((Position)r).position.equals(anItem)).findFirst().get();
+        selection = records.stream().filter(p -> ((Position)p).position.equals(anItem)).findFirst().get();
     }
 
     @Override
