@@ -67,6 +67,22 @@ public class Role extends Base {
         }
     }
 
+    public static int getRoleIdByLookupCode(String lookupCode) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("select id from roles where lookup_code = '%s'", lookupCode);
+            ResultSet resultSet = statement.executeQuery(query);
+            if (!resultSet.next()) {
+                throw new SQLException("No records in roles table");
+            }
+            return resultSet.getInt("id");
+        } catch (SQLException se) {
+            se.printStackTrace();
+            return 0;
+        }
+    }
+
     public String role;
     public String lookupCode;
 
