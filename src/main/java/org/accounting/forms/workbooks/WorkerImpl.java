@@ -1,8 +1,6 @@
 package org.accounting.forms.workbooks;
 
-import org.accounting.database.models.Base;
-import org.accounting.database.models.Position;
-import org.accounting.database.models.Worker;
+import org.accounting.database.models.*;
 import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
 import org.accounting.forms.models.tablemodels.MainTableModel;
 
@@ -25,9 +23,10 @@ public class WorkerImpl implements IDataManipulator {
         }
     }
 
-    @Override
-    public void insertData(MainTableModel tableModel, Base base) {
-        Worker.insertData((Worker) base);
+    public void insertData(MainTableModel tableModel, Base base, String password) {
+        User user = new User(0, ((Worker)base).email, password, Role.getRoleIdByLookupCode("manager"), 0);
+        User.insertData(user);
+        Worker.insertData((Worker) base, user.id);
         tableModel.addRecord(base);
     }
 

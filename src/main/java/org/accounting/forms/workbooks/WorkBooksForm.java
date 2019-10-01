@@ -44,6 +44,10 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     private JTextField textFieldSuppliersCompanyName;
     private JSpinner spinnerWorkersDateOfBirth;
     private JComboBox<String> comboBoxWorkersPositions;
+    private JTextField textFieldWorkersEmail;
+    private JTextField textFieldWorkersPassword;
+    private JLabel labelWorkersPassword;
+    private JLabel labelWorkersEmail;
     private SupplierImpl supplier;
     private WorkerImpl worker;
     private SupplierTable supplierTableModel;
@@ -55,7 +59,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
 
     private void createWorkBooksForm() {
         setContentPane(panelWorkBooks);
-        setSize(800, 600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setTitle("Work Books");
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -107,6 +111,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         textFieldWorkersFullName.setText(workerTableModel.getRecord(rowIndex).fullName);
         spinnerWorkersDateOfBirth.setValue((workerTableModel.getRecord(rowIndex).dateOfBirth));
         comboBoxWorkersPositions.setSelectedItem(workerTableModel.getRecord(rowIndex).position);
+        textFieldWorkersEmail.setText(workerTableModel.getRecord(rowIndex).email);
         setEditModeWorkers();
     }
 
@@ -122,8 +127,10 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     private boolean isAnyEmptyFieldWorkers() {
         String[] values = new String[]{
                 textFieldWorkersFullName.getText(),
-                 spinnerWorkersDateOfBirth.getValue().toString(),
-                (String) comboBoxWorkersPositions.getSelectedItem()};
+                spinnerWorkersDateOfBirth.getValue().toString(),
+                (String) comboBoxWorkersPositions.getSelectedItem(),
+                textFieldWorkersPassword.getText(),
+                textFieldWorkersPassword.getText()};
 
         if (Arrays.stream(values).anyMatch(String::isEmpty)) {
             JOptionPane.showMessageDialog(this, "Field cannot be empty!");
@@ -230,8 +237,12 @@ public class WorkBooksForm extends JDialog implements ActionListener {
                             0,
                             textFieldWorkersFullName.getText(),
                             (Date) spinnerWorkersDateOfBirth.getValue(),
-                            (String) comboBoxWorkersPositions.getSelectedItem()));
+                            (String) comboBoxWorkersPositions.getSelectedItem(),
+                            textFieldWorkersEmail.getText()),
+                            textFieldWorkersPassword.getText());
                     textFieldWorkersFullName.setText("");
+                    textFieldWorkersEmail.setText("");
+                    textFieldWorkersPassword.setText("");
                 }
                 break;
             case "btnEditWorker":
@@ -288,7 +299,7 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         tabbedPaneWorkBooks = new JTabbedPane();
         panelWorkBooks.add(tabbedPaneWorkBooks, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         panelSuppliers = new JPanel();
-        panelSuppliers.setLayout(new GridLayoutManager(4, 8, new Insets(0, 0, 0, 0), -1, -1));
+        panelSuppliers.setLayout(new GridLayoutManager(4, 8, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPaneWorkBooks.addTab("Suppliers", panelSuppliers);
         scrollPaneSuppliers = new JScrollPane();
         panelSuppliers.add(scrollPaneSuppliers, new GridConstraints(0, 0, 1, 8, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -328,10 +339,10 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         final Spacer spacer3 = new Spacer();
         panelSuppliers.add(spacer3, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         panelWorkers = new JPanel();
-        panelWorkers.setLayout(new GridLayoutManager(4, 5, new Insets(0, 0, 0, 0), -1, -1));
+        panelWorkers.setLayout(new GridLayoutManager(4, 6, new Insets(5, 5, 5, 5), -1, -1));
         tabbedPaneWorkBooks.addTab("Workers", panelWorkers);
         scrollPaneWorkers = new JScrollPane();
-        panelWorkers.add(scrollPaneWorkers, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panelWorkers.add(scrollPaneWorkers, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableWorkers = new JTable();
         scrollPaneWorkers.setViewportView(tableWorkers);
         btnAddWorkers = new JButton();
@@ -343,12 +354,12 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         spinnerWorkersDateOfBirth = new JSpinner();
         panelWorkers.add(spinnerWorkersDateOfBirth, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         comboBoxWorkersPositions = new JComboBox();
-        panelWorkers.add(comboBoxWorkersPositions, new GridConstraints(2, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(comboBoxWorkersPositions, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnSaveWorkers = new JButton();
         btnSaveWorkers.setActionCommand("btnSaveWorker");
         btnSaveWorkers.setEnabled(false);
         btnSaveWorkers.setText("Save");
-        panelWorkers.add(btnSaveWorkers, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(btnSaveWorkers, new GridConstraints(3, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnEditWorkers = new JButton();
         btnEditWorkers.setActionCommand("btnEditWorker");
         btnEditWorkers.setText("Edit");
@@ -361,20 +372,30 @@ public class WorkBooksForm extends JDialog implements ActionListener {
         panelWorkers.add(labelWorkersDateOfBirth, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelWorkersPosition = new JLabel();
         labelWorkersPosition.setText("Position");
-        panelWorkers.add(labelWorkersPosition, new GridConstraints(1, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(labelWorkersPosition, new GridConstraints(1, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnShowPositionsForm = new JButton();
         btnShowPositionsForm.setActionCommand("btnShowPositionsForm");
         btnShowPositionsForm.setText(". . .");
-        panelWorkers.add(btnShowPositionsForm, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(btnShowPositionsForm, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textFieldWorkersEmail = new JTextField();
+        panelWorkers.add(textFieldWorkersEmail, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        textFieldWorkersPassword = new JTextField();
+        panelWorkers.add(textFieldWorkersPassword, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         btnDeleteWorkers = new JButton();
         btnDeleteWorkers.setActionCommand("btnDeleteWorker");
         btnDeleteWorkers.setText("Delete");
-        panelWorkers.add(btnDeleteWorkers, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(btnDeleteWorkers, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnCancelWorkers = new JButton();
         btnCancelWorkers.setActionCommand("btnCancelWorker");
         btnCancelWorkers.setEnabled(false);
         btnCancelWorkers.setText("Cancel");
-        panelWorkers.add(btnCancelWorkers, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelWorkers.add(btnCancelWorkers, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelWorkersPassword = new JLabel();
+        labelWorkersPassword.setText("Password");
+        panelWorkers.add(labelWorkersPassword, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelWorkersEmail = new JLabel();
+        labelWorkersEmail.setText("Email");
+        panelWorkers.add(labelWorkersEmail, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -383,4 +404,5 @@ public class WorkBooksForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelWorkBooks;
     }
+
 }
