@@ -16,8 +16,9 @@ public class Worker extends Base {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT wo.id, wo.full_name, wo.date_of_birth, po.position FROM " +
-                    "workers wo INNER JOIN positions po ON wo.position_id = po.id";
+            String query = "select w.id, w.full_name, w.date_of_birth, p.position, u.email from workers w " +
+            "join positions p on w.position_id = p.id " +
+            "left join users u on w.user_id = u.id";
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next())
@@ -25,7 +26,8 @@ public class Worker extends Base {
                         resultSet.getInt("id"),
                         resultSet.getString("full_name"),
                         resultSet.getDate("date_of_birth"),
-                        resultSet.getString("position")
+                        resultSet.getString("position"),
+                        resultSet.getString("email")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
@@ -33,12 +35,12 @@ public class Worker extends Base {
         return results;
     }
 
-    public static void insertData(Worker worker) {
+    public static void insertData(Worker worker, int userId) {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO workers VALUES(null,'%s','%s',(SELECT id FROM positions where position='%s'), null)",
-                    worker.fullName, dateFormat.format(worker.dateOfBirth), worker.position);
+            String query = String.format("INSERT INTO workers VALUES(null,'%s','%s',(SELECT id FROM positions where position='%s'), null, %d)",
+                    worker.fullName, dateFormat.format(worker.dateOfBirth), worker.position, userId);
             statement.execute(query);
             worker.id = (int)((StatementImpl) statement).getLastInsertID();
         } catch (SQLException se) {
@@ -72,11 +74,20 @@ public class Worker extends Base {
     public String fullName;
     public Date dateOfBirth;
     public String position;
+    public String email;
 
     public Worker(int id, String fullName, Date dateOfBirth, String position) {
         this.id = id;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
         this.position = position;
+    }
+
+    public Worker(int id, String fullName, Date dateOfBirth, String position, String email) {
+        this.id = id;
+        this.fullName = fullName;
+        this.dateOfBirth = dateOfBirth;
+        this.position = position;
+        this.email = email;
     }
 }

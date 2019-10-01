@@ -8,7 +8,7 @@ public class WorkerTable extends MainTableModel {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     public WorkerTable() {
-        columnNames = new String[]{"Full Name", "Date of birth", "Position"};
+        columnNames = new String[]{"Full Name", "Date of birth", "Position", "Email"};
     }
 
     @Override
@@ -21,7 +21,8 @@ public class WorkerTable extends MainTableModel {
                 return dateFormat.format(worker.dateOfBirth);
             case 2:
                 return worker.position;
-
+            case 3:
+                return worker.email;
         }
         return "";
     }

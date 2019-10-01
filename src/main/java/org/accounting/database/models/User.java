@@ -27,7 +27,7 @@ public class User extends Base {
         try {
             Connection connection = Database.getConnection();
             StatementImpl statement = (StatementImpl)connection.createStatement();
-            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, (SELECT id FROM roles WHERE role='%s'))", user.email, user.password, user.role);
+            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", user.email, user.password, user.roleId);
             statement.execute(query);
             user.id = (int) statement.getLastInsertID();
         } catch (SQLException se) {
