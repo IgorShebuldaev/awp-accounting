@@ -19,7 +19,7 @@ public class UserTable extends MainTableModel {
             case 2:
                 return user.getRole().role;
             case 3:
-                return user.timeInProgram;
+                return user.getTimeInProgram();
         }
         return "";
     }

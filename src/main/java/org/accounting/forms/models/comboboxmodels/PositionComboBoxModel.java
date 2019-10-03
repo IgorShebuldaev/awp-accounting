@@ -1,19 +1,25 @@
 package org.accounting.forms.models.comboboxmodels;
 
+import org.accounting.database.models.Base;
 import org.accounting.database.models.Position;
 
 public class PositionComboBoxModel extends MainComboBoxModel {
-    @Override
-    public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(p -> ((Position)p).position.equals(anItem)).findFirst().get();
-    }
 
     @Override
     public Object getSelectedItem() {
-        return ((Position)super.getSelectedItem()).position;
+        if (selection == null) return "";
+
+        Position p = (Position) selection;
+        return p.position;
+    }
+
+    @Override
+    public void addRecord(Base record) {
+        Position p = (Position) record;
+        records.put(p.position, record);
     }
 
     public Object getElementAt(int index) {
-        return ((Position)records.get(index)).position;
+        return ((Position)super.getElementAt(index)).position;
     }
 }

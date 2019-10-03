@@ -1,20 +1,25 @@
 package org.accounting.forms.models.comboboxmodels;
 
+import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
 
 public class RoleComboBoxModel extends MainComboBoxModel {
 
     @Override
-    public void setSelectedItem(Object anItem) {
-        selection = records.stream().filter(r -> ((Role)r).role.equals(anItem)).findFirst().get();
+    public Object getSelectedItem() {
+        if (selection == null) return "";
+
+        Role p = (Role) selection;
+        return p.role;
     }
 
     @Override
-    public Object getSelectedItem() {
-        return ((Role)super.getSelectedItem()).role;
+    public void addRecord(Base record) {
+        Role p = (Role) record;
+        records.put(p.role, record);
     }
 
     public Object getElementAt(int index) {
-        return ((Role)records.get(index)).role;
+        return ((Role)super.getElementAt(index)).role;
     }
 }

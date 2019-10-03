@@ -3,24 +3,18 @@ package org.accounting.forms.models.comboboxmodels;
 import org.accounting.database.models.Base;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
-    protected ArrayList<Base> records = new ArrayList<>();
+    protected HashMap<String, Base> records = new HashMap<>();
     protected Base selection = null;
+
+    public abstract void addRecord(Base record);
 
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = (Base) anItem;
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        selection = getSelection();
-        if (selection == null) { return ""; }
-
-        return selection;
+        selection = records.get(anItem);
     }
 
     @Override
@@ -30,17 +24,13 @@ public abstract class MainComboBoxModel extends AbstractListModel implements Com
 
     @Override
     public Object getElementAt(int index) {
-        return records.get(index);
-    }
-
-    public void addRecord(Base record) {
-        records.add(record);
+        return records.values().toArray()[index];
     }
 
     public Base getSelection() {
         if (selection != null) return selection;
 
-        return records.get(0);
+        return null;
     }
 
     public void removeAllElements() {
