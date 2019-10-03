@@ -249,7 +249,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            User.deleteData(deliveryTableModel.getRecord(rowIndex).id);
+            Delivery.deleteData(deliveryTableModel.getRecord(rowIndex).id);
             deliveryTableModel.removeRow(rowIndex);
         }
     }
