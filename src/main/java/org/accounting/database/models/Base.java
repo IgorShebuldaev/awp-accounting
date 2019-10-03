@@ -13,4 +13,8 @@ public abstract class Base {
     public boolean isValid() {
         return id != 0;
     }
+
+    public String toString() {
+        return String.format("%s: %s", this.getClass().getSimpleName(), String.valueOf(this.id));
+    }
 }

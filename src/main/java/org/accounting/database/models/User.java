@@ -5,8 +5,11 @@ import org.accounting.database.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class User extends Base {
+    private Errors errors;
+
     public static ArrayList<User> getAll() {
         ArrayList<User> results = new ArrayList<>();
         try {
@@ -40,18 +43,6 @@ public class User extends Base {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
             String query = String.format("DELETE FROM users WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public static void updateData(User user) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
-                "role_id=%d where id=%d", user.email, user.password, user.timeInProgram, user.roleId, user.id);
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
@@ -134,11 +125,87 @@ public class User extends Base {
         return this.role = new Role(this.roleId);
     }
 
+    public boolean save() {
+        if (!isPositive()) { return false; }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
+                "role_id=%d where id=%d", email, password, timeInProgram, roleId, id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public String getTimeInProgram() {
+        int seconds = timeInProgram % 60;
+        int minutes = timeInProgram / 60 % 60;
+        int days = timeInProgram / 86400;
+
+        return String.format("%02d:%02d:%02d",
+            days,
+            minutes,
+            seconds
+        );
+    }
+
+    public boolean isPositive() {
+        boolean tmp = super.isValid();
+
+        if (email.isEmpty()) {
+           getErrors().addError("Email cannot be empty!");
+        }
+
+        return getErrors().isAny();
+    }
+
+    public Errors getErrors() {
+        if (errors == null) { errors = new Errors(); }
+
+        return errors;
+    }
+
     private void setAttributes(ResultSet resultSet) throws SQLException {
         this.id = resultSet.getInt("id");
         this.email = resultSet.getString("email");
         this.password = resultSet.getString("password");
         this.roleId = resultSet.getInt("role_id");
         this.timeInProgram = resultSet.getInt("time_in_program");
+    }
+
+    public class Errors {
+        private ArrayList<String> errors = new ArrayList<>();
+
+        public void addError(String error) {
+            errors.add(error);
+        }
+
+        public boolean isAny() {
+            return !errors.isEmpty();
+        }
+
+        public String fullMessages() {
+            return errors.stream().collect(Collectors.joining(new CharSequence() {
+                @Override
+                public int length() {
+                    return 1;
+                }
+
+                @Override
+                public char charAt(int i) {
+                    return ',';
+                }
+
+                @Override
+                public CharSequence subSequence(int i, int i1) {
+                    return null;
+                }
+            }));
+        }
+
     }
 }
