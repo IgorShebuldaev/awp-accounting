@@ -25,35 +25,35 @@ task load(type: Exec) {
   group 'Database'
   description 'Loads database schema'
 
-  commandLine 'sh', './db.sh', 'load'
+  commandLine './db.sh', 'load'
 }
 
 task dump(type: Exec) {
   group 'Database'
   description "Creates dump of database's structure"
 
-  commandLine 'sh', './db.sh', 'dump'
+  commandLine './db.sh', 'dump'
 }
 
 task destroy(type: Exec) {
   group 'Database'
   description 'Destroys database'
 
-  commandLine 'sh', './db.sh', 'destroy'
+  commandLine './db.sh', 'destroy'
 }
 
 task create(type: Exec) {
   group 'Database'
   description 'Creates empty database'
 
-  commandLine 'sh', './db.sh', 'create'
+  commandLine './db.sh', 'create'
 }
 
 task seed(type: Exec) {
     group 'Database'
     description 'Applies seeds to database'
 
-    commandLine 'sh', './db.sh', 'seed'
+    commandLine './db.sh', 'seed'
 }
 
 task setup_db {
