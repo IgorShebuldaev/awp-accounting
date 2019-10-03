@@ -28,7 +28,7 @@ public abstract class MainComboBoxModel extends AbstractListModel implements Com
     }
 
     public Base getSelection() {
-        if (selection != null) return selection;
+        if (selection != null) { return selection; }
 
         return null;
     }

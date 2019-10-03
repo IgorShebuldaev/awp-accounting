@@ -5,7 +5,7 @@ import org.accounting.database.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 public class User extends Base {
     private Errors errors;
@@ -24,29 +24,6 @@ public class User extends Base {
             se.printStackTrace();
         }
         return results;
-    }
-
-    public static void insertData(User user) {
-        try {
-            Connection connection = Database.getConnection();
-            StatementImpl statement = (StatementImpl)connection.createStatement();
-            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", user.email, user.password, user.roleId);
-            statement.execute(query);
-            user.id = (int) statement.getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public static void deleteData(int id) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM users WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
     }
 
     private static PreparedStatement buildQuery(String field, Object value, Class valueClass) {
@@ -125,6 +102,21 @@ public class User extends Base {
         return this.role = new Role(this.roleId);
     }
 
+    public boolean insert() {
+        if (!isPositive()) { return false; }
+        try {
+            Connection connection = Database.getConnection();
+            StatementImpl statement = (StatementImpl)connection.createStatement();
+            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", email, password, roleId);
+            statement.execute(query);
+            id = (int) statement.getLastInsertID();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return true;
+    }
+
     public boolean save() {
         if (!isPositive()) { return false; }
 
@@ -141,6 +133,17 @@ public class User extends Base {
         return true;
     }
 
+    public void delete() {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM users WHERE id=%d", id);
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
     public String getTimeInProgram() {
         int seconds = timeInProgram % 60;
         int minutes = timeInProgram / 60 % 60;
@@ -154,10 +157,16 @@ public class User extends Base {
     }
 
     public boolean isPositive() {
-        boolean tmp = super.isValid();
+        HashMap<String, String> fields = new HashMap<>();
 
-        if (email.isEmpty()) {
-           getErrors().addError("Email cannot be empty!");
+        fields.put(email,"Email cannot be empty!");
+        fields.put(password,"Password cannot be empty!");
+        fields.put(Integer.toString(roleId),"Role cannot be empty!");
+
+        for (String field: fields.keySet()) {
+            if (field.isEmpty()) {
+                getErrors().addError(fields.get(field));
+            }
         }
 
         return getErrors().isAny();
@@ -175,37 +184,5 @@ public class User extends Base {
         this.password = resultSet.getString("password");
         this.roleId = resultSet.getInt("role_id");
         this.timeInProgram = resultSet.getInt("time_in_program");
-    }
-
-    public class Errors {
-        private ArrayList<String> errors = new ArrayList<>();
-
-        public void addError(String error) {
-            errors.add(error);
-        }
-
-        public boolean isAny() {
-            return !errors.isEmpty();
-        }
-
-        public String fullMessages() {
-            return errors.stream().collect(Collectors.joining(new CharSequence() {
-                @Override
-                public int length() {
-                    return 1;
-                }
-
-                @Override
-                public char charAt(int i) {
-                    return ',';
-                }
-
-                @Override
-                public CharSequence subSequence(int i, int i1) {
-                    return null;
-                }
-            }));
-        }
-
     }
 }

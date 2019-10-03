@@ -9,14 +9,14 @@ public class PositionComboBoxModel extends MainComboBoxModel {
     public Object getSelectedItem() {
         if (selection == null) return "";
 
-        Position p = (Position) selection;
-        return p.position;
+        Position position = (Position) selection;
+        return position.position;
     }
 
     @Override
     public void addRecord(Base record) {
-        Position p = (Position) record;
-        records.put(p.position, record);
+        Position position = (Position) record;
+        records.put(position.position, record);
     }
 
     public Object getElementAt(int index) {

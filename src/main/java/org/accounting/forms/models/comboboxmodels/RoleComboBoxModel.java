@@ -9,14 +9,14 @@ public class RoleComboBoxModel extends MainComboBoxModel {
     public Object getSelectedItem() {
         if (selection == null) return "";
 
-        Role p = (Role) selection;
-        return p.role;
+        Role role = (Role) selection;
+        return role.role;
     }
 
     @Override
     public void addRecord(Base record) {
-        Role p = (Role) record;
-        records.put(p.role, record);
+        Role role = (Role) record;
+        records.put(role.role, record);
     }
 
     public Object getElementAt(int index) {

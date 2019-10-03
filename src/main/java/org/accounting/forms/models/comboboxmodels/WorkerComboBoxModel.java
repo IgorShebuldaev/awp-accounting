@@ -9,14 +9,14 @@ public class WorkerComboBoxModel extends MainComboBoxModel {
     public Object getSelectedItem() {
         if (selection == null) return "";
 
-        Worker p = (Worker) selection;
-        return p.fullName;
+        Worker worker = (Worker) selection;
+        return worker.fullName;
     }
 
     @Override
     public void addRecord(Base record) {
-        Worker p = (Worker) record;
-        records.put(p.fullName, record);
+        Worker worker = (Worker) record;
+        records.put(worker.fullName, record);
     }
 
     public Object getElementAt(int index) {

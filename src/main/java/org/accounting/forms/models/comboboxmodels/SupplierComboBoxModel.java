@@ -9,14 +9,14 @@ public class SupplierComboBoxModel extends MainComboBoxModel {
     public Object getSelectedItem() {
         if (selection == null) return "";
 
-        Supplier p = (Supplier) selection;
-        return p.companyName;
+        Supplier supplier = (Supplier) selection;
+        return supplier.companyName;
     }
 
     @Override
     public void addRecord(Base record) {
-        Supplier p = (Supplier) record;
-        records.put(p.companyName, record);
+        Supplier supplier = (Supplier) record;
+        records.put(supplier.companyName, record);
     }
 
     public Object getElementAt(int index) {
