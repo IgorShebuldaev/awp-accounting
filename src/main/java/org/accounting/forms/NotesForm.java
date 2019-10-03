@@ -68,5 +68,4 @@ public class NotesForm extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return panelNotes;
     }
-
 }

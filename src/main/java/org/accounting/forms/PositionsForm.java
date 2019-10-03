@@ -3,6 +3,7 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Position;
+import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.tablemodels.PositionTable;
 
 import javax.swing.*;
@@ -38,6 +39,7 @@ public class PositionsForm extends JDialog implements ActionListener {
 
         positionTableModel = new PositionTable();
         fillTable();
+        tablePositions.getTableHeader().setReorderingAllowed(false);
         tablePositions.setModel(positionTableModel);
 
         addButton.addActionListener(this);
@@ -69,16 +71,8 @@ public class PositionsForm extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        Object[] options = {"Yes", "No"};
-        int n = JOptionPane.showOptionDialog(this,
-                "Are you sure you want to delete the record?",
-                "Message",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
-        if (n == JOptionPane.YES_OPTION) {
+
+        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
             Position.deleteData(positionTableModel.getRecord(rowIndex).id);
             positionTableModel.removeRow(rowIndex);
         }
@@ -209,5 +203,4 @@ public class PositionsForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelPositions;
     }
-
 }

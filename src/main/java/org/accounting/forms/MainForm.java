@@ -8,6 +8,7 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
 import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
 import org.accounting.forms.workbooks.IDataManipulator;
@@ -102,6 +103,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
         deliveryTableModel = new DeliveryTable();
         fillTable();
+        tableDeliveries.getTableHeader().setReorderingAllowed(false);
         tableDeliveries.setModel(deliveryTableModel);
 
         spinnerDeliveriesDeliveryDate.setModel(setCurrentDateSpinner());
@@ -109,12 +111,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                int x = JOptionPane.showConfirmDialog(
-                        null,
-                        "Are you sure you want to exit?",
-                        "Confirm Exit", JOptionPane.YES_NO_OPTION);
-
-                if (x == JOptionPane.YES_OPTION) {
+                if (new YesNoDialog("Are you sure you want to exit?", "Confirm Exit").isPositive()) {
                     CurrentUser.updateDataTimeInProgram();
                     try {
                         Database.closeConnection();
@@ -152,17 +149,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         User currentUser = CurrentUser.getUser();
 
         currentUser.timeInProgram += 1;
-        int seconds = currentUser.timeInProgram % 60;
-        int minutes = currentUser.timeInProgram / 60 % 60;
-        int days = currentUser.timeInProgram / 86400;
         labelBar.setText(
-                String.format("User: %s. Role: %s. Time in program: %02d:%02d:%02d",
-                        currentUser.email,
-                        currentUser.getRole().role,
-                        days,
-                        minutes,
-                        seconds
-                )
+            String.format("User: %s. Role: %s. Time in program: %s",
+                currentUser.email,
+                currentUser.getRole().role,
+                currentUser.getTimeInProgram()
+            )
         );
     }
 
@@ -236,12 +228,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private void insertData() {
         if (isAnyEmptyField()) {
             Delivery delivery = new Delivery(
-                    0,
-                    (Date) spinnerDeliveriesDeliveryDate.getValue(),
-                    (String) comboBoxSuppliers.getSelectedItem(),
-                    textFieldProduct.getText(),
-                    textFieldPrice.getText(),
-                    (String) comboBoxWorkers.getSelectedItem());
+                0,
+                (Date) spinnerDeliveriesDeliveryDate.getValue(),
+                (String) comboBoxSuppliers.getSelectedItem(),
+                textFieldProduct.getText(),
+                textFieldPrice.getText(),
+                (String) comboBoxWorkers.getSelectedItem());
             Delivery.insertData(delivery);
             deliveryTableModel.addRecord(delivery);
             textFieldProduct.setText("");
@@ -255,16 +247,8 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        Object[] options = {"Yes", "No"};
-        int n = JOptionPane.showOptionDialog(this,
-                "Are you sure you want to delete the record?",
-                "Message",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
-        if (n == JOptionPane.YES_OPTION) {
+
+        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
             User.deleteData(deliveryTableModel.getRecord(rowIndex).id);
             deliveryTableModel.removeRow(rowIndex);
         }
@@ -274,12 +258,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         int rowIndex = tableDeliveries.getSelectedRow();
         if (isAnyEmptyField()) {
             Delivery delivery = new Delivery(
-                    deliveryTableModel.getRecord(rowIndex).id,
-                    (Date) spinnerDeliveriesDeliveryDate.getValue(),
-                    (String) comboBoxSuppliers.getSelectedItem(),
-                    textFieldProduct.getText(),
-                    textFieldPrice.getText(),
-                    (String) comboBoxWorkers.getSelectedItem());
+                deliveryTableModel.getRecord(rowIndex).id,
+                (Date) spinnerDeliveriesDeliveryDate.getValue(),
+                (String) comboBoxSuppliers.getSelectedItem(),
+                textFieldProduct.getText(),
+                textFieldPrice.getText(),
+                (String) comboBoxWorkers.getSelectedItem());
 
             Delivery.updateData(delivery);
             deliveryTableModel.setValueAt(delivery, rowIndex);
@@ -303,11 +287,11 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
 
     private boolean isAnyEmptyField() {
         String[] values = new String[]{
-                spinnerDeliveriesDeliveryDate.getValue().toString(),
-                (String) comboBoxSuppliers.getSelectedItem(),
-                textFieldProduct.getText(),
-                textFieldPrice.getText(),
-                (String) comboBoxWorkers.getSelectedItem()
+            spinnerDeliveriesDeliveryDate.getValue().toString(),
+            (String) comboBoxSuppliers.getSelectedItem(),
+            textFieldProduct.getText(),
+            textFieldPrice.getText(),
+            (String) comboBoxWorkers.getSelectedItem()
         };
 
         if (Arrays.stream(values).anyMatch(String::isEmpty)) {
@@ -481,5 +465,4 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
-
 }
