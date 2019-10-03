@@ -25,7 +25,7 @@ public class WorkerImpl implements IDataManipulator {
 
     public void insertData(MainTableModel tableModel, Base base, String password) {
         User user = new User(0, ((Worker)base).email, password, Role.getRoleIdByLookupCode("manager"), 0);
-        User.insertData(user);
+        user.insert();
         Worker.insertData((Worker) base, user.id);
         tableModel.addRecord(base);
     }
