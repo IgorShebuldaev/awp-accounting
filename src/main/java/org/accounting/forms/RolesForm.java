@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.ArrayList;
 
 public class RolesForm extends JDialog implements ActionListener {
     private JPanel panelRolesForm;
@@ -39,7 +37,8 @@ public class RolesForm extends JDialog implements ActionListener {
         setModalityType(ModalityType.APPLICATION_MODAL);
 
         roleTableModel = new RoleTable();
-        fillTable();
+
+        Role.getAll().forEach(roleTableModel::addRecord);
         tableRoles.getTableHeader().setReorderingAllowed(false);
         tableRoles.setModel(roleTableModel);
 
@@ -50,24 +49,37 @@ public class RolesForm extends JDialog implements ActionListener {
         deleteButton.addActionListener(this);
     }
 
-    private void fillTable() {
-        ArrayList<Role> results = Role.getAll();
-        for (Role role : results) {
-            roleTableModel.addRecord(role);
+    private void insertRecord() {
+        Role role = new Role();
+        role.setRole(textFieldRole.getText());
+        role.setRole(lookupCode.getText());
+
+        if (!role.save()) {
+            JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));
+            return;
         }
+
+        roleTableModel.addRecord(role);
+        textFieldRole.setText("");
+        lookupCode.setText("");
     }
 
-    private void insertData() {
-        if (isAnyEmptyField()) {
-            Role role = new Role(0, textFieldRole.getText(), lookupCode.getText());
-            Role.insertData(role);
-            roleTableModel.addRecord(role);
-            textFieldRole.setText("");
-            lookupCode.setText("");
+    private void saveRecord() {
+        int rowIndex = tableRoles.getSelectedRow();
+        Role role = roleTableModel.getRecord(rowIndex);
+        role.setRole(textFieldRole.getText());
+        role.setLookupCode(lookupCode.getText());
+
+        if (!role.save()) {
+            JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));
+            return;
         }
+
+        roleTableModel.setValueAt(role, rowIndex);
+        setDefaultMode();
     }
 
-    private void deleteData() {
+    private void deleteRecord() {
         int rowIndex = tableRoles.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -75,42 +87,22 @@ public class RolesForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            Role.deleteData(roleTableModel.getRecord(rowIndex).id);
+            roleTableModel.getRecord(rowIndex).delete();
             roleTableModel.removeRow(rowIndex);
         }
     }
 
-    private void updateData() {
+    private void setValues() {
         int rowIndex = tableRoles.getSelectedRow();
-        if (isAnyEmptyField() || rowIndex < 0) {
-            Role role = new Role(roleTableModel.getRecord(rowIndex).id, textFieldRole.getText(), lookupCode.getText());
-            Role.updateData(role);
-            roleTableModel.setValueAt(role, rowIndex);
-            setDefaultMode();
-        }
-    }
-
-    private void setValuesComponents() {
-        int row = tableRoles.getSelectedRow();
-        if (row < 0) {
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
 
-        textFieldRole.setText(roleTableModel.getRecord(row).role);
-        lookupCode.setText(roleTableModel.getRecord(row).lookupCode);
+        Role role = roleTableModel.getRecord(rowIndex);
+        textFieldRole.setText(role.getRole());
+        lookupCode.setText(role.getLookupCode());
         setEditMode();
-    }
-
-    private boolean isAnyEmptyField() {
-        String[] values = new String[]{textFieldRole.getText(), lookupCode.getText()};
-
-        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
-            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private void setDefaultMode() {
@@ -137,19 +129,19 @@ public class RolesForm extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "addButton":
-                insertData();
+                insertRecord();
                 break;
             case "editButton":
-                setValuesComponents();
+                setValues();
                 break;
             case "saveButton":
-                updateData();
+                saveRecord();
                 break;
             case "cancelButton":
                 setDefaultMode();
                 break;
             case "deleteButton":
-                deleteData();
+                deleteRecord();
                 break;
         }
     }
@@ -212,4 +204,5 @@ public class RolesForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelRolesForm;
     }
+
 }

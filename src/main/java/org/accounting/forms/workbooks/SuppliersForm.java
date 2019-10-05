@@ -26,15 +26,14 @@ public class SuppliersForm extends JPanel implements ActionListener {
     private JButton btnDeleteSuppliers;
     private SupplierTable supplierTableModel;
 
-    private SupplierImpl supplier;
-
-    public SuppliersForm() {
+    SuppliersForm() {
         super();
 
         supplierTableModel = new SupplierTable();
-        supplier = new SupplierImpl();
-        supplier.fillTable(supplierTableModel);
+
+        Supplier.getAll().forEach(supplierTableModel::addRecord);
         tableSuppliers.setModel(supplierTableModel);
+        tableSuppliers.getTableHeader().setReorderingAllowed(false);
 
         btnAddSuppliers.addActionListener(this);
         btnDeleteSuppliers.addActionListener(this);
@@ -47,6 +46,58 @@ public class SuppliersForm extends JPanel implements ActionListener {
 
     JPanel getPanel() {
         return panelSuppliers;
+    }
+
+    private void insertRecord() {
+        Supplier supplier = new Supplier();
+        supplier.setCompanyName(textFieldSuppliersCompanyName.getText());
+
+        if (!supplier.save()) {
+            JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        supplierTableModel.addRecord(supplier);
+        textFieldSuppliersCompanyName.setText("");
+    }
+
+    private void saveRecord() {
+        int rowIndex = tableSuppliers.getSelectedRow();
+        Supplier supplier = supplierTableModel.getRecord(rowIndex);
+        supplier.setCompanyName(textFieldSuppliersCompanyName.getText());
+
+        if (!supplier.save()) {
+            JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        supplierTableModel.setValueAt(supplier, rowIndex);
+        textFieldSuppliersCompanyName.setText("");
+        setDefaultMode();
+    }
+
+    private void deleteRecord() {
+        int rowIndex = tableSuppliers.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
+            return;
+        }
+
+        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
+            supplierTableModel.getRecord(rowIndex).delete();
+            supplierTableModel.removeRow(rowIndex);
+        }
+    }
+
+    private void setValues() {
+        int rowIndex = tableSuppliers.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
+            return;
+        }
+
+        textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).getCompanyName());
+        setEditMode();
     }
 
     private void setDefaultMode() {
@@ -68,62 +119,11 @@ public class SuppliersForm extends JPanel implements ActionListener {
         btnSaveSuppliers.setEnabled(true);
     }
 
-    private boolean isAnyEmptyField() {
-        if (textFieldSuppliersCompanyName.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private void setValues() {
-        int rowIndex = tableSuppliers.getSelectedRow();
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
-            return;
-        }
-        textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).companyName);
-        setEditMode();
-    }
-
-    private void addRecord() {
-        if (isAnyEmptyField()) {
-            supplier.insertData(supplierTableModel, new Supplier(
-                0,
-                textFieldSuppliersCompanyName.getText())
-            );
-
-            textFieldSuppliersCompanyName.setText("");
-        }
-    }
-
-    private void saveRecord() {
-        if (isAnyEmptyField()) {
-            supplier.updateData(supplierTableModel, tableSuppliers.getSelectedRow(),
-                new Supplier(
-                    supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id,
-                    textFieldSuppliersCompanyName.getText())
-            );
-
-            textFieldSuppliersCompanyName.setText("");
-            setDefaultMode();
-        }
-    }
-
-    private void deleteRecord() {
-        if (tableSuppliers.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
-        } else if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            supplier.deleteData(supplierTableModel, tableSuppliers.getSelectedRow(), supplierTableModel.getRecord(tableSuppliers.getSelectedRow()).id);
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "btnAddSupplier":
-                addRecord();
+                insertRecord();
                 break;
             case "btnEditSupplier":
                 setValues();

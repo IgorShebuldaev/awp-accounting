@@ -3,7 +3,7 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.accounting.database.models.Role;
+import org.accounting.database.models.Base;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.tablemodels.UserTable;
@@ -13,8 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class UsersForm extends JDialog implements ActionListener {
     private JPanel panelUsersForm;
@@ -41,7 +39,8 @@ public class UsersForm extends JDialog implements ActionListener {
         setModalityType(ModalityType.APPLICATION_MODAL);
 
         userTableModel = new UserTable();
-        fillTable();
+
+        User.getAll().forEach(userTableModel::addRecord);
         tableUsers.getTableHeader().setReorderingAllowed(false);
         tableUsers.setModel(userTableModel);
 
@@ -52,52 +51,29 @@ public class UsersForm extends JDialog implements ActionListener {
         cancelButton.addActionListener(this);
     }
 
-    private void fillTable() {
-        ArrayList<User> results = User.getAll();
-        for (User user : results) {
-            userTableModel.addRecord(user);
-        }
-    }
+    private void insertRecord() {
+        User user = new User();
+        user.setEmail(userFields.textFieldEmail.getText());
+        user.setPassword(userFields.textFieldPassword.getText());
+        user.setRoleId(userFields.roleModel.getSelection().map(Base::getId).orElse(0));
 
-    private void insertData() {
-        User user = new User(0,
-                userFields.textFieldEmail.getText(),
-                userFields.textFieldPassword.getText(),
-                userFields.roleModel.getSelection().id,
-                0);
-
-        if (!user.insert()) {
-            JOptionPane.showMessageDialog(this, user.getErrors().fullMessages());
+        if (!user.save()) {
+            JOptionPane.showMessageDialog(this, user.getErrors().fullMessages("\n"));
             return;
         }
+
         userTableModel.addRecord(user);
         userFields.textFieldEmail.setText("");
         userFields.textFieldPassword.setText("");
     }
 
-    private void deleteData() {
-        int rowIndex = tableUsers.getSelectedRow();
-
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-            return;
-        }
-
-        User user = userTableModel.getRecord(rowIndex);
-
-        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            user.delete();
-            userTableModel.removeRow(rowIndex);
-        }
-    }
-
-    private void updateData() {
+    private void saveRecord() {
         int rowIndex = tableUsers.getSelectedRow();
         User user = userTableModel.getRecord(rowIndex);
 
-        user.email = userFields.textFieldEmail.getText();
-        user.password = userFields.textFieldPassword.getText();
-        user.roleId = userFields.roleModel.getSelection().id;
+        user.setEmail(userFields.textFieldEmail.getText());
+        user.setPassword(userFields.textFieldPassword.getText());
+        user.setRoleId(userFields.roleModel.getSelection().map(Base::getId).orElse(0));
 
         if (!user.save()) {
             JOptionPane.showMessageDialog(this, user.getErrors().fullMessages());
@@ -108,7 +84,20 @@ public class UsersForm extends JDialog implements ActionListener {
         setDefaultMode();
     }
 
-    private void setValuesComponents() {
+    private void deleteRecord() {
+        int rowIndex = tableUsers.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+            return;
+        }
+
+        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
+            userTableModel.getRecord(rowIndex).delete();
+            userTableModel.removeRow(rowIndex);
+        }
+    }
+
+    private void setValues() {
         int rowIndex = tableUsers.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -117,24 +106,10 @@ public class UsersForm extends JDialog implements ActionListener {
 
         User user = userTableModel.getRecord(rowIndex);
 
-        userFields.textFieldEmail.setText(user.email);
-        userFields.textFieldPassword.setText(user.password);
-        userFields.comboBoxRoles.setSelectedItem(user.getRole().role);
+        userFields.textFieldEmail.setText(user.getEmail());
+        userFields.textFieldPassword.setText(user.getPassword());
+        userFields.comboBoxRoles.setSelectedItem(user.getRole().getRole());
         setEditMode();
-    }
-
-    private boolean isAnyEmptyField() {
-        String[] values = new String[]{
-                userFields.textFieldEmail.getText(),
-                userFields.textFieldPassword.getText(),
-                (String) userFields.comboBoxRoles.getSelectedItem()};
-
-        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
-            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private void setDefaultMode() {
@@ -161,16 +136,16 @@ public class UsersForm extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "add":
-                insertData();
+                insertRecord();
                 break;
             case "delete":
-                deleteData();
+                deleteRecord();
                 break;
             case "edit":
-                setValuesComponents();
+                setValues();
                 break;
             case "save":
-                updateData();
+                saveRecord();
                 break;
             case "cancel":
                 setDefaultMode();
@@ -239,5 +214,4 @@ public class UsersForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelUsersForm;
     }
-
 }

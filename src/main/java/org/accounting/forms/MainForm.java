@@ -8,10 +8,10 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.components.DataTimePicker;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
 import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
-import org.accounting.forms.workbooks.IDataManipulator;
 import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.forms.models.tablemodels.DeliveryTable;
 import org.accounting.user.CurrentUser;
@@ -20,11 +20,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
-public class MainForm extends JFrame implements ActionListener, IDataManipulator {
+public class MainForm extends JFrame implements ActionListener {
     private JFrame authorizationForm = new JFrame("Log in");
     private JTextField textFieldEmail = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
@@ -42,7 +40,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     private JTextField textFieldProduct;
     private JTextField textFieldPrice;
     private JComboBox<String> comboBoxWorkers;
-    private JLabel labelBar;
+    private JLabel labelStatusBar;
     private JLabel labelDeliveryDate;
     private JLabel labelSupplier;
     private JLabel labelProduct;
@@ -102,11 +100,12 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         setLocationRelativeTo(null);
 
         deliveryTableModel = new DeliveryTable();
-        fillTable();
-        tableDeliveries.getTableHeader().setReorderingAllowed(false);
-        tableDeliveries.setModel(deliveryTableModel);
 
-        spinnerDeliveriesDeliveryDate.setModel(setCurrentDateSpinner());
+        Delivery.getAll().forEach(deliveryTableModel::addRecord);
+        tableDeliveries.setModel(deliveryTableModel);
+        tableDeliveries.getTableHeader().setReorderingAllowed(false);
+
+        spinnerDeliveriesDeliveryDate.setModel(new DataTimePicker().setCurrentDateSpinner());
         spinnerDeliveriesDeliveryDate.setEditor(new JSpinner.DateEditor(spinnerDeliveriesDeliveryDate, "dd.MM.yyyy"));
 
         this.addWindowListener(new WindowAdapter() {
@@ -125,8 +124,7 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
             }
         });
 
-
-        updateStatusBar();
+        updateStatusBar(); //???
 
         Timer timer = new Timer(1000, e -> updateStatusBar());
         timer.start();
@@ -145,17 +143,14 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         setVisible(true);
     }
 
-    private void updateStatusBar() {
-        User currentUser = CurrentUser.getUser();
-
-        currentUser.timeInProgram += 1;
-        labelBar.setText(
-            String.format("User: %s. Role: %s. Time in program: %s",
-                currentUser.email,
-                currentUser.getRole().role,
-                currentUser.getTimeInProgram()
-            )
-        );
+    private void validateUserAuthorization(JTextField login, JPasswordField password) {
+        Authorization currentUser = new Authorization();
+        if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
+            authorizationForm.dispose();
+            createMainForm();
+        } else {
+            JOptionPane.showMessageDialog(authorizationForm, "Invalid login or password! Try again.");
+        }
     }
 
     private JMenuBar creatMenuBar() {
@@ -207,41 +202,69 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         return menuBar;
     }
 
-    private void validateUserAuthorization(JTextField login, JPasswordField password) {
-        Authorization currentUser = new Authorization();
-        if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
-            authorizationForm.dispose();
-            createMainForm();
-        } else {
-            JOptionPane.showMessageDialog(authorizationForm, "Invalid login or password! Try again.");
-        }
+    private void updateStatusBar() {
+        User currentUser = CurrentUser.getUser();
+
+        currentUser.incrementTimeInProgram(1);
+        labelStatusBar.setText(
+                String.format("User: %s. Role: %s. Time in program: %s",
+                        currentUser.getEmail(),
+                        currentUser.getRole().getRole(),
+                        currentUser.getFormattedTimeInProgram()
+                )
+        );
     }
 
-    private void fillTable() {
-        ArrayList<Delivery> results = Delivery.getAll();
-        for (Delivery delivery : results) {
-            deliveryTableModel.addRecord(delivery);
-        }
-        tableDeliveries.setModel(deliveryTableModel);
+    private void addItemComboBoxSupplier() {
+        supplierComboBoxModel.removeAllElements();
+        Supplier.getAll().forEach(supplierComboBoxModel::addRecord);
+        comboBoxSuppliers.setModel(supplierComboBoxModel);
     }
 
-    private void insertData() {
-        if (isAnyEmptyField()) {
-            Delivery delivery = new Delivery(
-                0,
-                (Date) spinnerDeliveriesDeliveryDate.getValue(),
-                (String) comboBoxSuppliers.getSelectedItem(),
-                textFieldProduct.getText(),
-                textFieldPrice.getText(),
-                (String) comboBoxWorkers.getSelectedItem());
-            Delivery.insertData(delivery);
-            deliveryTableModel.addRecord(delivery);
-            textFieldProduct.setText("");
-            textFieldPrice.setText("");
-        }
+    private void addItemComboBoxWorker() {
+        workerComboBoxModel.removeAllElements();
+        Worker.getAll().forEach(workerComboBoxModel::addRecord);
+        comboBoxWorkers.setModel(workerComboBoxModel);
     }
 
-    private void deleteData() {
+    private void insertRecord() {
+        Delivery delivery = new Delivery();
+        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
+        delivery.setSupplier((String) comboBoxSuppliers.getSelectedItem());
+        delivery.setProduct(textFieldProduct.getText());
+        delivery.setPrice(textFieldPrice.getText());
+        delivery.setWorker((String) workerComboBoxModel.getSelectedItem());
+
+        if (!delivery.save()) {
+            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        deliveryTableModel.addRecord(delivery);
+        textFieldProduct.setText("");
+        textFieldPrice.setText("");
+    }
+
+    private void saveRecord() {
+        int rowIndex = tableDeliveries.getSelectedRow();
+        Delivery delivery = deliveryTableModel.getRecord(rowIndex);
+        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
+        delivery.setSupplier((String) comboBoxSuppliers.getSelectedItem());
+        delivery.setProduct(textFieldProduct.getText());
+        delivery.setPrice(textFieldPrice.getText());
+        delivery.setWorker((String) comboBoxWorkers.getSelectedItem());
+
+        if (!delivery.save()) {
+            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        delivery.save();
+        deliveryTableModel.setValueAt(delivery, rowIndex);
+        setDefaultMode();
+    }
+
+    private void deleteRecord() {
         int rowIndex = tableDeliveries.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -249,75 +272,25 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            Delivery.deleteData(deliveryTableModel.getRecord(rowIndex).id);
+            deliveryTableModel.getRecord(rowIndex).delete();
             deliveryTableModel.removeRow(rowIndex);
         }
     }
 
-    private void updateData() {
-        int rowIndex = tableDeliveries.getSelectedRow();
-        if (isAnyEmptyField()) {
-            Delivery delivery = new Delivery(
-                deliveryTableModel.getRecord(rowIndex).id,
-                (Date) spinnerDeliveriesDeliveryDate.getValue(),
-                (String) comboBoxSuppliers.getSelectedItem(),
-                textFieldProduct.getText(),
-                textFieldPrice.getText(),
-                (String) comboBoxWorkers.getSelectedItem());
-
-            Delivery.updateData(delivery);
-            deliveryTableModel.setValueAt(delivery, rowIndex);
-            setDefaultMode();
-        }
-    }
-
-    private void setValuesComponents() {
+    private void setValues() {
         int rowIndex = tableDeliveries.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        spinnerDeliveriesDeliveryDate.setValue(deliveryTableModel.getRecord(rowIndex).deliveryDate);
-        comboBoxSuppliers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).supplier);
-        textFieldProduct.setText(deliveryTableModel.getRecord(rowIndex).product);
-        textFieldPrice.setText(deliveryTableModel.getRecord(rowIndex).price);
-        comboBoxWorkers.setSelectedItem(deliveryTableModel.getRecord(rowIndex).worker);
+
+        Delivery delivery = deliveryTableModel.getRecord(rowIndex);
+        spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
+        comboBoxSuppliers.setSelectedItem(delivery.getSupplier());
+        textFieldProduct.setText(delivery.getProduct());
+        textFieldPrice.setText(delivery.getPrice());
+        comboBoxWorkers.setSelectedItem(delivery.getWorker());
         setEditMode();
-    }
-
-    private boolean isAnyEmptyField() {
-        String[] values = new String[]{
-            spinnerDeliveriesDeliveryDate.getValue().toString(),
-            (String) comboBoxSuppliers.getSelectedItem(),
-            textFieldProduct.getText(),
-            textFieldPrice.getText(),
-            (String) comboBoxWorkers.getSelectedItem()
-        };
-
-        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
-            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private void addItemComboBoxSupplier() {
-        supplierComboBoxModel.removeAllElements();
-        ArrayList<Supplier> results = Supplier.getAll();
-        for (Supplier supplier : results) {
-            supplierComboBoxModel.addRecord(supplier);
-        }
-        comboBoxSuppliers.setModel(supplierComboBoxModel);
-    }
-
-    private void addItemComboBoxWorker() {
-        workerComboBoxModel.removeAllElements();
-        ArrayList<Worker> results = Worker.getAll();
-        for (Worker worker : results) {
-            workerComboBoxModel.addRecord(worker);
-        }
-        comboBoxWorkers.setModel(workerComboBoxModel);
     }
 
     private void setDefaultMode() {
@@ -369,19 +342,19 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
                 new RolesForm().setVisible(true);
                 break;
             case "addButton":
-                insertData();
+                insertRecord();
                 break;
             case "editButton":
-                setValuesComponents();
+                setValues();
                 break;
             case "saveButton":
-                updateData();
+                saveRecord();
                 break;
             case "cancelButton":
                 setDefaultMode();
                 break;
             case "deleteButton":
-                deleteData();
+                deleteRecord();
                 break;
         }
     }
@@ -407,9 +380,9 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
         panelMain.add(scrollPaneMain, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableDeliveries = new JTable();
         scrollPaneMain.setViewportView(tableDeliveries);
-        labelBar = new JLabel();
-        labelBar.setText("                     ");
-        panelMain.add(labelBar, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelStatusBar = new JLabel();
+        labelStatusBar.setText("                     ");
+        panelMain.add(labelStatusBar, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         addButton = new JButton();
         addButton.setActionCommand("addButton");
         addButton.setText("Add");
@@ -465,4 +438,5 @@ public class MainForm extends JFrame implements ActionListener, IDataManipulator
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
+
 }

@@ -21,7 +21,7 @@
           </component>
         </children>
       </scrollpane>
-      <component id="29085" class="javax.swing.JLabel" binding="labelBar">
+      <component id="29085" class="javax.swing.JLabel" binding="labelStatusBar">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

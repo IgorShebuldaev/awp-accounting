@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class PositionsForm extends JDialog implements ActionListener {
     private JTable tablePositions;
@@ -38,9 +36,10 @@ public class PositionsForm extends JDialog implements ActionListener {
         setModalityType(ModalityType.APPLICATION_MODAL);
 
         positionTableModel = new PositionTable();
-        fillTable();
-        tablePositions.getTableHeader().setReorderingAllowed(false);
+
+        Position.getAll().forEach(positionTableModel::addRecord);
         tablePositions.setModel(positionTableModel);
+        tablePositions.getTableHeader().setReorderingAllowed(false);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
@@ -49,23 +48,35 @@ public class PositionsForm extends JDialog implements ActionListener {
         deleteButton.addActionListener(this);
     }
 
-    private void fillTable() {
-        ArrayList<Position> results = Position.getAll();
-        for (Position role : results) {
-            positionTableModel.addRecord(role);
+    private void insertRecord() {
+        Position position = new Position();
+        position.setPosition(textFieldPosition.getText());
+
+        if (!position.save()) {
+            JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
+            return;
         }
+
+        positionTableModel.addRecord(position);
+        textFieldPosition.setText("");
     }
 
-    private void insertData() {
-        if (isAnyEmptyField()) {
-            Position position = new Position(0, textFieldPosition.getText());
-            Position.insertData(position);
-            positionTableModel.addRecord(position);
-            textFieldPosition.setText("");
+    private void saveRecord() {
+        int rowIndex = tablePositions.getSelectedRow();
+        Position position = positionTableModel.getRecord(rowIndex);
+        position.setPosition(textFieldPosition.getText());
+
+        if (!position.save()) {
+            JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
+            return;
         }
+
+        positionTableModel.setValueAt(position, rowIndex);
+        textFieldPosition.setText("");
+        setDefaultMode();
     }
 
-    private void deleteRole() {
+    private void deleteRecord() {
         int rowIndex = tablePositions.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
@@ -73,38 +84,20 @@ public class PositionsForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            Position.deleteData(positionTableModel.getRecord(rowIndex).id);
+            positionTableModel.getRecord(rowIndex).delete();
             positionTableModel.removeRow(rowIndex);
         }
     }
 
-    private void updateData() {
+    private void setValues() {
         int rowIndex = tablePositions.getSelectedRow();
-        if (isAnyEmptyField()) {
-            Position position = new Position(positionTableModel.getRecord(rowIndex).id, textFieldPosition.getText());
-            Position.updateData(position);
-            positionTableModel.setValueAt(position, rowIndex);
-            setDefaultMode();
-        }
-    }
-
-    private void setValuesComponents() {
-        int row = tablePositions.getSelectedRow();
-        if (row < 0) {
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
-        textFieldPosition.setText(positionTableModel.getRecord(row).position);
-        setEditMode();
-    }
 
-    private boolean isAnyEmptyField() {
-        if (textFieldPosition.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
+        textFieldPosition.setText(positionTableModel.getRecord(rowIndex).getPosition());
+        setEditMode();
     }
 
     private void setDefaultMode() {
@@ -130,19 +123,19 @@ public class PositionsForm extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "addButton":
-                insertData();
+                insertRecord();
                 break;
             case "editButton":
-                setValuesComponents();
+                setValues();
                 break;
             case "saveButton":
-                updateData();
+                saveRecord();
                 break;
             case "cancelButton":
                 setDefaultMode();
                 break;
             case "deleteButton":
-                deleteRole();
+                deleteRecord();
                 break;
         }
     }
@@ -203,4 +196,5 @@ public class PositionsForm extends JDialog implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelPositions;
     }
+
 }

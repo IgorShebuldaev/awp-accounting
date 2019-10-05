@@ -2,16 +2,18 @@ package org.accounting.forms.workbooks;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.Position;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.PositionsForm;
+import org.accounting.forms.components.DataTimePicker;
 import org.accounting.forms.helpers.YesNoDialog;
+import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
 import org.accounting.forms.models.tablemodels.WorkerTable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.Date;
 
 public class WorkersForms extends JPanel implements ActionListener {
@@ -34,22 +36,21 @@ public class WorkersForms extends JPanel implements ActionListener {
     private JLabel labelWorkersPosition;
     private JLabel labelWorkersPassword;
     private JLabel labelWorkersEmail;
-
-    private WorkerImpl worker;
     private WorkerTable workerTableModel;
 
-    public WorkersForms() {
+    WorkersForms() {
         super();
 
         workerTableModel = new WorkerTable();
-        worker = new WorkerImpl();
-        worker.fillTable(workerTableModel);
-        tableWorkers.setModel(workerTableModel);
 
-        spinnerWorkersDateOfBirth.setModel(worker.setCurrentDateSpinner());
+        Worker.getAll().forEach(workerTableModel::addRecord);
+        tableWorkers.setModel(workerTableModel);
+        tableWorkers.getTableHeader().setReorderingAllowed(false);
+
+        spinnerWorkersDateOfBirth.setModel(new DataTimePicker().setCurrentDateSpinner());
         spinnerWorkersDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkersDateOfBirth, "dd.MM.yyyy"));
 
-        comboBoxWorkersPositions.setModel(worker.addItemComboBoxPosition());
+        addItemComboBoxPosition();
 
         btnAddWorkers.addActionListener(this);
         btnDeleteWorkers.addActionListener(this);
@@ -65,33 +66,80 @@ public class WorkersForms extends JPanel implements ActionListener {
         return panelWorkers;
     }
 
+    private void showPositionsForm() {
+        new PositionsForm().setVisible(true);
+        addItemComboBoxPosition();
+    }
+
+    private void addItemComboBoxPosition() {
+        PositionComboBoxModel model = new PositionComboBoxModel();
+        Position.getAll().forEach(model::addRecord);
+        comboBoxWorkersPositions.setModel(model);
+    }
+
+    private void insertRecord() {
+        Worker worker = new Worker();
+        worker.setFullName(textFieldWorkersFullName.getText());
+        worker.setDateOfBirth((Date) spinnerWorkersDateOfBirth.getValue());
+        worker.setPosition((String) comboBoxWorkersPositions.getSelectedItem());
+        worker.setEmail(textFieldWorkersEmail.getText());
+
+        if (!worker.save()) {
+            JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        workerTableModel.addRecord(worker);
+        textFieldWorkersFullName.setText("");
+        textFieldWorkersEmail.setText("");
+        textFieldWorkersPassword.setText("");
+    }
+
+    private void saveRecord() {
+        int rowIndex = tableWorkers.getSelectedRow();
+        Worker worker = workerTableModel.getRecord(rowIndex);
+
+        worker.setFullName(textFieldWorkersFullName.getText());
+        worker.setDateOfBirth((Date) spinnerWorkersDateOfBirth.getValue());
+        worker.setPosition((String) comboBoxWorkersPositions.getSelectedItem());
+        worker.setEmail(textFieldWorkersEmail.getText());
+
+        if (!worker.save()) {
+            JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
+            return;
+        }
+
+        workerTableModel.setValueAt(worker, rowIndex);
+        textFieldWorkersFullName.setText("");
+        setDefaultMode();
+    }
+
+    private void deleteRecord() {
+        int rowIndex = tableWorkers.getSelectedRow();
+        if (rowIndex < 0) {
+            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
+            return;
+        }
+
+        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
+            workerTableModel.getRecord(rowIndex).delete();
+            workerTableModel.removeRow(rowIndex);
+        }
+    }
+
     private void setValues() {
         int rowIndex = tableWorkers.getSelectedRow();
         if (rowIndex < 0) {
             JOptionPane.showMessageDialog(null, "Select an entry in the table!");
             return;
         }
-        textFieldWorkersFullName.setText(workerTableModel.getRecord(rowIndex).fullName);
-        spinnerWorkersDateOfBirth.setValue((workerTableModel.getRecord(rowIndex).dateOfBirth));
-        comboBoxWorkersPositions.setSelectedItem(workerTableModel.getRecord(rowIndex).position);
-        textFieldWorkersEmail.setText(workerTableModel.getRecord(rowIndex).email);
+
+        Worker worker = workerTableModel.getRecord(rowIndex);
+        textFieldWorkersFullName.setText(worker.getFullName());
+        spinnerWorkersDateOfBirth.setValue(worker.getDateOfBirth());
+        comboBoxWorkersPositions.setSelectedItem(worker.getPosition());
+        textFieldWorkersEmail.setText(worker.getEmail());
         setEditMode();
-    }
-
-    private boolean isAnyEmptyField() {
-        String[] values = new String[]{
-            textFieldWorkersFullName.getText(),
-            spinnerWorkersDateOfBirth.getValue().toString(),
-            (String) comboBoxWorkersPositions.getSelectedItem(),
-            textFieldWorkersPassword.getText(),
-            textFieldWorkersPassword.getText()};
-
-        if (Arrays.stream(values).anyMatch(String::isEmpty)) {
-            JOptionPane.showMessageDialog(null, "Field cannot be empty!");
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private void setDefaultMode() {
@@ -115,54 +163,11 @@ public class WorkersForms extends JPanel implements ActionListener {
         tableWorkers.setEnabled(false);
     }
 
-    private void showPositionsForm() {
-        new PositionsForm().setVisible(true);
-        comboBoxWorkersPositions.setModel(worker.addItemComboBoxPosition());
-    }
-
-    private void deleteRecord() {
-        if (tableWorkers.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(null, "Select an entry in the table!");
-            return;
-        }
-        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            worker.deleteData(workerTableModel, tableWorkers.getSelectedRow(), workerTableModel.getRecord(tableWorkers.getSelectedRow()).id);
-        }
-    }
-
-    private void saveRecord() {
-        if (isAnyEmptyField()) {
-            worker.updateData(workerTableModel, tableWorkers.getSelectedRow(),
-                new Worker(
-                    workerTableModel.getRecord(tableWorkers.getSelectedRow()).id,
-                    textFieldWorkersFullName.getText(),
-                    (Date) spinnerWorkersDateOfBirth.getValue(),
-                    (String) comboBoxWorkersPositions.getSelectedItem()));
-            textFieldWorkersFullName.setText("");
-            setDefaultMode();
-        }
-    }
-
-    private void addRecord() {
-        if (isAnyEmptyField()) {
-            worker.insertData(workerTableModel, new Worker(
-                    0,
-                    textFieldWorkersFullName.getText(),
-                    (Date) spinnerWorkersDateOfBirth.getValue(),
-                    (String) comboBoxWorkersPositions.getSelectedItem(),
-                    textFieldWorkersEmail.getText()),
-                textFieldWorkersPassword.getText());
-            textFieldWorkersFullName.setText("");
-            textFieldWorkersEmail.setText("");
-            textFieldWorkersPassword.setText("");
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "btnAddWorker":
-                addRecord();
+                insertRecord();
                 break;
             case "btnEditWorker":
                 setValues();

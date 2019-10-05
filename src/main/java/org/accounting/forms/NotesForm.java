@@ -14,13 +14,15 @@ public class NotesForm extends JDialog {
     private JTextArea textAreaNotes;
     private JScrollPane scrollPaneNotes;
     private JPanel panelNotes;
+    private Note note;
 
     NotesForm() {
         createNotesForm();
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                Note.updateNoteCurrentUser(CurrentUser.getUser().id, textAreaNotes.getText());
+                note.setNote(textAreaNotes.getText());
+                note.updateNoteCurrentUser();
             }
         });
     }
@@ -32,10 +34,12 @@ public class NotesForm extends JDialog {
         setTitle("Notes");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        Note note = Note.getNoteCurrentUser(CurrentUser.getUser().id);
+        note = new Note();
+        note.setId(CurrentUser.getUser().getId());
+        note.getNoteCurrentUser();
 
         if (note != null) {
-            textAreaNotes.setText(note.note);
+            textAreaNotes.setText(note.getNote());
         }
     }
 
