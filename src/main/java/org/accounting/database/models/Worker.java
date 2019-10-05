@@ -82,6 +82,15 @@ public class Worker extends Base {
         this.email = email;
     }
 
+    public boolean isValid() {
+        getValidator().validatePresence(fullName, "Full name");
+        getValidator().validatePresence(dateOfBirth, "Date of birth");
+        getValidator().validatePresence(position, "Position");
+        getValidator().validateEmail(email);
+
+        return getErrors().isEmpty();
+    }
+
     public boolean save() {
         if (!isValid()) { return false; }
 

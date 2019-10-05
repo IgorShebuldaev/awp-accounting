@@ -46,6 +46,12 @@ public class Supplier extends Base {
         this.companyName = companyName;
     }
 
+    public boolean isValid() {
+        getValidator().validatePresence(companyName, "Company name");
+
+        return getErrors().isEmpty();
+    }
+
     public boolean save() {
         if (!isValid()) { return false; }
 

@@ -98,6 +98,13 @@ public class Role extends Base {
         return ADMIN_LOOKUP_CODE;
     }
 
+    public boolean isValid() {
+        getValidator().validatePresence(role, "Role");
+        getValidator().validatePresence(lookupCode, "Lookup code");
+
+        return getErrors().isEmpty();
+    }
+
     public boolean save() {
         if (!isValid()) { return false; }
 

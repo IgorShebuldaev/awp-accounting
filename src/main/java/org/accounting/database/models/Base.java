@@ -1,52 +1,75 @@
 package org.accounting.database.models;
 
+import org.accounting.database.Database;
+import org.accounting.database.models.utils.Errors;
+import org.accounting.database.models.utils.Validator;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
-public abstract class Base {
+public abstract class  Base {
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public static ArrayList<?> getAll() { return null; }
+    protected abstract String getTableName();
 
-    public int id;
+    public static ArrayList<?> getAll() { return null; }
+    protected Integer id;
+    protected boolean isNewRecord;
+    protected Errors errors;
+    protected Validator validator;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Errors getErrors() {
+        if (errors == null) { errors = new Errors(); }
+
+        return errors;
+    }
+
+    protected Validator getValidator() {
+        if (validator == null) { validator = new Validator(getErrors()); };
+
+        return validator;
+    }
+
+    public boolean isNewRecord() {
+        return this.getId() == null || this.isNewRecord;
+    }
 
     public boolean isValid() {
-        return id != 0;
+        if (isNewRecord()) { return true; }
+
+        getValidator().validateCustom("Incorrect id", getId(), new Validator.CustomValidator<Integer>() {
+            @Override
+            public boolean isValid(Integer object) {
+                return object > 0;
+            }
+        });
+
+        return getErrors().isEmpty();
+    }
+
+    public void delete() {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("DELETE FROM %s WHERE id=%d", getTableName(), getId());
+            statement.execute(query);
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
     }
 
     public String toString() {
-        return String.format("%s: %s", this.getClass().getSimpleName(), String.valueOf(this.id));
-    }
-
-    public class Errors {
-        private ArrayList<String> errors = new ArrayList<>();
-
-        public void addError(String error) {
-            errors.add(error);
-        }
-
-        public boolean isAny() {
-            return errors.isEmpty();
-        }
-
-        public String fullMessages() {
-            return errors.stream().collect(Collectors.joining(new CharSequence() {
-                @Override
-                public int length() {
-                    return 1;
-                }
-
-                @Override
-                public char charAt(int i) {
-                    return ',';
-                }
-
-                @Override
-                public CharSequence subSequence(int i, int i1) {
-                    return null;
-                }
-            }));
-        }
+        return String.format("%s: %s", this.getClass().getSimpleName(), String.valueOf(this.getId()));
     }
 }

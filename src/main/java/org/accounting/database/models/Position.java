@@ -46,6 +46,12 @@ public class Position extends Base {
         this.position = position;
     }
 
+    public boolean isValid() {
+        getValidator().validatePresence(position, "Position");
+
+        return getErrors().isEmpty();
+    }
+
     public boolean save() {
         if (!isValid()) { return false; }
 

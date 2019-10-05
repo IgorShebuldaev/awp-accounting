@@ -95,6 +95,16 @@ public class Delivery extends Base {
         this.worker = worker;
     }
 
+    public boolean isValid() {
+        getValidator().validatePresence(deliveryDate, "Delivery date");
+        getValidator().validatePresence(supplier, "Supplier");
+        getValidator().validatePresence(product, "Product");
+        getValidator().validatePresence(price, "Price");
+        getValidator().validatePresence(worker, "Worker");
+
+        return getErrors().isEmpty();
+    }
+
     public boolean save() {
         if (!isValid()) { return false; }
 
