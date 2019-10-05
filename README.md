@@ -6,7 +6,7 @@ To mount a database, create a file database.properties and fill in the example
 src/main/resources/database.properties.example.
 Then use the file seed.sql to fill the system tables in the program, 
 otherwise you will not be able to log in.
-## Gradle task
+## Gradle tasks
 * Loads database schema.
 ```
 load

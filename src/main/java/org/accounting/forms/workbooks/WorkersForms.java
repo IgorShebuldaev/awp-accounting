@@ -5,7 +5,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Position;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.PositionsForm;
-import org.accounting.forms.components.DataTimePicker;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
 import org.accounting.forms.models.tablemodels.WorkerTable;
@@ -47,8 +46,9 @@ public class WorkersForms extends JPanel implements ActionListener {
         tableWorkers.setModel(workerTableModel);
         tableWorkers.getTableHeader().setReorderingAllowed(false);
 
-        spinnerWorkersDateOfBirth.setModel(new DataTimePicker().setCurrentDateSpinner());
+        spinnerWorkersDateOfBirth.setModel(new SpinnerDateModel());
         spinnerWorkersDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkersDateOfBirth, "dd.MM.yyyy"));
+        spinnerWorkersDateOfBirth.setValue(new Date());
 
         addItemComboBoxPosition();
 

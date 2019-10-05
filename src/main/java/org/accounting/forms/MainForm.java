@@ -8,7 +8,6 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
-import org.accounting.forms.components.DataTimePicker;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
 import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
@@ -105,8 +104,9 @@ public class MainForm extends JFrame implements ActionListener {
         tableDeliveries.setModel(deliveryTableModel);
         tableDeliveries.getTableHeader().setReorderingAllowed(false);
 
-        spinnerDeliveriesDeliveryDate.setModel(new DataTimePicker().setCurrentDateSpinner());
+        spinnerDeliveriesDeliveryDate.setModel(new SpinnerDateModel());
         spinnerDeliveriesDeliveryDate.setEditor(new JSpinner.DateEditor(spinnerDeliveriesDeliveryDate, "dd.MM.yyyy"));
+        spinnerDeliveriesDeliveryDate.setValue(new Date());
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
