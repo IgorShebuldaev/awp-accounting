@@ -8,41 +8,49 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Note extends Base {
-    public static Note getNoteCurrentUser(int id) {
-        Note results = null;
+    private String note;
+
+    public Note() {}
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public void getNoteCurrentUser() {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
             String query = String.format("SELECT n.id, n.note FROM workers w INNER JOIN notes n on w.note_id = n.id where w.id=%d", id);
             ResultSet resultSet = statement.executeQuery(query);
 
-            while (resultSet.next()) {
-                results = new Note(
-                        resultSet.getInt("id"),
-                        resultSet.getString("note")
-                );
+            if (!resultSet.next()) {
+                return;
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
+
+            id = resultSet.getInt("id");
+            note = resultSet.getString("note");
+            } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return results;
     }
 
-    public static void updateNoteCurrentUser(int id, String note) {
+    public void updateNoteCurrentUser() {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
             String query = String.format("UPDATE notes SET note='%s' WHERE id=(SELECT n.id FROM workers w INNER JOIN notes n on w.note_id = n.id where w.id=%d)", note, id);
             statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    public String note;
-
-    public Note(int id, String note) {
-        this.id = id;
-        this.note = note;
+    @Override
+    protected String getTableName() {
+        return "notes";
     }
 }

@@ -5,11 +5,8 @@ import org.accounting.database.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class User extends Base {
-    private Errors errors;
-
     public static ArrayList<User> getAll() {
         ArrayList<User> results = new ArrayList<>();
         try {
@@ -52,11 +49,13 @@ public class User extends Base {
         return null;
     }
 
-    public String email;
-    public String password;
-    public int roleId;
-    public int timeInProgram;
+    private String email;
+    private String password;
+    private int roleId;
+    private int timeInProgram;
     private Role role;
+
+    public User() {}
 
     public User(int id) {
         try {
@@ -86,12 +85,28 @@ public class User extends Base {
         }
     }
 
-    public User(int id, String email, String password, int role_id, int timeInProgram) {
-        this.id = id;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
-        this.roleId = role_id;
-        this.timeInProgram = timeInProgram;
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
     public Role getRole() {
@@ -102,49 +117,37 @@ public class User extends Base {
         return this.role = new Role(this.roleId);
     }
 
-    public boolean insert() {
-        if (!isPositive()) { return false; }
-        try {
-            Connection connection = Database.getConnection();
-            StatementImpl statement = (StatementImpl)connection.createStatement();
-            String query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", email, password, roleId);
-            statement.execute(query);
-            id = (int) statement.getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-
-        return true;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    public boolean save() {
-        if (!isPositive()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
-                "role_id=%d where id=%d", email, password, timeInProgram, roleId, id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-
-        return true;
+    public void setTimeInProgram(int timeInProgram) {
+        this.timeInProgram = timeInProgram;
     }
 
-    public void delete() {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM users WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
+    public int getTimeInProgram() {
+        return this.timeInProgram;
     }
 
-    public String getTimeInProgram() {
+    public boolean isValid() {
+        getValidator().validatePresence(email, "Email");
+        getValidator().validateEmail(email);
+        getValidator().validatePresence(password, "Password");
+        getValidator().validateForeignKey(roleId, "Role Id");
+
+        return getErrors().isEmpty();
+    }
+
+    private void setAttributes(ResultSet resultSet) throws SQLException {
+        this.id = resultSet.getInt("id");
+        this.email = resultSet.getString("email");
+        this.password = resultSet.getString("password");
+        this.roleId = resultSet.getInt("role_id");
+        this.timeInProgram = resultSet.getInt("time_in_program");
+        this.isNewRecord = false;
+    }
+
+    public String getFormattedTimeInProgram() {
         int seconds = timeInProgram % 60;
         int minutes = timeInProgram / 60 % 60;
         int days = timeInProgram / 86400;
@@ -156,33 +159,42 @@ public class User extends Base {
         );
     }
 
-    public boolean isPositive() {
-        HashMap<String, String> fields = new HashMap<>();
+    public int incrementTimeInProgram(Integer step) {
+        return this.timeInProgram += step;
+    }
 
-        fields.put(email,"Email cannot be empty!");
-        fields.put(password,"Password cannot be empty!");
-        fields.put(Integer.toString(roleId),"Role cannot be empty!");
+    public boolean save() {
+        if (!isValid()) { return false; }
 
-        for (String field: fields.keySet()) {
-            if (field.isEmpty()) {
-                getErrors().addError(fields.get(field));
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+
+            String query;
+            if (isNewRecord()) {
+                query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", email, password, roleId);
+
+            } else {
+                query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
+                    "role_id=%d where id=%d", email, password, timeInProgram, roleId, id);
             }
+
+            statement.execute(query);
+
+            if (isNewRecord()) {
+                this.id = (int)((StatementImpl) statement).getLastInsertID();
+                this.isNewRecord = false;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+            return false;
         }
 
-        return getErrors().isAny();
+        return true;
     }
 
-    public Errors getErrors() {
-        if (errors == null) { errors = new Errors(); }
-
-        return errors;
-    }
-
-    private void setAttributes(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getInt("id");
-        this.email = resultSet.getString("email");
-        this.password = resultSet.getString("password");
-        this.roleId = resultSet.getInt("role_id");
-        this.timeInProgram = resultSet.getInt("time_in_program");
+    @Override
+    protected String getTableName() {
+        return "users";
     }
 }

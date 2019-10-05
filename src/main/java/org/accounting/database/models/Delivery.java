@@ -38,57 +38,102 @@ public class Delivery extends Base {
         return results;
     }
 
-    public static void insertData(Delivery delivery) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO deliveries " +
-                    "VALUES(null,'%s',(SELECT id FROM suppliers WHERE company_name='%s'),'%s','%s'," +
-                    "(SELECT id FROM workers WHERE full_name='%s'))", dateFormat.format(delivery.deliveryDate), delivery.supplier, delivery.product, delivery.price, delivery.worker);
-            statement.execute(query);
-            delivery.id = (int)((StatementImpl) statement).getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    private Date deliveryDate;
+    private String supplier;
+    private String product;
+    private String price;
+    private String worker;
 
-    public static void deleteData(int id) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM deliveries WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    public Delivery() { }
 
-    public static void updateData(Delivery delivery) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE deliveries SET " +
-                    "delivery_date='%s', supplier_id=(SELECT id FROM suppliers WHERE company_name='%s'), " +
-                    "product='%s', price='%s', worker_id=(SELECT id FROM workers WHERE full_name='%s') " +
-                    "WHERE id=%d", dateFormat.format(delivery.deliveryDate), delivery.supplier, delivery.product, delivery.price, delivery.worker, delivery.id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public Date deliveryDate;
-    public String supplier;
-    public String product;
-    public String price;
-    public String worker;
-
-    public Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
+    private Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
         this.id = id;
         this.deliveryDate = deliveryDate;
         this.supplier = supplier;
         this.product = product;
         this.price = price;
         this.worker = worker;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public String getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getWorker() {
+        return worker;
+    }
+
+    public void setWorker(String worker) {
+        this.worker = worker;
+    }
+
+    public boolean save() {
+        if (!isValid()) { return false; }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+
+            String query;
+            if (isNewRecord()) {
+                query = String.format("INSERT INTO deliveries " +
+                        "VALUES(null,'%s',(SELECT id FROM suppliers WHERE company_name='%s'),'%s','%s'," +
+                        "(SELECT id FROM workers WHERE full_name='%s'))",
+                        dateFormat.format(deliveryDate), supplier, product, price, worker);
+
+            } else {
+                query = String.format("UPDATE deliveries SET " +
+                        "delivery_date='%s', supplier_id=(SELECT id FROM suppliers WHERE company_name='%s'), " +
+                        "product='%s', price='%s', worker_id=(SELECT id FROM workers WHERE full_name='%s') " +
+                        "WHERE id=%d",
+                        dateFormat.format(deliveryDate), supplier, product, price, worker, getId());
+            }
+
+            statement.execute(query);
+
+            if (isNewRecord()) {
+                this.id = (int)((StatementImpl) statement).getLastInsertID();
+                this.isNewRecord = false;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected String getTableName() {
+        return "deliveries";
     }
 }

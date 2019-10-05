@@ -35,59 +35,86 @@ public class Worker extends Base {
         return results;
     }
 
-    public static void insertData(Worker worker, int userId) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO workers VALUES(null,'%s','%s',(SELECT id FROM positions where position='%s'), null, %d)",
-                    worker.fullName, dateFormat.format(worker.dateOfBirth), worker.position, userId);
-            statement.execute(query);
-            worker.id = (int)((StatementImpl) statement).getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    private String fullName;
+    private Date dateOfBirth;
+    private String position;
+    private String  email;
 
-    public static void deleteData(int id) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM workers WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    public Worker() {}
 
-    public static void updateData(Worker worker) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=(SELECT id FROM positions WHERE position='%s') WHERE id=%d",
-                worker.fullName, dateFormat.format(worker.dateOfBirth), worker.position, worker.id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public String fullName;
-    public Date dateOfBirth;
-    public String position;
-    public String email;
-
-    public Worker(int id, String fullName, Date dateOfBirth, String position) {
-        this.id = id;
-        this.fullName = fullName;
-        this.dateOfBirth = dateOfBirth;
-        this.position = position;
-    }
-
-    public Worker(int id, String fullName, Date dateOfBirth, String position, String email) {
+    private Worker(int id, String fullName, Date dateOfBirth, String position, String email) {
         this.id = id;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
         this.position = position;
         this.email = email;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean save() {
+        if (!isValid()) { return false; }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+
+            String query;
+            if (isNewRecord()) {
+                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',(SELECT id FROM positions where position='%s'), null, %d)",
+                        fullName, dateFormat.format(dateOfBirth), position, id);
+
+            } else {
+                query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=(SELECT id FROM positions WHERE position='%s') WHERE id=%d",
+                        fullName, dateFormat.format(dateOfBirth), position, id);
+            }
+
+            statement.execute(query);
+
+            if (isNewRecord()) {
+                this.id = (int)((StatementImpl) statement).getLastInsertID();
+                this.isNewRecord = false;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected String getTableName() {
+        return "workers";
     }
 }

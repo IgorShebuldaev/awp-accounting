@@ -29,44 +29,55 @@ public class Position extends Base {
         return results;
     }
 
-    public static void insertData(Position position) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO positions VALUES(null,'%s')", position.position);
-            statement.execute(query);
-            position.id = (int)((StatementImpl) statement).getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    private String position;
 
-    public static void updateData(Position position) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE positions SET position='%s' where id=%d", position.position, position.id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    public Position() {}
 
-    public static void deleteData(int id) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM positions where id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public String position;
-
-    public Position(int id, String position) {
+    private Position(int id, String position) {
         this.id = id;
         this.position = position;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public boolean save() {
+        if (!isValid()) { return false; }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+
+            String query;
+            if (isNewRecord()) {
+                query = String.format("INSERT INTO positions VALUES(null,'%s')", position);
+
+            } else {
+                query = String.format("UPDATE positions SET position='%s' where id=%d", position, id);
+            }
+
+            statement.execute(query);
+
+            if (isNewRecord()) {
+                this.id = (int)((StatementImpl) statement).getLastInsertID();
+                this.isNewRecord = false;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected String getTableName() {
+        return "positions";
     }
 }

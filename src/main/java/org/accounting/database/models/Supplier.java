@@ -29,44 +29,55 @@ public class Supplier extends Base {
         return results;
     }
 
-    public static void insertData(Supplier supplier) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("INSERT INTO suppliers VALUES(null,'%s')", supplier.companyName);
-            statement.execute(query);
-            supplier.id = (int)((StatementImpl) statement).getLastInsertID();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    private String companyName;
 
-    public static void updateData(Supplier supplier) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("UPDATE suppliers SET company_name='%s' WHERE id=%d", supplier.companyName, supplier.id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
+    public Supplier() {}
 
-    public static void deleteData(int id) {
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-            String query = String.format("DELETE FROM suppliers WHERE id=%d", id);
-            statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-    }
-
-    public String companyName;
-
-    public Supplier(int id, String companyName) {
+    private Supplier(int id, String companyName) {
         this.id = id;
         this.companyName = companyName;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public boolean save() {
+        if (!isValid()) { return false; }
+
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+
+            String query;
+            if (isNewRecord()) {
+                query = String.format("INSERT INTO suppliers VALUES(null,'%s')", companyName);
+
+            } else {
+                query = String.format("UPDATE suppliers SET company_name='%s' WHERE id=%d", companyName, getId());
+            }
+
+            statement.execute(query);
+
+            if (isNewRecord()) {
+                this.id = (int)((StatementImpl) statement).getLastInsertID();
+                this.isNewRecord = false;
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected String getTableName() {
+        return "suppliers";
     }
 }
