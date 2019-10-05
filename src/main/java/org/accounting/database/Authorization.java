@@ -8,7 +8,7 @@ public class Authorization {
     public boolean isAuthorized(String login, String password) {
         User user = new User(login);
 
-        if (user.isValid() && user.password.equals(password)) {
+        if (!user.isNewRecord() && user.getPassword().equals(password)) {
             CurrentUser.setCurrentUser(user);
             return true;
         }

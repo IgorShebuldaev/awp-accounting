@@ -13,13 +13,13 @@ public class UserTable extends MainTableModel {
         User user = (User) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return user.email;
+                return user.getEmail();
             case 1:
-                return user.password;
+                return user.getPassword();
             case 2:
-                return user.getRole().role;
+                return user.getRole().getRole();
             case 3:
-                return user.getTimeInProgram();
+                return user.getFormattedTimeInProgram();
         }
         return "";
     }

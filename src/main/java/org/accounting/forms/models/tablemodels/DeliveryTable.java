@@ -16,15 +16,15 @@ public class DeliveryTable extends MainTableModel {
         Delivery delivery = (Delivery) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return dateFormat.format(delivery.deliveryDate);
+                return dateFormat.format(delivery.getDeliveryDate());
             case 1:
-                return delivery.supplier;
+                return delivery.getSupplier();
             case 2:
-                return delivery.product;
+                return delivery.getProduct();
             case 3:
-                return delivery.price;
+                return delivery.getPrice();
             case 4:
-                return delivery.worker;
+                return delivery.getWorker();
         }
         return "";
     }

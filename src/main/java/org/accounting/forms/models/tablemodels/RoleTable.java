@@ -13,9 +13,9 @@ public class RoleTable extends MainTableModel {
         Role role = (Role) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return role.role;
+                return role.getRole();
             case 1:
-                return role.lookupCode;
+                return role.getLookupCode();
         }
         return "";
     }

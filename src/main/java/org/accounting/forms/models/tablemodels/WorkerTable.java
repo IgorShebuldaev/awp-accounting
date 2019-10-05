@@ -16,13 +16,13 @@ public class WorkerTable extends MainTableModel {
         Worker worker = (Worker) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return worker.fullName;
+                return worker.getFullName();
             case 1:
-                return dateFormat.format(worker.dateOfBirth);
+                return dateFormat.format(worker.getDateOfBirth());
             case 2:
-                return worker.position;
+                return worker.getPosition();
             case 3:
-                return worker.email;
+                return worker.getEmail();
         }
         return "";
     }

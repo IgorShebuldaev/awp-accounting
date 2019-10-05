@@ -7,19 +7,19 @@ public class PositionComboBoxModel extends MainComboBoxModel {
 
     @Override
     public Object getSelectedItem() {
-        if (selection == null) return "";
+        if (!selection.isPresent()) return "";
 
-        Position position = (Position) selection;
-        return position.position;
+        Position position = (Position) selection.get();
+        return position.getPosition();
     }
 
     @Override
     public void addRecord(Base record) {
         Position position = (Position) record;
-        records.put(position.position, record);
+        records.put(position.getPosition(), record);
     }
 
     public Object getElementAt(int index) {
-        return ((Position)super.getElementAt(index)).position;
+        return ((Position)super.getElementAt(index)).getPosition();
     }
 }

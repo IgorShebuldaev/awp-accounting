@@ -13,7 +13,7 @@ public class SupplierTable extends MainTableModel {
         Supplier supplier = (Supplier) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return supplier.companyName;
+                return supplier.getCompanyName();
         }
         return "";
     }

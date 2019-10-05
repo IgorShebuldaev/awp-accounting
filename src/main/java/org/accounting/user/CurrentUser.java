@@ -30,7 +30,7 @@ public class CurrentUser {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("UPDATE users SET time_in_program=%d where id=%d", user.timeInProgram, user.id);
+            String query = String.format("UPDATE users SET time_in_program=%d where id=%d", user.getTimeInProgram(), user.getId());
             statement.execute(query);
         } catch (SQLException se) {
             se.printStackTrace();
