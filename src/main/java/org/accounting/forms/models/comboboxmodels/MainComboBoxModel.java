@@ -4,17 +4,19 @@ import org.accounting.database.models.Base;
 
 import javax.swing.*;
 import java.util.HashMap;
+import java.util.Optional;
 
 public abstract class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
     protected HashMap<String, Base> records = new HashMap<>();
-    protected Base selection = null;
+    protected Optional<Base> selection = Optional.empty();
 
     public abstract void addRecord(Base record);
 
     @Override
     public void setSelectedItem(Object anItem) {
-        selection = records.get(anItem);
+        selection = Optional.of(records.get(anItem));
+        fireContentsChanged(anItem, 0, 0);
     }
 
     @Override
@@ -27,10 +29,8 @@ public abstract class MainComboBoxModel extends AbstractListModel implements Com
         return records.values().toArray()[index];
     }
 
-    public Base getSelection() {
-        if (selection != null) { return selection; }
-
-        return null;
+    public Optional<Base> getSelection() {
+        return selection;
     }
 
     public void removeAllElements() {
