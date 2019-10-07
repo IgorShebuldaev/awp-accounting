@@ -10,16 +10,16 @@ public class PositionComboBoxModel extends MainComboBoxModel {
         if (!selection.isPresent()) return "";
 
         Position position = (Position) selection.get();
-        return position.getPosition();
+        return position.getName();
     }
 
     @Override
     public void addRecord(Base record) {
         Position position = (Position) record;
-        records.put(position.getPosition(), record);
+        records.put(position.getName(), record);
     }
 
     public Object getElementAt(int index) {
-        return ((Position)super.getElementAt(index)).getPosition();
+        return ((Position)super.getElementAt(index)).getName();
     }
 }
