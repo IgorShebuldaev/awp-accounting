@@ -17,7 +17,7 @@ public class UserTable extends MainTableModel {
             case 1:
                 return user.getPassword();
             case 2:
-                return user.getRole().getRole();
+                return user.getRole().getName();
             case 3:
                 return user.getFormattedTimeInProgram();
         }

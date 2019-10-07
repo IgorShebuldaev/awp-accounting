@@ -10,16 +10,16 @@ public class RoleComboBoxModel extends MainComboBoxModel {
         if (!selection.isPresent()) return "";
 
         Role role = (Role) selection.get();
-        return role.getRole();
+        return role.getName();
     }
 
     @Override
     public void addRecord(Base record) {
         Role role = (Role) record;
-        records.put(role.getRole(), record);
+        records.put(role.getName(), record);
     }
 
     public Object getElementAt(int index) {
-        return ((Role)super.getElementAt(index)).getRole();
+        return ((Role)super.getElementAt(index)).getName();
     }
 }

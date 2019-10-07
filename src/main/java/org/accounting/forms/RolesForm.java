@@ -51,8 +51,8 @@ public class RolesForm extends JDialog implements ActionListener {
 
     private void insertRecord() {
         Role role = new Role();
-        role.setRole(textFieldRole.getText());
-        role.setRole(lookupCode.getText());
+        role.setName(textFieldRole.getText());
+        role.setName(lookupCode.getText());
 
         if (!role.save()) {
             JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));
@@ -67,7 +67,7 @@ public class RolesForm extends JDialog implements ActionListener {
     private void saveRecord() {
         int rowIndex = tableRoles.getSelectedRow();
         Role role = roleTableModel.getRecord(rowIndex);
-        role.setRole(textFieldRole.getText());
+        role.setName(textFieldRole.getText());
         role.setLookupCode(lookupCode.getText());
 
         if (!role.save()) {
@@ -100,7 +100,7 @@ public class RolesForm extends JDialog implements ActionListener {
         }
 
         Role role = roleTableModel.getRecord(rowIndex);
-        textFieldRole.setText(role.getRole());
+        textFieldRole.setText(role.getName());
         lookupCode.setText(role.getLookupCode());
         setEditMode();
     }

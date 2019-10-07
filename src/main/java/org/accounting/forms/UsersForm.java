@@ -108,7 +108,7 @@ public class UsersForm extends JDialog implements ActionListener {
 
         userFields.textFieldEmail.setText(user.getEmail());
         userFields.textFieldPassword.setText(user.getPassword());
-        userFields.comboBoxRoles.setSelectedItem(user.getRole().getRole());
+        userFields.comboBoxRoles.setSelectedItem(user.getRole().getName());
         setEditMode();
     }
 

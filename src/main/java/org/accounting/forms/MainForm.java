@@ -209,7 +209,7 @@ public class MainForm extends JFrame implements ActionListener {
         labelStatusBar.setText(
                 String.format("User: %s. Role: %s. Time in program: %s",
                         currentUser.getEmail(),
-                        currentUser.getRole().getRole(),
+                        currentUser.getRole().getName(),
                         currentUser.getFormattedTimeInProgram()
                 )
         );
