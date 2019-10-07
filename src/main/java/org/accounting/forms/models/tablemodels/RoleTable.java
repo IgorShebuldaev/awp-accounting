@@ -16,8 +16,9 @@ public class RoleTable extends MainTableModel {
                 return role.getName();
             case 1:
                 return role.getLookupCode();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override

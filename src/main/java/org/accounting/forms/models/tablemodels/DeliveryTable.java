@@ -18,15 +18,16 @@ public class DeliveryTable extends MainTableModel {
             case 0:
                 return dateFormat.format(delivery.getDeliveryDate());
             case 1:
-                return delivery.getSupplier();
+                return delivery.getSupplier().getCompanyName();
             case 2:
                 return delivery.getProduct();
             case 3:
                 return delivery.getPrice();
             case 4:
-                return delivery.getWorker();
+                return delivery.getWorker().getFullName();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override

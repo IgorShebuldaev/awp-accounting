@@ -20,11 +20,12 @@ public class WorkerTable extends MainTableModel {
             case 1:
                 return dateFormat.format(worker.getDateOfBirth());
             case 2:
-                return worker.getPosition();
+                return worker.getPosition().getName();
             case 3:
-                return worker.getEmail();
+                return worker.getUser().getEmail();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override

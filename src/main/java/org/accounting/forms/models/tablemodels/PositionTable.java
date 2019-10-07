@@ -13,9 +13,10 @@ public class PositionTable extends MainTableModel {
         Position position = (Position) data.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return position.getPosition();
+                return position.getName();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override

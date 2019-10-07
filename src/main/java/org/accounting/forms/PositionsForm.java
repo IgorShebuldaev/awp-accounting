@@ -50,7 +50,7 @@ public class PositionsForm extends JDialog implements ActionListener {
 
     private void insertRecord() {
         Position position = new Position();
-        position.setPosition(textFieldPosition.getText());
+        position.setName(textFieldPosition.getText());
 
         if (!position.save()) {
             JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
@@ -64,7 +64,7 @@ public class PositionsForm extends JDialog implements ActionListener {
     private void saveRecord() {
         int rowIndex = tablePositions.getSelectedRow();
         Position position = positionTableModel.getRecord(rowIndex);
-        position.setPosition(textFieldPosition.getText());
+        position.setName(textFieldPosition.getText());
 
         if (!position.save()) {
             JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
@@ -96,7 +96,7 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        textFieldPosition.setText(positionTableModel.getRecord(rowIndex).getPosition());
+        textFieldPosition.setText(positionTableModel.getRecord(rowIndex).getName());
         setEditMode();
     }
 

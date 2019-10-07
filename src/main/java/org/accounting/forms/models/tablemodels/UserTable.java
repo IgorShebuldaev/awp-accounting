@@ -20,8 +20,9 @@ public class UserTable extends MainTableModel {
                 return user.getRole().getName();
             case 3:
                 return user.getFormattedTimeInProgram();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override

@@ -4,10 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.Authorization;
 import org.accounting.database.Database;
-import org.accounting.database.models.Delivery;
-import org.accounting.database.models.Supplier;
-import org.accounting.database.models.User;
-import org.accounting.database.models.Worker;
+import org.accounting.database.models.*;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
 import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
@@ -230,10 +227,10 @@ public class MainForm extends JFrame implements ActionListener {
     private void insertRecord() {
         Delivery delivery = new Delivery();
         delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-        delivery.setSupplier((String) comboBoxSuppliers.getSelectedItem());
+        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
         delivery.setProduct(textFieldProduct.getText());
         delivery.setPrice(textFieldPrice.getText());
-        delivery.setWorker((String) workerComboBoxModel.getSelectedItem());
+        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!delivery.save()) {
             JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
@@ -249,10 +246,10 @@ public class MainForm extends JFrame implements ActionListener {
         int rowIndex = tableDeliveries.getSelectedRow();
         Delivery delivery = deliveryTableModel.getRecord(rowIndex);
         delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-        delivery.setSupplier((String) comboBoxSuppliers.getSelectedItem());
+        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
         delivery.setProduct(textFieldProduct.getText());
         delivery.setPrice(textFieldPrice.getText());
-        delivery.setWorker((String) comboBoxWorkers.getSelectedItem());
+        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!delivery.save()) {
             JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
@@ -286,10 +283,10 @@ public class MainForm extends JFrame implements ActionListener {
 
         Delivery delivery = deliveryTableModel.getRecord(rowIndex);
         spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
-        comboBoxSuppliers.setSelectedItem(delivery.getSupplier());
+        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getCompanyName());
         textFieldProduct.setText(delivery.getProduct());
         textFieldPrice.setText(delivery.getPrice());
-        comboBoxWorkers.setSelectedItem(delivery.getWorker());
+        comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
         setEditMode();
     }
 

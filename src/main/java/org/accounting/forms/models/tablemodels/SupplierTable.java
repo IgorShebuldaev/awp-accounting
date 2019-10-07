@@ -14,8 +14,9 @@ public class SupplierTable extends MainTableModel {
         switch (columnIndex) {
             case 0:
                 return supplier.getCompanyName();
+            default:
+                return "";
         }
-        return "";
     }
 
     @Override
