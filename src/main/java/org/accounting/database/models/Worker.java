@@ -16,7 +16,7 @@ public class Worker extends Base {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "select w.id, w.full_name, w.date_of_birth, p.position, u.email from workers w " +
+            String query = "select w.id, w.full_name, w.date_of_birth, w.position_id, w.user_id from workers w " +
             "join positions p on w.position_id = p.id " +
             "left join users u on w.user_id = u.id";
             ResultSet resultSet = statement.executeQuery(query);
@@ -26,8 +26,8 @@ public class Worker extends Base {
                         resultSet.getInt("id"),
                         resultSet.getString("full_name"),
                         resultSet.getDate("date_of_birth"),
-                        resultSet.getString("position"),
-                        resultSet.getString("email")
+                        resultSet.getInt("position_id"),
+                        resultSet.getInt("user_id")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
@@ -37,17 +37,40 @@ public class Worker extends Base {
 
     private String fullName;
     private Date dateOfBirth;
-    private String position;
-    private String  email;
+    private int positionId;
+    private int userId;
+    private Position position;
+    private User user;
 
     public Worker() {}
 
-    private Worker(int id, String fullName, Date dateOfBirth, String position, String email) {
+    public Worker(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("SELECT * FROM workers where id = %d", id);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (!resultSet.next()) {
+                return;
+            }
+
+            this.id = resultSet.getInt("id");
+            this.fullName = resultSet.getString("full_name");
+            this.dateOfBirth = resultSet.getDate("date_of_birth");
+            this.positionId = resultSet.getInt("position_id");
+            this.userId = resultSet.getInt("user_id");
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    private Worker(int id, String fullName, Date dateOfBirth, int positionId, int userId) {
         this.id = id;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
-        this.position = position;
-        this.email = email;
+        this.positionId = positionId;
+        this.userId = userId;
     }
 
     public String getFullName() {
@@ -66,27 +89,50 @@ public class Worker extends Base {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getPosition() {
-        return position;
+    public int getPositionId() {
+        return positionId;
     }
 
-    public void setPosition(String position) {
+    public void setPositionId(int positionId) {
+        this.positionId = positionId;
+    }
+
+    public Position getPosition() {
+        if (this.position != null) {
+            return position;
+        }
+
+        return this.position = new Position(this.positionId);
+    }
+
+    public void setPosition(Position position) {
         this.position = position;
     }
 
-    public String getEmail() {
-        return email;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public User getUser() {
+        if (this.user != null) {
+            return user;
+        }
+
+        return this.user = new User(this.userId);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public boolean isValid() {
         getValidator().validatePresence(fullName, "Full name");
         getValidator().validatePresence(dateOfBirth, "Date of birth");
-        getValidator().validatePresence(position, "Position");
-        getValidator().validateEmail(email);
+        getValidator().validatePresence(positionId, "Position");
 
         return getErrors().isEmpty();
     }
@@ -100,12 +146,12 @@ public class Worker extends Base {
 
             String query;
             if (isNewRecord()) {
-                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',(SELECT id FROM positions where position='%s'), null, %d)",
-                        fullName, dateFormat.format(dateOfBirth), position, id);
+                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, null, null)",
+                        fullName, dateFormat.format(dateOfBirth), positionId);
 
             } else {
-                query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=(SELECT id FROM positions WHERE position='%s') WHERE id=%d",
-                        fullName, dateFormat.format(dateOfBirth), position, id);
+                query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
+                        fullName, dateFormat.format(dateOfBirth), positionId, id);
             }
 
             statement.execute(query);

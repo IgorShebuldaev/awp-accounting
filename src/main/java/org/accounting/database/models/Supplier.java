@@ -33,6 +33,24 @@ public class Supplier extends Base {
 
     public Supplier() {}
 
+    public Supplier(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("SELECT * FROM suppliers where id = %d", id);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (!resultSet.next()) {
+                return;
+            }
+
+            this.id = resultSet.getInt("id");
+            this.companyName = resultSet.getString("company_name");
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
     private Supplier(int id, String companyName) {
         this.id = id;
         this.companyName = companyName;

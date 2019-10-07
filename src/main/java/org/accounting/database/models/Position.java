@@ -3,10 +3,7 @@ package org.accounting.database.models;
 import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Position extends Base {
@@ -21,7 +18,7 @@ public class Position extends Base {
             while (resultSet.next())
                 results.add(new Position(
                    resultSet.getInt("id"),
-                   resultSet.getString("position")
+                   resultSet.getString("name")
                 ));
         } catch (SQLException se) {
             se.printStackTrace();
@@ -29,25 +26,43 @@ public class Position extends Base {
         return results;
     }
 
-    private String position;
+    private String name;
 
     public Position() {}
 
-    private Position(int id, String position) {
+    public Position(int id) {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("SELECT * FROM positions where id = %d", id);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (!resultSet.next()) {
+                return;
+            }
+
+            this.id = resultSet.getInt("id");
+            this.name = resultSet.getString("name");
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    private Position(int id, String name) {
         this.id = id;
-        this.position = position;
+        this.name = name;
     }
 
-    public String getPosition() {
-        return position;
+    public String getName() {
+        return name;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isValid() {
-        getValidator().validatePresence(position, "Position");
+        getValidator().validatePresence(name, "Position");
 
         return getErrors().isEmpty();
     }
@@ -61,10 +76,10 @@ public class Position extends Base {
 
             String query;
             if (isNewRecord()) {
-                query = String.format("INSERT INTO positions VALUES(null,'%s')", position);
+                query = String.format("INSERT INTO positions VALUES(null,'%s')", name);
 
             } else {
-                query = String.format("UPDATE positions SET position='%s' where id=%d", position, id);
+                query = String.format("UPDATE positions SET name='%s' where id=%d", name, id);
             }
 
             statement.execute(query);

@@ -11,12 +11,20 @@ public class Validator {
         this.errors = errors;
     }
 
+    public void validatePresence(int value, String fieldName) {
+        validatePresence(value, fieldName, String.format("%s cannot be empty", fieldName));
+    }
+
     public void validatePresence(String value, String fieldName) {
         validatePresence(value, fieldName, String.format("%s cannot be empty", fieldName));
     }
 
     public void validatePresence(Date value, String fieldName) {
         validatePresence(value, fieldName, String.format("%s cannot be empty", fieldName));
+    }
+
+    public void validatePresence(int value, String fieldName, String message) {
+        if (value == 0) { errors.addError(message); }
     }
 
     public void validatePresence(String value, String fieldName, String message) {

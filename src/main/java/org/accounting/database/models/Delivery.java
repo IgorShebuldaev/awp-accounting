@@ -16,7 +16,7 @@ public class Delivery extends Base {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "SELECT de.id, de.delivery_date, su.company_name, de.product, de.price, wo.full_name " +
+            String query = "SELECT de.id, de.delivery_date, de.supplier_id, de.product, de.price, de.worker_id " +
                     "FROM deliveries de " +
                     "INNER JOIN suppliers su ON de.supplier_id = su.id " +
                     "INNER JOIN workers wo ON de.worker_id = wo.id";
@@ -26,10 +26,10 @@ public class Delivery extends Base {
                 results.add(new Delivery(
                         resultSet.getInt("id"),
                         resultSet.getDate("delivery_date"),
-                        resultSet.getString("company_name"),
+                        resultSet.getInt("supplier_id"),
                         resultSet.getString("product"),
                         resultSet.getString("price"),
-                        resultSet.getString("full_name")
+                        resultSet.getInt("worker_id")
                 ));
             }
         } catch (SQLException se) {
@@ -39,20 +39,22 @@ public class Delivery extends Base {
     }
 
     private Date deliveryDate;
-    private String supplier;
+    private int supplierId;
+    private Supplier supplier;
     private String product;
     private String price;
-    private String worker;
+    private int workerId;
+    private Worker worker;
 
     public Delivery() { }
 
-    private Delivery(int id, Date deliveryDate, String supplier, String product, String price, String worker) {
+    private Delivery(int id, Date deliveryDate, int supplierId, String product, String price, int workerId) {
         this.id = id;
         this.deliveryDate = deliveryDate;
-        this.supplier = supplier;
+        this.supplierId = supplierId;
         this.product = product;
         this.price = price;
-        this.worker = worker;
+        this.workerId = workerId;
     }
 
     public Date getDeliveryDate() {
@@ -63,12 +65,12 @@ public class Delivery extends Base {
         this.deliveryDate = deliveryDate;
     }
 
-    public String getSupplier() {
-        return supplier;
+    public int getSupplierId() {
+        return supplierId;
     }
 
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
+    public void setSupplierId(int supplierId) {
+        this.supplierId = supplierId;
     }
 
     public String getProduct() {
@@ -87,20 +89,44 @@ public class Delivery extends Base {
         this.price = price;
     }
 
-    public String getWorker() {
-        return worker;
+    public int getWorkerId() {
+        return workerId;
     }
 
-    public void setWorker(String worker) {
+    public void setWorkerId(int workerId) {
+        this.workerId = workerId;
+    }
+
+    public Supplier getSupplier() {
+        if (this.supplier != null) {
+            return supplier;
+        }
+
+        return this.supplier = new Supplier(this.supplierId);
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public Worker getWorker() {
+        if (this.worker != null) {
+            return worker;
+        }
+
+        return this.worker = new Worker(this.workerId);
+    }
+
+    public void setWorker(Worker worker) {
         this.worker = worker;
     }
 
     public boolean isValid() {
         getValidator().validatePresence(deliveryDate, "Delivery date");
-        getValidator().validatePresence(supplier, "Supplier");
+        getValidator().validatePresence(supplierId, "Supplier");
         getValidator().validatePresence(product, "Product");
         getValidator().validatePresence(price, "Price");
-        getValidator().validatePresence(worker, "Worker");
+        getValidator().validatePresence(workerId, "Worker");
 
         return getErrors().isEmpty();
     }
@@ -114,17 +140,12 @@ public class Delivery extends Base {
 
             String query;
             if (isNewRecord()) {
-                query = String.format("INSERT INTO deliveries " +
-                        "VALUES(null,'%s',(SELECT id FROM suppliers WHERE company_name='%s'),'%s','%s'," +
-                        "(SELECT id FROM workers WHERE full_name='%s'))",
-                        dateFormat.format(deliveryDate), supplier, product, price, worker);
-
+                query = String.format("INSERT INTO deliveries VALUES(null,'%s', %d,'%s','%s', %d)",
+                        dateFormat.format(deliveryDate), supplierId, product, price, workerId);
             } else {
-                query = String.format("UPDATE deliveries SET " +
-                        "delivery_date='%s', supplier_id=(SELECT id FROM suppliers WHERE company_name='%s'), " +
-                        "product='%s', price='%s', worker_id=(SELECT id FROM workers WHERE full_name='%s') " +
-                        "WHERE id=%d",
-                        dateFormat.format(deliveryDate), supplier, product, price, worker, getId());
+                query = String.format("UPDATE deliveries SET delivery_date='%s', supplier_id=%d, " +
+                        "product='%s', price='%s', worker_id=%d WHERE id=%d",
+                        dateFormat.format(deliveryDate), supplierId, product, price, workerId, id);
             }
 
             statement.execute(query);
