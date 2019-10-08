@@ -2,6 +2,7 @@ package org.accounting.forms.workbooks;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Position;
 import org.accounting.database.models.Worker;
@@ -9,6 +10,7 @@ import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
 import org.accounting.forms.models.tablemodels.WorkerTable;
+import org.accounting.forms.partials.UserFields;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,22 +20,21 @@ import java.util.Date;
 
 public class WorkersForms extends JPanel implements ActionListener {
     private JTable tableWorkers;
-    private JButton btnAddWorkers;
-    private JTextField textFieldWorkersFullName;
-    private JSpinner spinnerWorkersDateOfBirth;
-    private JComboBox comboBoxWorkersPositions;
-    private JButton btnSaveWorkers;
-    private JButton btnEditWorkers;
-    private JButton btnShowPositionsForm;
-    private JTextField textFieldWorkersEmail;
-    private JTextField textFieldWorkersPassword;
-    private JButton btnDeleteWorkers;
-    private JButton btnCancelWorkers;
+    private JButton addButton;
+    private JTextField textFieldFullName;
+    private JSpinner spinnerDateOfBirth;
+    private JComboBox comboBoxPositions;
+    private JButton saveButton;
+    private JButton editButton;
+    private JButton showPositionsFormButton;
     private JPanel panelWorkers;
     private JScrollPane scrollPaneWorkers;
-    private JLabel labelWorkersFullName;
-    private JLabel labelWorkersDateOfBirth;
-    private JLabel labelWorkersPosition;
+    private JLabel labelFullName;
+    private JLabel labelDateOfBirth;
+    private JLabel labelPosition;
+    private UserFields userFieldsPanel;
+    private JButton cancelButton;
+    private JButton deleteButton;
     private WorkerTable workerTableModel;
     private PositionComboBoxModel positionComboBoxModel;
 
@@ -49,16 +50,16 @@ public class WorkersForms extends JPanel implements ActionListener {
         positionComboBoxModel = new PositionComboBoxModel();
         addItemComboBoxPosition();
 
-        spinnerWorkersDateOfBirth.setModel(new SpinnerDateModel());
-        spinnerWorkersDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerWorkersDateOfBirth, "dd.MM.yyyy"));
-        spinnerWorkersDateOfBirth.setValue(new Date());
+        spinnerDateOfBirth.setModel(new SpinnerDateModel());
+        spinnerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerDateOfBirth, "dd.MM.yyyy"));
+        spinnerDateOfBirth.setValue(new Date());
 
-        btnAddWorkers.addActionListener(this);
-        btnDeleteWorkers.addActionListener(this);
-        btnEditWorkers.addActionListener(this);
-        btnSaveWorkers.addActionListener(this);
-        btnCancelWorkers.addActionListener(this);
-        btnShowPositionsForm.addActionListener(this);
+        addButton.addActionListener(this);
+        editButton.addActionListener(this);
+        saveButton.addActionListener(this);
+        cancelButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+        showPositionsFormButton.addActionListener(this);
 
         add(panelWorkers);
     }
@@ -75,13 +76,13 @@ public class WorkersForms extends JPanel implements ActionListener {
     private void addItemComboBoxPosition() {
         positionComboBoxModel.removeAllElements();
         Position.getAll().forEach(positionComboBoxModel::addRecord);
-        comboBoxWorkersPositions.setModel(positionComboBoxModel);
+        comboBoxPositions.setModel(positionComboBoxModel);
     }
 
     private void insertRecord() {
         Worker worker = new Worker();
-        worker.setFullName(textFieldWorkersFullName.getText());
-        worker.setDateOfBirth((Date) spinnerWorkersDateOfBirth.getValue());
+        worker.setFullName(textFieldFullName.getText());
+        worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
         worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!worker.save()) {
@@ -90,17 +91,17 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         workerTableModel.addRecord(worker);
-        textFieldWorkersFullName.setText("");
-        textFieldWorkersEmail.setText("");
-        textFieldWorkersPassword.setText("");
+        textFieldFullName.setText("");
+        //textFieldWorkersEmail.setText("");
+        //textFieldWorkersPassword.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tableWorkers.getSelectedRow();
         Worker worker = workerTableModel.getRecord(rowIndex);
 
-        worker.setFullName(textFieldWorkersFullName.getText());
-        worker.setDateOfBirth((Date) spinnerWorkersDateOfBirth.getValue());
+        worker.setFullName(textFieldFullName.getText());
+        worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
         worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!worker.save()) {
@@ -109,7 +110,7 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         workerTableModel.setValueAt(worker, rowIndex);
-        textFieldWorkersFullName.setText("");
+        textFieldFullName.setText("");
         setDefaultMode();
     }
 
@@ -134,30 +135,30 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         Worker worker = workerTableModel.getRecord(rowIndex);
-        textFieldWorkersFullName.setText(worker.getFullName());
-        spinnerWorkersDateOfBirth.setValue(worker.getDateOfBirth());
-        comboBoxWorkersPositions.setSelectedItem(worker.getPositionId());
+        textFieldFullName.setText(worker.getFullName());
+        spinnerDateOfBirth.setValue(worker.getDateOfBirth());
+        comboBoxPositions.setSelectedItem(worker.getPositionId());
         setEditMode();
     }
 
     private void setDefaultMode() {
-        btnAddWorkers.setEnabled(true);
-        btnEditWorkers.setEnabled(true);
-        btnSaveWorkers.setEnabled(false);
-        btnCancelWorkers.setEnabled(false);
-        btnDeleteWorkers.setEnabled(true);
-        btnShowPositionsForm.setEnabled(true);
+        addButton.setEnabled(true);
+        editButton.setEnabled(true);
+        saveButton.setEnabled(false);
+        cancelButton.setEnabled(false);
+        deleteButton.setEnabled(true);
+        showPositionsFormButton.setEnabled(true);
         tableWorkers.setEnabled(true);
-        textFieldWorkersFullName.setText("");
+        textFieldFullName.setText("");
     }
 
     private void setEditMode() {
-        btnAddWorkers.setEnabled(false);
-        btnEditWorkers.setEnabled(false);
-        btnSaveWorkers.setEnabled(true);
-        btnCancelWorkers.setEnabled(true);
-        btnDeleteWorkers.setEnabled(false);
-        btnShowPositionsForm.setEnabled(false);
+        addButton.setEnabled(false);
+        editButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        cancelButton.setEnabled(true);
+        deleteButton.setEnabled(false);
+        showPositionsFormButton.setEnabled(false);
         tableWorkers.setEnabled(false);
     }
 
@@ -204,43 +205,57 @@ public class WorkersForms extends JPanel implements ActionListener {
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panelWorkers = new JPanel();
-        panelWorkers.setLayout(new GridLayoutManager(4, 4, new Insets(5, 5, 5, 5), -1, -1));
+        panelWorkers.setLayout(new GridLayoutManager(9, 6, new Insets(5, 5, 5, 5), -1, -1));
         panel1.add(panelWorkers, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPaneWorkers = new JScrollPane();
-        panelWorkers.add(scrollPaneWorkers, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panelWorkers.add(scrollPaneWorkers, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableWorkers = new JTable();
         scrollPaneWorkers.setViewportView(tableWorkers);
-        btnAddWorkers = new JButton();
-        btnAddWorkers.setActionCommand("btnAddWorker");
-        btnAddWorkers.setText("Add");
-        panelWorkers.add(btnAddWorkers, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textFieldWorkersFullName = new JTextField();
-        panelWorkers.add(textFieldWorkersFullName, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        spinnerWorkersDateOfBirth = new JSpinner();
-        panelWorkers.add(spinnerWorkersDateOfBirth, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxWorkersPositions = new JComboBox();
-        panelWorkers.add(comboBoxWorkersPositions, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        btnSaveWorkers = new JButton();
-        btnSaveWorkers.setActionCommand("btnSaveWorker");
-        btnSaveWorkers.setEnabled(false);
-        btnSaveWorkers.setText("Save");
-        panelWorkers.add(btnSaveWorkers, new GridConstraints(3, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        btnEditWorkers = new JButton();
-        btnEditWorkers.setActionCommand("btnEditWorker");
-        btnEditWorkers.setText("Edit");
-        panelWorkers.add(btnEditWorkers, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelWorkersFullName = new JLabel();
-        labelWorkersFullName.setText("Full name");
-        panelWorkers.add(labelWorkersFullName, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelWorkersDateOfBirth = new JLabel();
-        labelWorkersDateOfBirth.setText("Date of birth");
-        panelWorkers.add(labelWorkersDateOfBirth, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelWorkersPosition = new JLabel();
-        labelWorkersPosition.setText("Position");
-        panelWorkers.add(labelWorkersPosition, new GridConstraints(1, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        btnShowPositionsForm = new JButton();
-        btnShowPositionsForm.setActionCommand("btnShowPositionsForm");
-        btnShowPositionsForm.setText(". . .");
-        panelWorkers.add(btnShowPositionsForm, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        addButton = new JButton();
+        addButton.setActionCommand("btnAddWorker");
+        addButton.setText("Add");
+        panelWorkers.add(addButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setActionCommand("btnSaveWorker");
+        saveButton.setEnabled(false);
+        saveButton.setText("Save");
+        panelWorkers.add(saveButton, new GridConstraints(8, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        editButton = new JButton();
+        editButton.setActionCommand("btnEditWorker");
+        editButton.setText("Edit");
+        panelWorkers.add(editButton, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelFullName = new JLabel();
+        labelFullName.setText("Full name");
+        panelWorkers.add(labelFullName, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelDateOfBirth = new JLabel();
+        labelDateOfBirth.setText("Date of birth");
+        panelWorkers.add(labelDateOfBirth, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        labelPosition = new JLabel();
+        labelPosition.setText("Position");
+        panelWorkers.add(labelPosition, new GridConstraints(6, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cancelButton = new JButton();
+        cancelButton.setText("Cancel");
+        panelWorkers.add(cancelButton, new GridConstraints(8, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        deleteButton = new JButton();
+        deleteButton.setText("Delete");
+        panelWorkers.add(deleteButton, new GridConstraints(8, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textFieldFullName = new JTextField();
+        panelWorkers.add(textFieldFullName, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        spinnerDateOfBirth = new JSpinner();
+        panelWorkers.add(spinnerDateOfBirth, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBoxPositions = new JComboBox();
+        panelWorkers.add(comboBoxPositions, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showPositionsFormButton = new JButton();
+        showPositionsFormButton.setActionCommand("btnShowPositionsForm");
+        showPositionsFormButton.setText(". . .");
+        panelWorkers.add(showPositionsFormButton, new GridConstraints(7, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panelWorkers.add(spacer1, new GridConstraints(1, 1, 5, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panelWorkers.add(spacer2, new GridConstraints(1, 2, 5, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        panelWorkers.add(spacer3, new GridConstraints(1, 0, 5, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        userFieldsPanel = new UserFields();
+        panelWorkers.add(userFieldsPanel.$$$getRootComponent$$$(), new GridConstraints(1, 4, 7, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 }
