@@ -133,7 +133,7 @@ public class User extends Base {
         getValidator().validatePresence(email, "Email");
         getValidator().validateEmail(email);
         getValidator().validatePresence(password, "Password");
-        getValidator().validateForeignKey(roleId, "Role Id");
+        getValidator().validateForeignKey(roleId, "Role id");
 
         return getErrors().isEmpty();
     }

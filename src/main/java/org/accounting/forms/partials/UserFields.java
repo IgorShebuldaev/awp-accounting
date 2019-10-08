@@ -2,16 +2,18 @@ package org.accounting.forms.partials;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
+import org.accounting.database.models.User;
 import org.accounting.forms.RolesForm;
 import org.accounting.forms.models.comboboxmodels.MainComboBoxModel;
 import org.accounting.forms.models.comboboxmodels.RoleComboBoxModel;
+import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class UserFields extends JPanel implements ActionListener {
     public JLabel labelEmail;
@@ -23,10 +25,14 @@ public class UserFields extends JPanel implements ActionListener {
     public JButton showRolesFormButton;
     public JPanel panel;
     private JPanel userFieldsPanel;
-
     public MainComboBoxModel roleModel;
 
     public UserFields() {
+        if (!(CurrentUser.getUser().getRole().isAdmin())) {
+            labelRole.setVisible(false);
+            comboBoxRoles.setVisible(false);
+            showRolesFormButton.setVisible(false);
+        }
 
         roleModel = new RoleComboBoxModel();
         addItemComboBoxRole();
@@ -37,10 +43,15 @@ public class UserFields extends JPanel implements ActionListener {
 
     private void addItemComboBoxRole() {
         roleModel.removeAllElements();
-        ArrayList<Role> results = Role.getAll();
-        for (Role role : results) {
-            roleModel.addRecord(role);
-        }
+        Role.getAll().forEach(roleModel::addRecord);
+    }
+
+    public User buildUser() {
+        User user = new User();
+        user.setEmail(textFieldEmail.getText());
+        user.setPassword(textFieldPassword.getText());
+        user.setRoleId(roleModel.getSelection().map(Base::getId).orElse(0));
+        return user;
     }
 
     @Override
@@ -104,5 +115,4 @@ public class UserFields extends JPanel implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return userFieldsPanel;
     }
-
 }
