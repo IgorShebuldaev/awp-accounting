@@ -34,6 +34,7 @@ public class Role extends Base {
     private String name;
     private String lookupCode;
     private final String ADMIN_LOOKUP_CODE = "admin";
+    private final String MANAGER_LOOKUP_CODE = "manager";
 
     public Role() {}
 
@@ -87,6 +88,27 @@ public class Role extends Base {
         getValidator().validatePresence(lookupCode, "Lookup code");
 
         return getErrors().isEmpty();
+    }
+
+    public int getIdRoleByLookupCode() {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("SELECT * FROM roles where lookup_code = '%s'", MANAGER_LOOKUP_CODE);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (!resultSet.next()) {
+                throw new SQLException();
+            }
+
+            this.id = resultSet.getInt("id");
+            this.name = resultSet.getString("name");
+            this.lookupCode = resultSet.getString("lookup_code");
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return id;
     }
 
     public boolean save() {
