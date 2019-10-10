@@ -146,8 +146,8 @@ public class Worker extends Base {
 
             String query;
             if (isNewRecord()) {
-                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, null, null)",
-                        fullName, dateFormat.format(dateOfBirth), positionId);
+                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, null, %d)",
+                        fullName, dateFormat.format(dateOfBirth), positionId, userId);
 
             } else {
                 query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
