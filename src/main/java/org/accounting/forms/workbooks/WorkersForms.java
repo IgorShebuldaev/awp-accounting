@@ -5,6 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.database.models.Base;
 import org.accounting.database.models.Position;
+import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
 import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.YesNoDialog;
@@ -80,10 +81,18 @@ public class WorkersForms extends JPanel implements ActionListener {
     }
 
     private void insertRecord() {
+        User user = userFieldsPanel.buildUser();
+
+        if (!user.save()) {
+            JOptionPane.showMessageDialog(this, user.getErrors().fullMessages("\n"));
+            return;
+        }
+
         Worker worker = new Worker();
         worker.setFullName(textFieldFullName.getText());
         worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
         worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
+        worker.setUserId(user.getId());
 
         if (!worker.save()) {
             JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
@@ -92,8 +101,8 @@ public class WorkersForms extends JPanel implements ActionListener {
 
         workerTableModel.addRecord(worker);
         textFieldFullName.setText("");
-        //textFieldWorkersEmail.setText("");
-        //textFieldWorkersPassword.setText("");
+        userFieldsPanel.textFieldEmail.setText("");
+        userFieldsPanel.textFieldPassword.setText("");
     }
 
     private void saveRecord() {
