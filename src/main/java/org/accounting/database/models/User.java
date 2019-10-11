@@ -1,12 +1,17 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
+
+import com.mysql.cj.jdbc.StatementImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class User extends Base {
+    private static final Logger logger = LogManager.getLogger(User.class);
+
     public static ArrayList<User> getAll() {
         ArrayList<User> results = new ArrayList<>();
         try {
@@ -159,8 +164,8 @@ public class User extends Base {
         );
     }
 
-    public int incrementTimeInProgram(Integer step) {
-        return this.timeInProgram += step;
+    public void incrementTimeInProgram(Integer step) {
+        timeInProgram += step;
     }
 
     public boolean save() {
@@ -186,7 +191,7 @@ public class User extends Base {
                 this.isNewRecord = false;
             }
         } catch (SQLException se) {
-            se.printStackTrace();
+            logger.error(se);
             return false;
         }
 

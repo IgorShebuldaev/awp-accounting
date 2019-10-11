@@ -90,7 +90,7 @@ public class Role extends Base {
         return getErrors().isEmpty();
     }
 
-    public int getIdRoleByLookupCode() {
+    public int getRoleIdByLookupCode() {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();

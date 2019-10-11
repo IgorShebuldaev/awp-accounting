@@ -52,7 +52,7 @@ public class UserFields extends JPanel implements ActionListener {
         user.setEmail(textFieldEmail.getText());
         user.setPassword(textFieldPassword.getText());
         if (roleModel.getSelection().map(Base::getId).orElse(0) == 0) {
-            user.setRoleId(role.getIdRoleByLookupCode());
+            user.setRoleId(role.getRoleIdByLookupCode());
             return user;
         }
         user.setRoleId(roleModel.getSelection().map(Base::getId).get());
