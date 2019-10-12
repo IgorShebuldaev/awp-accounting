@@ -2,6 +2,7 @@ package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -25,8 +26,8 @@ public class Role extends Base {
                     resultSet.getString("name"),
                     resultSet.getString("lookup_code")
                 ));
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return results;
     }
@@ -52,8 +53,9 @@ public class Role extends Base {
             this.id = resultSet.getInt("id");
             this.name = resultSet.getString("name");
             this.lookupCode = resultSet.getString("lookup_code");
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Role.class).error(e);
         }
     }
 
@@ -104,8 +106,9 @@ public class Role extends Base {
             this.id = resultSet.getInt("id");
             this.name = resultSet.getString("name");
             this.lookupCode = resultSet.getString("lookup_code");
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Role.class).error(e);
         }
 
         return id;
@@ -132,8 +135,9 @@ public class Role extends Base {
                 this.id = (int)((StatementImpl) statement).getLastInsertID();
                 this.isNewRecord = false;
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Delivery.class).error(e);
 
             return false;
         }

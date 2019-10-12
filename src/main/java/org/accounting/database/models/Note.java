@@ -1,6 +1,7 @@
 package org.accounting.database.models;
 
 import org.accounting.database.Database;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,7 +35,8 @@ public class Note extends Base {
             id = resultSet.getInt("id");
             note = resultSet.getString("note");
             } catch (SQLException e) {
-            e.printStackTrace();
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Note.class).error(e);
         }
     }
 
@@ -45,7 +47,8 @@ public class Note extends Base {
             String query = String.format("UPDATE notes SET note='%s' WHERE id=(SELECT n.id FROM workers w INNER JOIN notes n on w.note_id = n.id where w.id=%d)", note, id);
             statement.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Note.class).error(e);
         }
     }
 

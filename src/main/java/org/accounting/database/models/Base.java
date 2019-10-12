@@ -3,6 +3,7 @@ package org.accounting.database.models;
 import org.accounting.database.Database;
 import org.accounting.database.models.utils.Errors;
 import org.accounting.database.models.utils.Validator;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -64,8 +65,9 @@ public abstract class  Base {
             Statement statement = connection.createStatement();
             String query = String.format("DELETE FROM %s WHERE id=%d", getTableName(), getId());
             statement.execute(query);
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Base.class).error(e);
         }
     }
 

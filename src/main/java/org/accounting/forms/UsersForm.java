@@ -52,11 +52,6 @@ public class UsersForm extends JDialog implements ActionListener {
     }
 
     private void insertRecord() {
-//        User user = new User();
-//        user.setEmail(userFields.textFieldEmail.getText());
-//        user.setPassword(userFields.textFieldPassword.getText());
-//        user.setRoleId(userFields.roleModel.getSelection().map(Base::getId).orElse(0));
-
         User user = userFields.buildUser();
 
         if (!user.save()) {

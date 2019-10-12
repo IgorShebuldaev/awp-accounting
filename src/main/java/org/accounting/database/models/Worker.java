@@ -2,6 +2,7 @@ package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -29,8 +30,8 @@ public class Worker extends Base {
                         resultSet.getInt("position_id"),
                         resultSet.getInt("user_id")
                 ));
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return results;
     }
@@ -60,8 +61,9 @@ public class Worker extends Base {
             this.dateOfBirth = resultSet.getDate("date_of_birth");
             this.positionId = resultSet.getInt("position_id");
             this.userId = resultSet.getInt("user_id");
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Worker.class).error(e);
         }
     }
 
@@ -160,8 +162,10 @@ public class Worker extends Base {
                 this.id = (int)((StatementImpl) statement).getLastInsertID();
                 this.isNewRecord = false;
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Worker.class).error(e);
+
             return false;
         }
 

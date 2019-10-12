@@ -2,6 +2,7 @@ package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
 import org.accounting.database.Database;
+import org.apache.logging.log4j.LogManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class Position extends Base {
                    resultSet.getInt("id"),
                    resultSet.getString("name")
                 ));
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return results;
     }
@@ -43,8 +44,9 @@ public class Position extends Base {
 
             this.id = resultSet.getInt("id");
             this.name = resultSet.getString("name");
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Position.class).error(e);
         }
     }
 
@@ -88,8 +90,9 @@ public class Position extends Base {
                 this.id = (int)((StatementImpl) statement).getLastInsertID();
                 this.isNewRecord = false;
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(Position.class).error(e);
 
             return false;
         }

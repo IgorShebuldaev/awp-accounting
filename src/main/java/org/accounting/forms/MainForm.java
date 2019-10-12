@@ -106,13 +106,13 @@ public class MainForm extends JFrame implements ActionListener {
         spinnerDeliveriesDeliveryDate.setValue(new Date());
 
         this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent event) {
                 if (new YesNoDialog("Are you sure you want to exit?", "Confirm Exit").isPositive()) {
                     CurrentUser.updateDataTimeInProgram();
                     try {
                         Database.closeConnection();
-                    } catch (SQLException se) {
-                        se.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
@@ -311,16 +311,16 @@ public class MainForm extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
+    public void actionPerformed(ActionEvent event) {
+        switch (event.getActionCommand()) {
             case "ok":
                 validateUserAuthorization(textFieldEmail, passwordField);
                 break;
             case "exit":
                 try {
                     Database.closeConnection();
-                } catch (SQLException se) {
-                    se.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
                 System.exit(0);
                 break;

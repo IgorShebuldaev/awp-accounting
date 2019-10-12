@@ -22,8 +22,8 @@ public class User extends Base {
             while (resultSet.next()) {
                 results.add(new User(resultSet.getInt("id")));
             }
-        } catch (SQLException se) {
-            se.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return results;
     }
@@ -72,7 +72,8 @@ public class User extends Base {
 
             setAttributes(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(User.class).error(e);
         }
     }
 
@@ -86,7 +87,8 @@ public class User extends Base {
 
             setAttributes(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
+            getErrors().addError("Error. Contact the software developer.");
+            LogManager.getLogger(User.class).error(e);
         }
     }
 
