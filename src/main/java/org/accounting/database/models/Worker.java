@@ -39,8 +39,10 @@ public class Worker extends Base {
     private String fullName;
     private Date dateOfBirth;
     private int positionId;
+    private int noteID;
     private int userId;
     private Position position;
+    private Note note;
     private User user;
 
     public Worker() {}
@@ -111,6 +113,30 @@ public class Worker extends Base {
         this.position = position;
     }
 
+    public int getNoteID() {
+        return noteID;
+    }
+
+    public void setNoteID(int noteID) {
+        this.noteID = noteID;
+    }
+
+    public Note getNote() {
+        if (this.note != null) {
+            return note;
+        }
+
+        Note note = new Note();
+        note.createNewNotCurrentUser();
+        setNoteID(note.id);
+
+        return this.note = note;
+    }
+
+    public void setNote(Note note) {
+        this.note = note;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -148,8 +174,8 @@ public class Worker extends Base {
 
             String query;
             if (isNewRecord()) {
-                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, null, %d)",
-                        fullName, dateFormat.format(dateOfBirth), positionId, userId);
+                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, %d, %d)",
+                        fullName, dateFormat.format(dateOfBirth), positionId, getNote().id, userId);
 
             } else {
                 query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
