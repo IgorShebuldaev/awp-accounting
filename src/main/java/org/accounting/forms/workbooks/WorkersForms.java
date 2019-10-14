@@ -3,10 +3,7 @@ package org.accounting.forms.workbooks;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.accounting.database.models.Base;
-import org.accounting.database.models.Position;
-import org.accounting.database.models.User;
-import org.accounting.database.models.Worker;
+import org.accounting.database.models.*;
 import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
@@ -131,7 +128,16 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            workerTableModel.getRecord(rowIndex).delete();
+            Worker worker = workerTableModel.getRecord(rowIndex);
+            Note note = new Note();
+            User user = new User();
+
+            worker.delete();
+            note.setId(worker.getNoteID());
+            note.delete();
+            user.setId(worker.getUserId());
+            user.delete();
+
             workerTableModel.removeRow(rowIndex);
         }
     }
@@ -174,22 +180,22 @@ public class WorkersForms extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
-            case "btnAddWorker":
+            case "add":
                 insertRecord();
                 break;
-            case "btnEditWorker":
+            case "edit":
                 setValues();
                 break;
-            case "btnSaveWorker":
+            case "save":
                 saveRecord();
                 break;
-            case "btnCancelWorker":
+            case "cancel":
                 setDefaultMode();
                 break;
-            case "btnDeleteWorker":
+            case "delete":
                 deleteRecord();
                 break;
-            case "btnShowPositionsForm":
+            case "showPositionsForm":
                 showPositionsForm();
                 addItemComboBoxPosition();
                 break;
@@ -221,16 +227,16 @@ public class WorkersForms extends JPanel implements ActionListener {
         tableWorkers = new JTable();
         scrollPaneWorkers.setViewportView(tableWorkers);
         addButton = new JButton();
-        addButton.setActionCommand("btnAddWorker");
+        addButton.setActionCommand("add");
         addButton.setText("Add");
         panelWorkers.add(addButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
-        saveButton.setActionCommand("btnSaveWorker");
+        saveButton.setActionCommand("save");
         saveButton.setEnabled(false);
         saveButton.setText("Save");
         panelWorkers.add(saveButton, new GridConstraints(8, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editButton = new JButton();
-        editButton.setActionCommand("btnEditWorker");
+        editButton.setActionCommand("edit");
         editButton.setText("Edit");
         panelWorkers.add(editButton, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelFullName = new JLabel();
@@ -243,9 +249,11 @@ public class WorkersForms extends JPanel implements ActionListener {
         labelPosition.setText("Position");
         panelWorkers.add(labelPosition, new GridConstraints(6, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cancelButton = new JButton();
+        cancelButton.setActionCommand("cancel");
         cancelButton.setText("Cancel");
         panelWorkers.add(cancelButton, new GridConstraints(8, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deleteButton = new JButton();
+        deleteButton.setActionCommand("delete");
         deleteButton.setText("Delete");
         panelWorkers.add(deleteButton, new GridConstraints(8, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textFieldFullName = new JTextField();
@@ -255,7 +263,7 @@ public class WorkersForms extends JPanel implements ActionListener {
         comboBoxPositions = new JComboBox();
         panelWorkers.add(comboBoxPositions, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         showPositionsFormButton = new JButton();
-        showPositionsFormButton.setActionCommand("btnShowPositionsForm");
+        showPositionsFormButton.setActionCommand("showPositionsForm");
         showPositionsFormButton.setText(". . .");
         panelWorkers.add(showPositionsFormButton, new GridConstraints(7, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
