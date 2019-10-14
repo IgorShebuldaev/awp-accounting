@@ -35,8 +35,7 @@ public class NotesForm extends JDialog {
         setModalityType(ModalityType.APPLICATION_MODAL);
 
         note = new Note();
-        note.setId(CurrentUser.getUser().getId());
-        note.getNoteCurrentUser();
+        note.setNoteCurrentUser(CurrentUser.getUser().getId());
 
         if (note != null) {
             textAreaNotes.setText(note.getNote());
