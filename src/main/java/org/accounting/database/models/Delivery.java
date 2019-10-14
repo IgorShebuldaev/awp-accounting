@@ -1,8 +1,8 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+
 import org.accounting.database.Database;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,6 +36,7 @@ public class Delivery extends Base {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return results;
     }
 
@@ -156,8 +157,7 @@ public class Delivery extends Base {
                 this.isNewRecord = false;
             }
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Delivery.class).error(e);
+            writeLog(e);
 
             return false;
         }

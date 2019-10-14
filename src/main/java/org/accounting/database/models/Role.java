@@ -1,8 +1,8 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+
 import org.accounting.database.Database;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class Role extends Base {
     public static ArrayList<Role> getAll() {
         ArrayList<Role> results = new ArrayList<>();
-
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -29,6 +28,7 @@ public class Role extends Base {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return results;
     }
 
@@ -54,8 +54,7 @@ public class Role extends Base {
             this.name = resultSet.getString("name");
             this.lookupCode = resultSet.getString("lookup_code");
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Role.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -107,8 +106,7 @@ public class Role extends Base {
             this.name = resultSet.getString("name");
             this.lookupCode = resultSet.getString("lookup_code");
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Role.class).error(e);
+            writeLog(e);
         }
 
         return id;
@@ -136,8 +134,7 @@ public class Role extends Base {
                 this.isNewRecord = false;
             }
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Delivery.class).error(e);
+            writeLog(e);
 
             return false;
         }

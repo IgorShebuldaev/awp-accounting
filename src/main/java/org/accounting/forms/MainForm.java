@@ -2,6 +2,7 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+
 import org.accounting.database.Authorization;
 import org.accounting.database.Database;
 import org.accounting.database.models.*;
@@ -435,5 +436,4 @@ public class MainForm extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
-
 }

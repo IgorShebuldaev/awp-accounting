@@ -1,17 +1,13 @@
 package org.accounting.database.models;
 
-import org.accounting.database.Database;
-
 import com.mysql.cj.jdbc.StatementImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.accounting.database.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class User extends Base {
-    private static final Logger logger = LogManager.getLogger(User.class);
-
     public static ArrayList<User> getAll() {
         ArrayList<User> results = new ArrayList<>();
         try {
@@ -25,6 +21,7 @@ public class User extends Base {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return results;
     }
 
@@ -72,8 +69,7 @@ public class User extends Base {
 
             setAttributes(resultSet);
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(User.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -87,8 +83,7 @@ public class User extends Base {
 
             setAttributes(resultSet);
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(User.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -192,8 +187,9 @@ public class User extends Base {
                 this.id = (int)((StatementImpl) statement).getLastInsertID();
                 this.isNewRecord = false;
             }
-        } catch (SQLException se) {
-            logger.error(se);
+        } catch (SQLException e) {
+            writeLog(e);
+
             return false;
         }
 

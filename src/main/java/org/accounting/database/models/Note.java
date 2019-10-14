@@ -1,8 +1,8 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+
 import org.accounting.database.Database;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,7 +22,8 @@ public class Note extends Base {
         this.note = note;
     }
 
-    public void createNewNotCurrentUser() {
+    public Note getNewNoteCurrentUser() {
+        Note note = new Note();
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -30,11 +31,12 @@ public class Note extends Base {
 
             statement.execute(query);
 
-            id = (int)((StatementImpl) statement).getLastInsertID();
+            note.id = (int)((StatementImpl) statement).getLastInsertID();
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Note.class).error(e);
+            writeLog(e);
         }
+
+        return note;
     }
 
     public void setNoteCurrentUser(int id) {
@@ -51,8 +53,7 @@ public class Note extends Base {
             this.id = resultSet.getInt("id");
             note = resultSet.getString("note");
             } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Note.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -63,8 +64,7 @@ public class Note extends Base {
             String query = String.format("update notes set note='%s' where id=%d", note, id);
             statement.execute(query);
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Note.class).error(e);
+            writeLog(e);
         }
     }
 

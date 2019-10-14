@@ -1,8 +1,8 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+
 import org.accounting.database.Database;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -64,8 +64,7 @@ public class Worker extends Base {
             this.positionId = resultSet.getInt("position_id");
             this.userId = resultSet.getInt("user_id");
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Worker.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -126,11 +125,7 @@ public class Worker extends Base {
             return note;
         }
 
-        Note note = new Note();
-        note.createNewNotCurrentUser();
-        setNoteID(note.id);
-
-        return this.note = note;
+        return this.note = new Note().getNewNoteCurrentUser();
     }
 
     public void setNote(Note note) {
@@ -189,8 +184,7 @@ public class Worker extends Base {
                 this.isNewRecord = false;
             }
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Worker.class).error(e);
+            writeLog(e);
 
             return false;
         }

@@ -64,4 +64,3 @@ task setup_db {
   description 'Creates new database and applies schema'
 }
 setup_db.dependsOn create, load, seed
-

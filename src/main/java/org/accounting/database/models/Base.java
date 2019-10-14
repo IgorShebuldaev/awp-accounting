@@ -1,9 +1,10 @@
 package org.accounting.database.models;
 
+import org.apache.logging.log4j.LogManager;
+
 import org.accounting.database.Database;
 import org.accounting.database.models.utils.Errors;
 import org.accounting.database.models.utils.Validator;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -49,12 +50,7 @@ public abstract class  Base {
     public boolean isValid() {
         if (isNewRecord()) { return true; }
 
-        getValidator().validateCustom("Incorrect id", getId(), new Validator.CustomValidator<Integer>() {
-            @Override
-            public boolean isValid(Integer object) {
-                return object > 0;
-            }
-        });
+        getValidator().validateCustom("Incorrect id", getId(), object -> object > 0);
 
         return getErrors().isEmpty();
     }
@@ -66,9 +62,13 @@ public abstract class  Base {
             String query = String.format("DELETE FROM %s WHERE id=%d", getTableName(), getId());
             statement.execute(query);
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Base.class).error(e);
+            writeLog(e);
         }
+    }
+
+    protected void writeLog(SQLException e) {
+        getErrors().addError("Error. Contact the software developer.");
+        LogManager.getLogger(this.getClass()).error(e);
     }
 
     public String toString() {

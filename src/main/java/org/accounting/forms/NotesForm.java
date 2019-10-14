@@ -2,6 +2,7 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+
 import org.accounting.database.models.Note;
 import org.accounting.user.CurrentUser;
 

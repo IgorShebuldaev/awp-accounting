@@ -1,8 +1,8 @@
 package org.accounting.database.models;
 
 import com.mysql.cj.jdbc.StatementImpl;
+
 import org.accounting.database.Database;
-import org.apache.logging.log4j.LogManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -27,6 +27,7 @@ public class Supplier extends Base {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return results;
     }
 
@@ -48,8 +49,7 @@ public class Supplier extends Base {
             this.id = resultSet.getInt("id");
             this.companyName = resultSet.getString("company_name");
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Supplier.class).error(e);
+            writeLog(e);
         }
     }
 
@@ -94,8 +94,7 @@ public class Supplier extends Base {
                 this.isNewRecord = false;
             }
         } catch (SQLException e) {
-            getErrors().addError("Error. Contact the software developer.");
-            LogManager.getLogger(Supplier.class).error(e);
+            writeLog(e);
 
             return false;
         }
