@@ -17,7 +17,7 @@ public class Worker extends Base {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = "select w.id, w.full_name, w.date_of_birth, w.position_id, w.user_id from workers w " +
+            String query = "select * from workers w " +
             "join positions p on w.position_id = p.id " +
             "left join users u on w.user_id = u.id";
             ResultSet resultSet = statement.executeQuery(query);
@@ -28,6 +28,7 @@ public class Worker extends Base {
                         resultSet.getString("full_name"),
                         resultSet.getDate("date_of_birth"),
                         resultSet.getInt("position_id"),
+                        resultSet.getInt("note_id"),
                         resultSet.getInt("user_id")
                 ));
         } catch (SQLException e) {
@@ -68,11 +69,12 @@ public class Worker extends Base {
         }
     }
 
-    private Worker(int id, String fullName, Date dateOfBirth, int positionId, int userId) {
+    private Worker(int id, String fullName, Date dateOfBirth, int positionId, int noteID, int userId) {
         this.id = id;
         this.fullName = fullName;
         this.dateOfBirth = dateOfBirth;
         this.positionId = positionId;
+        this.noteID = noteID;
         this.userId = userId;
     }
 
@@ -170,8 +172,7 @@ public class Worker extends Base {
             String query;
             if (isNewRecord()) {
                 query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, %d, %d)",
-                        fullName, dateFormat.format(dateOfBirth), positionId, getNote().id, userId);
-
+                        fullName, dateFormat.format(dateOfBirth), positionId, noteID, userId);
             } else {
                 query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
                         fullName, dateFormat.format(dateOfBirth), positionId, id);
