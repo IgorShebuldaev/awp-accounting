@@ -23,7 +23,7 @@ public class NotesForm extends JDialog {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 note.setNote(textAreaNotes.getText());
-                note.updateNoteCurrentUser();
+                note.save();
             }
         });
     }

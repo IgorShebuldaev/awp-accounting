@@ -1,13 +1,8 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -158,40 +153,34 @@ public class Worker extends Base {
         return getErrors().isEmpty();
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                setNoteID(new Note().save().getId());
-                query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, %d, %d)",
-                        fullName, dateFormat.format(dateOfBirth), positionId, noteID, userId);
-            } else {
-                query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
-                        fullName, dateFormat.format(dateOfBirth), positionId, id);
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     protected String getTableName() {
         return "workers";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        Note note = new Note();
+        note.save();
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into workers values(null,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, fullName);
+        preparedStatement.setString(2, dateFormat.format(dateOfBirth));
+        preparedStatement.setInt(3, positionId);
+        preparedStatement.setInt(4, note.getId());
+        preparedStatement.setInt(5, userId);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update workers set " +
+                "full_name=?, date_of_birth=?, position_id=? where id=?");
+        preparedStatement.setInt(4,id);
+        preparedStatement.setString(1, fullName);
+        preparedStatement.setString(2, dateFormat.format(dateOfBirth));
+        preparedStatement.setInt(3, positionId);
+
+        return preparedStatement;
     }
 }

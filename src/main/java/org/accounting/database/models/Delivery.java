@@ -1,13 +1,8 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -133,40 +128,35 @@ public class Delivery extends Base {
         return getErrors().isEmpty();
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                query = String.format("INSERT INTO deliveries VALUES(null,'%s', %d,'%s','%s', %d)",
-                        dateFormat.format(deliveryDate), supplierId, product, price, workerId);
-            } else {
-                query = String.format("UPDATE deliveries SET delivery_date='%s', supplier_id=%d, " +
-                        "product='%s', price='%s', worker_id=%d WHERE id=%d",
-                        dateFormat.format(deliveryDate), supplierId, product, price, workerId, id);
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     protected String getTableName() {
         return "deliveries";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        new Note().save();
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into deliveries values(null,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, dateFormat.format(deliveryDate));
+        preparedStatement.setInt(2, supplierId);
+        preparedStatement.setString(3, product);
+        preparedStatement.setString(4, price);
+        preparedStatement.setInt(5, workerId);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update deliveries set " +
+                "delivery_date=?, supplier_id=?, product=?, price=?, worker_id=? where id=?");
+        preparedStatement.setInt(6,id);
+        preparedStatement.setString(1, dateFormat.format(deliveryDate));
+        preparedStatement.setInt(2, supplierId);
+        preparedStatement.setString(3, product);
+        preparedStatement.setString(4, price);
+        preparedStatement.setInt(5, workerId);
+
+        return preparedStatement;
     }
 }

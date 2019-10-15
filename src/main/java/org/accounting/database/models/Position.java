@@ -1,7 +1,5 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
 import java.sql.*;
@@ -69,38 +67,26 @@ public class Position extends Base {
         return getErrors().isEmpty();
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                query = String.format("INSERT INTO positions VALUES(null,'%s')", name);
-
-            } else {
-                query = String.format("UPDATE positions SET name='%s' where id=%d", name, id);
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     protected String getTableName() {
         return "positions";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into positions values(null,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, name);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update positions set " +
+                "name=? where id=?");
+        preparedStatement.setInt(2,id);
+        preparedStatement.setString(1, name);
+
+        return preparedStatement;
     }
 }

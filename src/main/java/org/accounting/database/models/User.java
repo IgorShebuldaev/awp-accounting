@@ -1,7 +1,5 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
 import java.sql.*;
@@ -165,39 +163,30 @@ public class User extends Base {
         timeInProgram += step;
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                query = String.format("INSERT INTO users VALUES(null,'%s','%s', 0, %d)", email, password, roleId);
-
-            } else {
-                query = String.format("UPDATE users SET email='%s', password='%s', time_in_program=%d, " +
-                    "role_id=%d where id=%d", email, password, timeInProgram, roleId, id);
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     protected String getTableName() {
         return "users";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into users values(null,?,?,0,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, email);
+        preparedStatement.setString(2, password);
+        preparedStatement.setInt(3, roleId);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update users set " +
+                "email=?, password=?, role_id=? where id=?");
+        preparedStatement.setInt(4,id);
+        preparedStatement.setString(1, email);
+        preparedStatement.setString(2, password);
+        preparedStatement.setInt(3, roleId);
+
+        return preparedStatement;
     }
 }

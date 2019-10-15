@@ -1,13 +1,8 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Supplier extends Base {
@@ -72,38 +67,25 @@ public class Supplier extends Base {
         return getErrors().isEmpty();
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                query = String.format("INSERT INTO suppliers VALUES(null,'%s')", companyName);
-
-            } else {
-                query = String.format("UPDATE suppliers SET company_name='%s' WHERE id=%d", companyName, getId());
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     @Override
     protected String getTableName() {
         return "suppliers";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into suppliers values(null,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, companyName);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update suppliers set company_name=? where id=?");
+        preparedStatement.setString(1, companyName);
+        preparedStatement.setInt(2,id);
+
+        return preparedStatement;
     }
 }

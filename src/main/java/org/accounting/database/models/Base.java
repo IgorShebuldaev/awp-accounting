@@ -6,9 +6,7 @@ import org.accounting.database.Database;
 import org.accounting.database.models.utils.Errors;
 import org.accounting.database.models.utils.Validator;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -16,6 +14,8 @@ public abstract class  Base {
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     protected abstract String getTableName();
+    protected abstract PreparedStatement getInsertStatement(Connection connection) throws SQLException;
+    protected abstract PreparedStatement getUpdateStatement(Connection connection) throws SQLException;
 
     public static ArrayList<?> getAll() { return null; }
     protected Integer id;
@@ -53,6 +53,34 @@ public abstract class  Base {
         getValidator().validateCustom("Incorrect id", getId(), object -> object > 0);
 
         return getErrors().isEmpty();
+    }
+
+    public boolean save() {
+        if (!isValid()) { return false; }
+
+        PreparedStatement preparedStatement;
+        try {
+            Connection connection = Database.getConnection();
+            if (isNewRecord()) {
+                preparedStatement = getInsertStatement(connection);
+                preparedStatement.executeUpdate();
+            } else {
+                preparedStatement = getUpdateStatement(connection);
+                preparedStatement.execute();
+            }
+
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+            if (isNewRecord() && resultSet.next()) {
+                id = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            writeLog(e);
+
+            return false;
+        }
+
+        return true;
     }
 
     public void delete() {

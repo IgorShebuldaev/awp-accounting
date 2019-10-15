@@ -1,13 +1,8 @@
 package org.accounting.database.models;
 
-import com.mysql.cj.jdbc.StatementImpl;
-
 import org.accounting.database.Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Role extends Base {
@@ -112,36 +107,6 @@ public class Role extends Base {
         return id;
     }
 
-    public boolean save() {
-        if (!isValid()) { return false; }
-
-        try {
-            Connection connection = Database.getConnection();
-            Statement statement = connection.createStatement();
-
-            String query;
-            if (isNewRecord()) {
-                query = String.format("INSERT INTO roles VALUES(null,'%s', '%s')", name, lookupCode);
-
-            } else {
-                query = String.format("UPDATE roles SET name='%s', lookup_code='%s' where id=%d", name, lookupCode, id);
-            }
-
-            statement.execute(query);
-
-            if (isNewRecord()) {
-                this.id = (int)((StatementImpl) statement).getLastInsertID();
-                this.isNewRecord = false;
-            }
-        } catch (SQLException e) {
-            writeLog(e);
-
-            return false;
-        }
-
-        return true;
-    }
-
     public boolean isAdmin() {
         return lookupCode.equals(ADMIN_LOOKUP_CODE);
     }
@@ -149,5 +114,25 @@ public class Role extends Base {
     @Override
     protected String getTableName() {
         return "roles";
+    }
+
+    @Override
+    protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into roles values(null,?,?)", Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, lookupCode);
+
+        return preparedStatement;
+    }
+
+    @Override
+    protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("update roles set " +
+                "name=?, lookup_code=? where id=?");
+        preparedStatement.setInt(3,id);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, lookupCode);
+
+        return preparedStatement;
     }
 }
