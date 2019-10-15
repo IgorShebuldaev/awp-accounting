@@ -22,7 +22,7 @@ public class Note extends Base {
         this.note = note;
     }
 
-    public Note getNewNoteCurrentUser() {
+    public Note save() {
         Note note = new Note();
         try {
             Connection connection = Database.getConnection();
@@ -35,7 +35,6 @@ public class Note extends Base {
         } catch (SQLException e) {
             writeLog(e);
         }
-
         return note;
     }
 

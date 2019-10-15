@@ -123,11 +123,7 @@ public class Worker extends Base {
     }
 
     public Note getNote() {
-        if (this.note != null) {
-            return note;
-        }
-
-        return this.note = new Note().getNewNoteCurrentUser();
+        return note;
     }
 
     public void setNote(Note note) {
@@ -171,9 +167,9 @@ public class Worker extends Base {
 
             String query;
             if (isNewRecord()) {
+                setNoteID(new Note().save().getId());
                 query = String.format("INSERT INTO workers VALUES(null,'%s','%s',%d, %d, %d)",
-                        fullName, dateFormat.format(dateOfBirth), positionId, getNote().id, userId);
-                setNoteID(getNote().id);
+                        fullName, dateFormat.format(dateOfBirth), positionId, noteID, userId);
             } else {
                 query = String.format("UPDATE workers SET full_name='%s', date_of_birth='%s', position_id=%d WHERE id=%d",
                         fullName, dateFormat.format(dateOfBirth), positionId, id);
