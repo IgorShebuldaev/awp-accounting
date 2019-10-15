@@ -152,7 +152,7 @@ public class WorkersForms extends JPanel implements ActionListener {
         Worker worker = workerTableModel.getRecord(rowIndex);
         textFieldFullName.setText(worker.getFullName());
         spinnerDateOfBirth.setValue(worker.getDateOfBirth());
-        comboBoxPositions.setSelectedItem(worker.getPositionId());
+        comboBoxPositions.setSelectedItem(worker.getPosition().getName());
         setEditMode();
     }
 
