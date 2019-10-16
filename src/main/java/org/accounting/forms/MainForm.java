@@ -122,7 +122,7 @@ public class MainForm extends JFrame implements ActionListener {
             }
         });
 
-        updateStatusBar(); //???
+        updateStatusBar();
 
         Timer timer = new Timer(1000, e -> updateStatusBar());
         timer.start();
@@ -162,20 +162,26 @@ public class MainForm extends JFrame implements ActionListener {
         JMenuItem jMenuItemWorkBooks = new JMenuItem("Work Books");
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
 
+        JMenuItem jMenuItemReports = new JMenuItem("Reports");
+        JMenuItem jMenuItemGraphics = new JMenuItem("Graphics");
+
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
         JMenuItem jMenuItemRoles = new JMenuItem("Roles");
 
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
 
+        jMenuItemReports.setActionCommand("reports");
+        jMenuItemGraphics.setActionCommand("graphics");
+
         jMenuItemUsers.setActionCommand("users");
         jMenuItemRoles.setActionCommand("roles");
 
-        reports.setActionCommand("reports");
-        graphics.setActionCommand("graphics");
-
         jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
+
+        jMenuItemReports.addActionListener(this);
+        jMenuItemGraphics.addActionListener(this);
 
         jMenuItemUsers.addActionListener(this);
         jMenuItemRoles.addActionListener(this);
@@ -183,6 +189,8 @@ public class MainForm extends JFrame implements ActionListener {
         menu.add(jMenuItemWorkBooks);
         menu.addSeparator();
         menu.add(jMenuItemNotes);
+
+        reports.add(jMenuItemReports);
 
         settings.add(jMenuItemUsers);
         settings.addSeparator();
@@ -338,6 +346,9 @@ public class MainForm extends JFrame implements ActionListener {
                 break;
             case "roles":
                 new RolesForm().setVisible(true);
+                break;
+            case "reports":
+                new ReportsForm().setVisible(true);
                 break;
             case "addButton":
                 insertRecord();
