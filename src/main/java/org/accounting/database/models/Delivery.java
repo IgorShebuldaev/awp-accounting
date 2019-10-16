@@ -135,8 +135,11 @@ public class Delivery extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        new Note().save();
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into deliveries values(null,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        String query = String.format(
+                "insert into %s(delivery_date, supplier_id, product, price, worker_id) values(?, ?, ?, ?, ?);",
+                getTableName());
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, dateFormat.format(deliveryDate));
         preparedStatement.setInt(2, supplierId);
         preparedStatement.setString(3, product);
@@ -148,9 +151,11 @@ public class Delivery extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update deliveries set " +
-                "delivery_date=?, supplier_id=?, product=?, price=?, worker_id=? where id=?");
-        preparedStatement.setInt(6,id);
+        StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
+        builder.append("delivery_date=?, supplier_id=?, product=?, price=?, worker_id=? ");
+        builder.append(String.format("where id = %d", getId()));
+
+        PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, dateFormat.format(deliveryDate));
         preparedStatement.setInt(2, supplierId);
         preparedStatement.setString(3, product);

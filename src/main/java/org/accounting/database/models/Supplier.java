@@ -74,7 +74,8 @@ public class Supplier extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into suppliers values(null,?)", Statement.RETURN_GENERATED_KEYS);
+        String query = String.format("insert into %s(company_name) values(?)", getTableName());
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, companyName);
 
         return preparedStatement;
@@ -82,7 +83,8 @@ public class Supplier extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update suppliers set company_name=? where id=?");
+        String query = String.format("update %s set company_name = ? where id = ?", getTableName());
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, companyName);
         preparedStatement.setInt(2,id);
 

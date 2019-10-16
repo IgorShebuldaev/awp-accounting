@@ -42,15 +42,17 @@ public class Note extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        return connection.prepareStatement("insert into notes values(null,null)", Statement.RETURN_GENERATED_KEYS);
+        return connection.prepareStatement(String.format("insert into %s values()", getTableName()));
     }
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update notes set " +
-                "note=? where id=?");
-        preparedStatement.setInt(2,id);
+        StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
+        builder.append("note = ? where id = ?");
+
+        PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, note);
+        preparedStatement.setInt(2,id);
 
         return preparedStatement;
     }

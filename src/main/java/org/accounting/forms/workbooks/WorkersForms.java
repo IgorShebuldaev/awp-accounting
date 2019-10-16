@@ -80,7 +80,7 @@ public class WorkersForms extends JPanel implements ActionListener {
     private void insertRecord() {
         User user = userFieldsPanel.buildUser();
 
-        if (!user.save()) {
+        if (!user.isValid()) {
             JOptionPane.showMessageDialog(this, user.getErrors().fullMessages("\n"));
             return;
         }
@@ -89,12 +89,20 @@ public class WorkersForms extends JPanel implements ActionListener {
         worker.setFullName(textFieldFullName.getText());
         worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
         worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
-        worker.setUserId(user.getId());
 
-        if (!worker.save()) {
+
+        if (!worker.isValid()) {
             JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
             return;
         }
+
+        Note note = new Note();
+        note.save();
+
+        user.save(); // manage dependencies manually by now
+        worker.setUser(user);
+        worker.setNote(note);
+        worker.save();
 
         workerTableModel.addRecord(worker);
         textFieldFullName.setText("");

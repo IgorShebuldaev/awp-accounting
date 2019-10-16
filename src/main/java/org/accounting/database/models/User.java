@@ -170,7 +170,8 @@ public class User extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into users values(null,?,?,0,?)", Statement.RETURN_GENERATED_KEYS);
+        String query = String.format("insert into %s(email, password, role_id) values(?,?,?)", getTableName());
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, email);
         preparedStatement.setString(2, password);
         preparedStatement.setInt(3, roleId);
@@ -180,12 +181,15 @@ public class User extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update users set " +
-                "email=?, password=?, role_id=? where id=?");
-        preparedStatement.setInt(4,id);
+        StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
+        builder.append("email=?, password = ?, role_id = ?, time_in_program = ? ");
+        builder.append(String.format("where id = %d", getId()));
+
+        PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, email);
         preparedStatement.setString(2, password);
         preparedStatement.setInt(3, roleId);
+        preparedStatement.setInt(4, timeInProgram);
 
         return preparedStatement;
     }
