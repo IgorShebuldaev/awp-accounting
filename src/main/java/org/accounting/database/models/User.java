@@ -138,15 +138,6 @@ public class User extends Base {
         return getErrors().isEmpty();
     }
 
-    private void setAttributes(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getInt("id");
-        this.email = resultSet.getString("email");
-        this.password = resultSet.getString("password");
-        this.roleId = resultSet.getInt("role_id");
-        this.timeInProgram = resultSet.getInt("time_in_program");
-        this.isNewRecord = false;
-    }
-
     public String getFormattedTimeInProgram() {
         int seconds = timeInProgram % 60;
         int minutes = timeInProgram / 60 % 60;
@@ -161,6 +152,15 @@ public class User extends Base {
 
     public void incrementTimeInProgram(Integer step) {
         timeInProgram += step;
+    }
+
+    private void setAttributes(ResultSet resultSet) throws SQLException {
+        this.id = resultSet.getInt("id");
+        this.email = resultSet.getString("email");
+        this.password = resultSet.getString("password");
+        this.roleId = resultSet.getInt("role_id");
+        this.timeInProgram = resultSet.getInt("time_in_program");
+        this.isNewRecord = false;
     }
 
     @Override

@@ -28,6 +28,7 @@ public abstract class  Base {
         return id;
     }
 
+    // TODO: Make it private
     public void setId(Integer id) {
         this.id = id;
         this.isNewRecord = false;

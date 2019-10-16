@@ -137,6 +137,7 @@ public class WorkersForms extends JPanel implements ActionListener {
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
             Worker worker = workerTableModel.getRecord(rowIndex);
+            // TODO: Deal with this mess
             Note note = new Note();
             User user = new User();
 
