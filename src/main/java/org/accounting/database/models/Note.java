@@ -5,16 +5,16 @@ import org.accounting.database.Database;
 import java.sql.*;
 
 public class Note extends Base {
-    private String note;
+    private String message;
 
     public Note() {}
 
-    public String getNote() {
-        return note;
+    public String getMessage() {
+        return message;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setNoteCurrentUser(int id) {
@@ -29,7 +29,7 @@ public class Note extends Base {
             }
 
             this.id = resultSet.getInt("id");
-            note = resultSet.getString("note");
+            message = resultSet.getString("note");
             } catch (SQLException e) {
             writeLog(e);
         }
@@ -51,8 +51,8 @@ public class Note extends Base {
         builder.append("note = ? where id = ?");
 
         PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
-        preparedStatement.setString(1, note);
-        preparedStatement.setInt(2,id);
+        preparedStatement.setString(1, message);
+        preparedStatement.setInt(2, id);
 
         return preparedStatement;
     }

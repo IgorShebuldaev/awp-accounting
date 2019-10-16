@@ -50,7 +50,7 @@ public class SuppliersForm extends JPanel implements ActionListener {
 
     private void insertRecord() {
         Supplier supplier = new Supplier();
-        supplier.setCompanyName(textFieldSuppliersCompanyName.getText());
+        supplier.setName(textFieldSuppliersCompanyName.getText());
 
         if (!supplier.save()) {
             JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
@@ -64,7 +64,7 @@ public class SuppliersForm extends JPanel implements ActionListener {
     private void saveRecord() {
         int rowIndex = tableSuppliers.getSelectedRow();
         Supplier supplier = supplierTableModel.getRecord(rowIndex);
-        supplier.setCompanyName(textFieldSuppliersCompanyName.getText());
+        supplier.setName(textFieldSuppliersCompanyName.getText());
 
         if (!supplier.save()) {
             JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
@@ -96,7 +96,7 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).getCompanyName());
+        textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).getName());
         setEditMode();
     }
 

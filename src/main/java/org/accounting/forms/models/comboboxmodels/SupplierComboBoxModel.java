@@ -10,16 +10,16 @@ public class SupplierComboBoxModel extends MainComboBoxModel {
         if (!selection.isPresent()) return "";
 
         Supplier supplier = (Supplier) selection.get();
-        return supplier.getCompanyName();
+        return supplier.getName();
     }
 
     @Override
     public void addRecord(Base record) {
         Supplier supplier = (Supplier) record;
-        records.put(supplier.getCompanyName(), record);
+        records.put(supplier.getName(), record);
     }
 
     public Object getElementAt(int index) {
-        return ((Supplier)super.getElementAt(index)).getCompanyName();
+        return ((Supplier)super.getElementAt(index)).getName();
     }
 }

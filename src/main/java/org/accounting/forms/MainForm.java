@@ -292,7 +292,7 @@ public class MainForm extends JFrame implements ActionListener {
 
         Delivery delivery = deliveryTableModel.getRecord(rowIndex);
         spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
-        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getCompanyName());
+        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getName());
         textFieldProduct.setText(delivery.getProduct());
         textFieldPrice.setText(delivery.getPrice());
         comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());

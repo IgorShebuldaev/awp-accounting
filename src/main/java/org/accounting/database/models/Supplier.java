@@ -26,7 +26,7 @@ public class Supplier extends Base {
         return results;
     }
 
-    private String companyName;
+    private String name;
 
     public Supplier() {}
 
@@ -42,27 +42,27 @@ public class Supplier extends Base {
             }
 
             this.id = resultSet.getInt("id");
-            this.companyName = resultSet.getString("company_name");
+            this.name = resultSet.getString("company_name");
         } catch (SQLException e) {
             writeLog(e);
         }
     }
 
-    private Supplier(int id, String companyName) {
+    private Supplier(int id, String name) {
         this.id = id;
-        this.companyName = companyName;
+        this.name = name;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getName() {
+        return name;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isValid() {
-        getValidator().validatePresence(companyName, "Company name");
+        getValidator().validatePresence(name, "Company name");
 
         return getErrors().isEmpty();
     }
@@ -76,7 +76,7 @@ public class Supplier extends Base {
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
         String query = String.format("insert into %s(company_name) values(?)", getTableName());
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, companyName);
+        preparedStatement.setString(1, name);
 
         return preparedStatement;
     }
@@ -85,7 +85,7 @@ public class Supplier extends Base {
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
         String query = String.format("update %s set company_name = ? where id = ?", getTableName());
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, companyName);
+        preparedStatement.setString(1, name);
         preparedStatement.setInt(2,id);
 
         return preparedStatement;
