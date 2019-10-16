@@ -14,36 +14,21 @@ import java.util.ArrayList;
 public abstract class  Base {
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    protected abstract String getTableName();
-    protected abstract PreparedStatement getInsertStatement(Connection connection) throws SQLException;
-    protected abstract PreparedStatement getUpdateStatement(Connection connection) throws SQLException;
-
     public static ArrayList<?> getAll() { return null; }
+
     protected Integer id;
-    protected boolean isNewRecord;
-    protected Errors errors;
-    protected Validator validator;
+    private boolean isNewRecord;
+    private Errors errors;
+    private Validator validator;
 
     public Integer getId() {
         return id;
-    }
-
-    // TODO: Make it private
-    public void setId(Integer id) {
-        this.id = id;
-        this.isNewRecord = false;
     }
 
     public Errors getErrors() {
         if (errors == null) { errors = new Errors(); }
 
         return errors;
-    }
-
-    protected Validator getValidator() {
-        if (validator == null) { validator = new Validator(getErrors()); };
-
-        return validator;
     }
 
     public boolean isNewRecord() {
@@ -66,10 +51,13 @@ public abstract class  Base {
             PreparedStatement preparedStatement;
 
             if (isNewRecord()) {
+                beforeCreate();
                 preparedStatement = getInsertStatement(connection);
             } else {
+                beforeUpdate();
                 preparedStatement = getUpdateStatement(connection);
             }
+            beforeSave();
             preparedStatement.execute();
 
             if (isNewRecord()) {
@@ -85,6 +73,10 @@ public abstract class  Base {
     }
 
     public void delete() {
+        beforeDelete();
+
+        if (isNewRecord()) { return; }
+
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
@@ -95,9 +87,30 @@ public abstract class  Base {
         }
     }
 
-    protected void writeLog(SQLException e) {
+    Validator getValidator() {
+        if (validator == null) { validator = new Validator(getErrors()); };
+
+        return validator;
+    }
+
+    protected abstract String getTableName();
+    protected abstract PreparedStatement getInsertStatement(Connection connection) throws SQLException;
+    protected abstract PreparedStatement getUpdateStatement(Connection connection) throws SQLException;
+
+    void beforeCreate() {}
+    void beforeUpdate() {}
+    void beforeSave() {}
+    void beforeDelete() {}
+
+    void writeLog(SQLException e) {
         getErrors().addError("Error. Contact the software developer.");
         LogManager.getLogger(this.getClass()).error(e);
+    }
+
+    // TODO: Make it completely(!) private. Deal with User.java call
+    void setId(Integer id) {
+        this.id = id;
+        this.isNewRecord = false;
     }
 
     public String toString() {

@@ -88,20 +88,14 @@ public class WorkersForms extends JPanel implements ActionListener {
         Worker worker = new Worker();
         worker.setFullName(textFieldFullName.getText());
         worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
-        worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
-
+        worker.setPositionID(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!worker.isValid()) {
             JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
             return;
         }
 
-        Note note = new Note();
-        note.save();
-
-        user.save(); // manage dependencies manually by now
         worker.setUser(user);
-        worker.setNote(note);
         worker.save();
 
         workerTableModel.addRecord(worker);
@@ -116,7 +110,7 @@ public class WorkersForms extends JPanel implements ActionListener {
 
         worker.setFullName(textFieldFullName.getText());
         worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
-        worker.setPositionId(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
+        worker.setPositionID(positionComboBoxModel.getSelection().map(Base::getId).orElse(0));
 
         if (!worker.save()) {
             JOptionPane.showMessageDialog(this, worker.getErrors().fullMessages("\n"));
@@ -136,17 +130,7 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            Worker worker = workerTableModel.getRecord(rowIndex);
-            // TODO: Deal with this mess
-            Note note = new Note();
-            User user = new User();
-
-            worker.delete();
-            note.setId(worker.getNoteID());
-            note.delete();
-            user.setId(worker.getUserId());
-            user.delete();
-
+            workerTableModel.getRecord(rowIndex).delete();
             workerTableModel.removeRow(rowIndex);
         }
     }

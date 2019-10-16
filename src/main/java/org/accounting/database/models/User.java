@@ -155,12 +155,11 @@ public class User extends Base {
     }
 
     private void setAttributes(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getInt("id");
+        this.setId(resultSet.getInt("id"));
         this.email = resultSet.getString("email");
         this.password = resultSet.getString("password");
         this.roleId = resultSet.getInt("role_id");
         this.timeInProgram = resultSet.getInt("time_in_program");
-        this.isNewRecord = false;
     }
 
     @Override

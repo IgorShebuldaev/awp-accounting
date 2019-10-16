@@ -9,6 +9,25 @@ public class Note extends Base {
 
     public Note() {}
 
+    public Note(int id) throws IllegalStateException {
+        try {
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            String query = String.format("select * from notes where id = %d", id);
+            ResultSet resultSet = statement.executeQuery(query);
+
+            // TODO: I need more general version of this. It's time to write another hierarchy - finders.
+            if (!resultSet.next()) {
+                throw new IllegalStateException(String.format("No such record: Note(%d)", id));
+            }
+
+            this.id = resultSet.getInt("id");
+            message = resultSet.getString("message");
+        } catch (SQLException e) {
+            writeLog(e);
+        }
+    }
+
     public String getMessage() {
         return message;
     }
@@ -21,7 +40,7 @@ public class Note extends Base {
         try {
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            String query = String.format("select n.id, n.note from workers w join notes n on w.note_id = n.id where user_id=%d", id);
+            String query = String.format("select n.id, n.message from workers w join notes n on w.note_id = n.id where user_id=%d", id);
             ResultSet resultSet = statement.executeQuery(query);
 
             if (!resultSet.next()) {
@@ -29,8 +48,8 @@ public class Note extends Base {
             }
 
             this.id = resultSet.getInt("id");
-            message = resultSet.getString("note");
-            } catch (SQLException e) {
+            message = resultSet.getString("message");
+        } catch (SQLException e) {
             writeLog(e);
         }
     }
@@ -48,7 +67,7 @@ public class Note extends Base {
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
         StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
-        builder.append("note = ? where id = ?");
+        builder.append("message = ? where id = ?");
 
         PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, message);
