@@ -30,6 +30,7 @@ public class Validator {
     public void validatePresence(String value, String fieldName, String message) {
         if (value.isEmpty()) { errors.addError(message); }
     }
+
     public void validatePresence(Date value, String fieldName, String message) {
         if (value == null) { errors.addError(message); }
     }

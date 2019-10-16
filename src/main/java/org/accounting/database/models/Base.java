@@ -1,5 +1,6 @@
 package org.accounting.database.models;
 
+import com.mysql.cj.jdbc.StatementImpl;
 import org.apache.logging.log4j.LogManager;
 
 import org.accounting.database.Database;
@@ -27,8 +28,10 @@ public abstract class  Base {
         return id;
     }
 
+    // TODO: Make it private
     public void setId(Integer id) {
         this.id = id;
+        this.isNewRecord = false;
     }
 
     public Errors getErrors() {
@@ -58,21 +61,19 @@ public abstract class  Base {
     public boolean save() {
         if (!isValid()) { return false; }
 
-        PreparedStatement preparedStatement;
         try {
             Connection connection = Database.getConnection();
+            PreparedStatement preparedStatement;
+
             if (isNewRecord()) {
                 preparedStatement = getInsertStatement(connection);
-                preparedStatement.executeUpdate();
             } else {
                 preparedStatement = getUpdateStatement(connection);
-                preparedStatement.execute();
             }
+            preparedStatement.execute();
 
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-            if (isNewRecord() && resultSet.next()) {
-                id = resultSet.getInt(1);
+            if (isNewRecord()) {
+                setId((int)((StatementImpl) preparedStatement).getLastInsertID());
             }
         } catch (SQLException e) {
             writeLog(e);

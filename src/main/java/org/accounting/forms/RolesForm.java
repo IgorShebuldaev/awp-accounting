@@ -52,7 +52,7 @@ public class RolesForm extends JDialog implements ActionListener {
     private void insertRecord() {
         Role role = new Role();
         role.setName(textFieldRole.getText());
-        role.setName(lookupCode.getText());
+        role.setLookupCode(lookupCode.getText());
 
         if (!role.save()) {
             JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));

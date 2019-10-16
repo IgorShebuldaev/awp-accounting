@@ -118,7 +118,9 @@ public class Role extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into roles values(null,?,?)", Statement.RETURN_GENERATED_KEYS);
+        String query = String.format("insert into %s(name, lookup_code) values(?, ?)", getTableName());
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, name);
         preparedStatement.setString(2, lookupCode);
 
@@ -127,11 +129,13 @@ public class Role extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update roles set " +
-                "name=?, lookup_code=? where id=?");
-        preparedStatement.setInt(3,id);
+        StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
+        builder.append("name = ?, lookup_code = ? where id = ?");
+
+        PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, name);
         preparedStatement.setString(2, lookupCode);
+        preparedStatement.setInt(3, id);
 
         return preparedStatement;
     }

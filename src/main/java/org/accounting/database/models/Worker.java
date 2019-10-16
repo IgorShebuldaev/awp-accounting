@@ -35,7 +35,7 @@ public class Worker extends Base {
     private String fullName;
     private Date dateOfBirth;
     private int positionId;
-    private int noteID;
+    private Integer noteID;
     private int userId;
     private Position position;
     private Note note;
@@ -123,6 +123,7 @@ public class Worker extends Base {
 
     public void setNote(Note note) {
         this.note = note;
+        this.noteID = note.getId();
     }
 
     public int getUserId() {
@@ -143,6 +144,7 @@ public class Worker extends Base {
 
     public void setUser(User user) {
         this.user = user;
+        this.userId = user.getId();
     }
 
     public boolean isValid() {
@@ -160,13 +162,13 @@ public class Worker extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        Note note = new Note();
-        note.save();
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into workers values(null,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+        String query = String.format("insert into %s(full_name, date_of_birth, position_id, note_id, user_id) values(?, ? ,?, ? ,?);", getTableName());
+
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, fullName);
         preparedStatement.setString(2, dateFormat.format(dateOfBirth));
         preparedStatement.setInt(3, positionId);
-        preparedStatement.setInt(4, note.getId());
+        preparedStatement.setInt(4, noteID);
         preparedStatement.setInt(5, userId);
 
         return preparedStatement;
@@ -174,12 +176,15 @@ public class Worker extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("update workers set " +
-                "full_name=?, date_of_birth=?, position_id=? where id=?");
-        preparedStatement.setInt(4,id);
+        StringBuilder builder = new StringBuilder(String.format("update %s set ", getTableName()));
+        builder.append("full_name = ?, date_of_birth = ?, position_id = ?, note_id = ? where id = ?");
+
+        PreparedStatement preparedStatement = connection.prepareStatement(builder.toString());
         preparedStatement.setString(1, fullName);
         preparedStatement.setString(2, dateFormat.format(dateOfBirth));
         preparedStatement.setInt(3, positionId);
+        preparedStatement.setInt(4, noteID);
+        preparedStatement.setInt(5, id);
 
         return preparedStatement;
     }
