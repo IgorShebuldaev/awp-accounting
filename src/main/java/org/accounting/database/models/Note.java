@@ -16,7 +16,6 @@ public class Note extends Base {
             String query = String.format("select * from notes where id = %d", id);
             ResultSet resultSet = statement.executeQuery(query);
 
-            // TODO: I need more general version of this. It's time to write another hierarchy - finders.
             if (!resultSet.next()) {
                 throw new IllegalStateException(String.format("No such record: Note(%d)", id));
             }

@@ -107,8 +107,7 @@ public abstract class  Base {
         LogManager.getLogger(this.getClass()).error(e);
     }
 
-    // TODO: Make it completely(!) private. Deal with User.java call
-    void setId(Integer id) {
+    private void setId(Integer id) {
         this.id = id;
         this.isNewRecord = false;
     }

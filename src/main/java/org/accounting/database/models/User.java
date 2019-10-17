@@ -27,10 +27,7 @@ public class User extends Base {
         try {
             Connection connection = Database.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(
-                String.format(
-                    "SELECT u.id, u.email, u.password, u.role_id, u.time_in_program " +
-                    "FROM users u WHERE u.%s = ?", field)
-            );
+                String.format("SELECT * FROM users WHERE %s = ?", field));
 
             switch (valueClass.getSimpleName()) {
                 case "String":
@@ -155,7 +152,7 @@ public class User extends Base {
     }
 
     private void setAttributes(ResultSet resultSet) throws SQLException {
-        this.setId(resultSet.getInt("id"));
+        this.id = resultSet.getInt("id");
         this.email = resultSet.getString("email");
         this.password = resultSet.getString("password");
         this.roleId = resultSet.getInt("role_id");

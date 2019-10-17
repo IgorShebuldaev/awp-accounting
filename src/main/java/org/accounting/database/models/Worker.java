@@ -139,13 +139,11 @@ public class Worker extends Base {
         if (note != null) {
             return note;
         }
-
         try {
-            return note = new Note(noteID);
+        return note = new Note(noteID);
         } catch (IllegalStateException e) {
-            // TODO: some bad shit just happened. handle it more gently
             System.exit(2);
-            return null; // why still require a return value? i'm already out of the fkn program
+            return null;
         }
     }
 
@@ -188,7 +186,7 @@ public class Worker extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        String query = String.format("insert into %s(full_name, date_of_birth, position_id, note_id, user_id) values(?, ? ,?, ? ,?);", getTableName());
+        String query = String.format("insert into %s(full_name, date_of_birth, position_id, note_id, user_id) values(?,?,?,?,?);", getTableName());
 
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, fullName);
