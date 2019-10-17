@@ -24,39 +24,44 @@ dependencies {
     annotationProcessor 'org.apache.logging.log4j:log4j-api:2.12.1'
 }
 
-task load(type: Exec) {
-  group 'Database'
-  description 'Loads database schema'
+task create(type: JavaExec) {
+    group 'Database'
+    description 'Creates empty database'
 
-  commandLine './db.sh', 'load'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'libs.Database.Create'
 }
 
-task dump(type: Exec) {
-  group 'Database'
-  description "Creates dump of database's structure"
+task load(type: JavaExec) {
+    group 'Database'
+    description 'Loads database schema'
 
-  commandLine './db.sh', 'dump'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'libs.Database.Load'
 }
 
-task destroy(type: Exec) {
-  group 'Database'
-  description 'Destroys database'
+task dump(type: JavaExec) {
+    group 'Database'
+    description "Creates dump of database's structure"
 
-  commandLine './db.sh', 'destroy'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'libs.Database.Dump'
 }
 
-task create(type: Exec) {
-  group 'Database'
-  description 'Creates empty database'
+task destroy(type: JavaExec)  {
+    group 'Database'
+    description 'Creates empty database'
 
-  commandLine './db.sh', 'create'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'libs.Database.Destroy'
 }
 
-task seed(type: Exec) {
+task seed(type: JavaExec) {
     group 'Database'
     description 'Applies seeds to database'
 
-    commandLine './db.sh', 'seed'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'libs.Database.Seed'
 }
 
 task setup_db {
