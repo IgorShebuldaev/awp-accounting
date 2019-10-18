@@ -1,11 +1,10 @@
 package libs.Database;
 
-import org.accounting.config.Config;
+import org.accounting.config.DbConfigReader;
 import org.accounting.database.Database;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Dump {
     public static void main(String[] args) {
@@ -16,18 +15,13 @@ public class Dump {
             System.exit(1);
         }
 
-        Properties properties = new Config().properties;
-        String host = properties.getProperty("host");
-        String port = properties.getProperty("port");
-        String database = properties.getProperty("database");
-        String user = properties.getProperty("user");
-        String password = properties.getProperty("pass");
+        DbConfigReader.DbConfig dbConfig = DbConfigReader.getDbConfig();
 
         String dumpFile = "src/main/resources/database_schema.sql";
 
         Runtime rt = Runtime.getRuntime();
         String command = String.format("mysqldump --no-data -h%s -u %s -p%s -P%s %s",
-            host, user, password, port, database);
+                dbConfig.getHost(), dbConfig.getUser(), dbConfig.getPassword(), dbConfig.getPort(), dbConfig.getDatabase());
         try {
             Process p = rt.exec(command);
 

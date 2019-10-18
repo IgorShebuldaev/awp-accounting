@@ -1,11 +1,10 @@
 package org.accounting.database;
 
-import org.accounting.config.Config;
+import org.accounting.config.DbConfigReader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Database {
     private static boolean includeDatabase = true;
@@ -20,23 +19,17 @@ public class Database {
             System.out.println(ex.getMessage());
         }
 
-        Properties properties = new Config().properties;
-
-        String host = properties.getProperty("host");
-        String port = properties.getProperty("port");
-        String database = properties.getProperty("database");
-        String user = properties.getProperty("user");
-        String password = properties.getProperty("pass");
+        DbConfigReader.DbConfig config = DbConfigReader.getDbConfig();
 
         StringBuilder connectionUrl = new StringBuilder();
         connectionUrl.append("jdbc:mysql://");
-        connectionUrl.append(String.format("%s:%s/", host, port));
+        connectionUrl.append(String.format("%s:%s/", config.getHost(), config.getPort()));
 
         if (includeDatabase) {
-            connectionUrl.append(database);
+            connectionUrl.append(config.getDatabase());
         }
 
-        return connection = DriverManager.getConnection(connectionUrl.toString(), user, password);
+        return connection = DriverManager.getConnection(connectionUrl.toString(), config.getUser(), config.getPassword());
     }
 
     public static Connection getConnectionWithoutDB() throws SQLException {

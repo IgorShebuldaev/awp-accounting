@@ -3,6 +3,6 @@
 out/
 build/
 *.DS_Store
-database.properties
+src/main/resources/database.xml
 *.swp
-
+src/main/logs/*
