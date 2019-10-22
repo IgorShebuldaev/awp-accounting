@@ -27,10 +27,10 @@ public class MainForm extends JFrame implements ActionListener {
     private JButton cancelButton;
     private JButton deleteButton;
     private JSpinner spinnerDeliveriesDeliveryDate;
-    private JComboBox<String> comboBoxSuppliers;
+    private JComboBox comboBoxSuppliers;
     private JTextField textFieldProduct;
     private JTextField textFieldPrice;
-    private JComboBox<String> comboBoxWorkers;
+    private JComboBox comboBoxWorkers;
     private JLabel labelStatusBar;
     private JLabel labelDeliveryDate;
     private JLabel labelSupplier;
@@ -41,7 +41,9 @@ public class MainForm extends JFrame implements ActionListener {
     private SupplierComboBoxModel supplierComboBoxModel;
     private WorkerComboBoxModel workerComboBoxModel;
 
-    public MainForm() {
+    private Timer timer;
+
+    MainForm() {
         createMainForm();
 
         deliveryTableModel = new DeliveryTable();
@@ -67,7 +69,8 @@ public class MainForm extends JFrame implements ActionListener {
 
         updateStatusBar();
 
-        new Timer(1000, e -> updateStatusBar()).start();
+        timer = new Timer(1000, e -> updateStatusBar());
+        timer.start();
 
         supplierComboBoxModel = new SupplierComboBoxModel();
         workerComboBoxModel = new WorkerComboBoxModel();
@@ -278,10 +281,13 @@ public class MainForm extends JFrame implements ActionListener {
                 new NotesForm().setVisible(true);
                 break;
             case "logout":
-
+                timer.stop();
+                CurrentUser.updateDataTimeInProgram();
+                dispose();
+                new AuthorizationForm().setVisible(true);
                 break;
             case "exitMenu":
-                this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
                 break;
             case "users":
                 new UsersForm().setVisible(true);
@@ -358,13 +364,13 @@ public class MainForm extends JFrame implements ActionListener {
         panelMain.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         spinnerDeliveriesDeliveryDate = new JSpinner();
         panelMain.add(spinnerDeliveriesDeliveryDate, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxSuppliers = new JComboBox();
+        comboBoxSuppliers = new JComboBox<>();
         panelMain.add(comboBoxSuppliers, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textFieldProduct = new JTextField();
         panelMain.add(textFieldProduct, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         textFieldPrice = new JTextField();
         panelMain.add(textFieldPrice, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        comboBoxWorkers = new JComboBox();
+        comboBoxWorkers = new JComboBox<>();
         panelMain.add(comboBoxWorkers, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelDeliveryDate = new JLabel();
         labelDeliveryDate.setText("Delivery date");

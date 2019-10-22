@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public abstract class MainComboBoxModel extends AbstractListModel implements ComboBoxModel {
 
-    protected HashMap<String, Base> records = new HashMap<>();
-    protected Optional<Base> selection = Optional.empty();
+    HashMap<String, Base> records = new HashMap<>();
+    Optional<Base> selection = Optional.empty();
 
     public abstract void addRecord(Base record);
 
