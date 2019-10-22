@@ -97,7 +97,7 @@ public class MainForm extends JFrame implements ActionListener {
         JMenu reports = new JMenu("Reports");
         JMenu graphics = new JMenu("Graphics");
         JMenu settings = new JMenu("Settings");
-        JMenu about = new JMenu("About");
+        JMenu help = new JMenu("Help");
 
         JMenuItem jMenuItemWorkBooks = new JMenuItem("Work Books");
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
@@ -105,10 +105,13 @@ public class MainForm extends JFrame implements ActionListener {
         JMenuItem jMenuItemExit = new JMenuItem("Exit");
 
         JMenuItem jMenuItemReports = new JMenuItem("Reports");
-        JMenuItem jMenuItemGraphics = new JMenuItem("Graphics");
+
+        JMenuItem jMenuItemChart = new JMenuItem("Chart");
 
         JMenuItem jMenuItemUsers = new JMenuItem("Users");
         JMenuItem jMenuItemRoles = new JMenuItem("Roles");
+
+        JMenuItem jMenuItemAbout = new JMenuItem("About");
 
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
@@ -116,10 +119,13 @@ public class MainForm extends JFrame implements ActionListener {
         jMenuItemExit.setActionCommand("exitMenu");
 
         jMenuItemReports.setActionCommand("reports");
-        jMenuItemGraphics.setActionCommand("graphics");
+
+        jMenuItemChart.setActionCommand("chart");
 
         jMenuItemUsers.setActionCommand("users");
         jMenuItemRoles.setActionCommand("roles");
+
+        jMenuItemAbout.setActionCommand("about");
 
         jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
@@ -127,10 +133,13 @@ public class MainForm extends JFrame implements ActionListener {
         jMenuItemExit.addActionListener(this);
 
         jMenuItemReports.addActionListener(this);
-        jMenuItemGraphics.addActionListener(this);
+
+        jMenuItemChart.addActionListener(this);
 
         jMenuItemUsers.addActionListener(this);
         jMenuItemRoles.addActionListener(this);
+
+        jMenuItemAbout.addActionListener(this);
 
         menu.add(jMenuItemWorkBooks);
         menu.addSeparator();
@@ -142,9 +151,13 @@ public class MainForm extends JFrame implements ActionListener {
 
         reports.add(jMenuItemReports);
 
+        graphics.add(jMenuItemChart);
+
         settings.add(jMenuItemUsers);
         settings.addSeparator();
         settings.add(jMenuItemRoles);
+
+        help.add(jMenuItemAbout);
 
         menuBar.add(menu);
         menuBar.add(reports);
@@ -153,7 +166,7 @@ public class MainForm extends JFrame implements ActionListener {
         if ((CurrentUser.getUser().getRole().isAdmin())) {
             menuBar.add(settings);
         }
-        menuBar.add(about);
+        menuBar.add(help);
 
         return menuBar;
     }
@@ -297,6 +310,12 @@ public class MainForm extends JFrame implements ActionListener {
                 break;
             case "reports":
                 new ReportsForm().setVisible(true);
+                break;
+            case "chart":
+                new ChartForm().setVisible(true);
+                break;
+            case "about":
+                JOptionPane.showMessageDialog(null,"Copyright © 2019 devTeam ");
                 break;
             case "addButton":
                 insertRecord();
