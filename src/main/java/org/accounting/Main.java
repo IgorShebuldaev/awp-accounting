@@ -1,9 +1,9 @@
 package org.accounting;
 
-import org.accounting.forms.MainForm;
+import org.accounting.forms.AuthorizationForm;
 
 public class Main {
     public static void main(String[] args) {
-        new MainForm().createUserAuthorizationForm();
+        new AuthorizationForm().setVisible(true);
     }
 }

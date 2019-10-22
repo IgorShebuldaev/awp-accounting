@@ -3,7 +3,6 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
-import org.accounting.database.Authorization;
 import org.accounting.database.Database;
 import org.accounting.database.models.*;
 import org.accounting.forms.helpers.YesNoDialog;
@@ -16,14 +15,9 @@ import org.accounting.user.CurrentUser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLException;
 import java.util.Date;
 
 public class MainForm extends JFrame implements ActionListener {
-    private JFrame authorizationForm = new JFrame("Log in");
-    private JTextField textFieldEmail = new JTextField(20);
-    private JPasswordField passwordField = new JPasswordField(20);
-
     private JTable tableDeliveries;
     private JPanel panelMain;
     private JScrollPane scrollPaneMain;
@@ -47,57 +41,10 @@ public class MainForm extends JFrame implements ActionListener {
     private SupplierComboBoxModel supplierComboBoxModel;
     private WorkerComboBoxModel workerComboBoxModel;
 
-    public void createUserAuthorizationForm() {
-        JPanel jPanel = new JPanel();
-
-        JButton okButton = new JButton("Ok");
-        okButton.setActionCommand("ok");
-
-        JButton exitButton = new JButton("Exit");
-        exitButton.setActionCommand("exit");
-
-        jPanel.add(textFieldEmail);
-        jPanel.add(passwordField);
-        jPanel.add(okButton);
-        jPanel.add(exitButton);
-
-        authorizationForm.setSize(250, 130);
-        authorizationForm.setLocationRelativeTo(null);
-        authorizationForm.add(jPanel);
-        authorizationForm.setVisible(true);
-        authorizationForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        passwordField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-                    validateUserAuthorization(textFieldEmail, passwordField);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-
-            }
-        });
-
-        okButton.addActionListener(this);
-        exitButton.addActionListener(this);
-    }
-
-    private void createMainForm() {
-        setJMenuBar(creatMenuBar());
-        setContentPane(panelMain);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
+    public MainForm() {
+        createMainForm();
 
         deliveryTableModel = new DeliveryTable();
-
         Delivery.getAll().forEach(deliveryTableModel::addRecord);
         tableDeliveries.setModel(deliveryTableModel);
         tableDeliveries.getTableHeader().setReorderingAllowed(false);
@@ -110,11 +57,7 @@ public class MainForm extends JFrame implements ActionListener {
             public void windowClosing(WindowEvent event) {
                 if (new YesNoDialog("Are you sure you want to exit?", "Confirm Exit").isPositive()) {
                     CurrentUser.updateDataTimeInProgram();
-                    try {
-                        Database.closeConnection();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    Database.closeConnection();
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } else {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -124,31 +67,25 @@ public class MainForm extends JFrame implements ActionListener {
 
         updateStatusBar();
 
-        Timer timer = new Timer(1000, e -> updateStatusBar());
-        timer.start();
+        new Timer(1000, e -> updateStatusBar()).start();
 
         supplierComboBoxModel = new SupplierComboBoxModel();
         workerComboBoxModel = new WorkerComboBoxModel();
         addItemComboBoxSupplier();
         addItemComboBoxWorker();
+    }
+
+    private void createMainForm() {
+        setJMenuBar(creatMenuBar());
+        setContentPane(panelMain);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);
         saveButton.addActionListener(this);
         deleteButton.addActionListener(this);
         cancelButton.addActionListener(this);
-
-        setVisible(true);
-    }
-
-    private void validateUserAuthorization(JTextField login, JPasswordField password) {
-        Authorization currentUser = new Authorization();
-        if (currentUser.isAuthorized(login.getText(), String.valueOf(password.getPassword()))) {
-            authorizationForm.dispose();
-            createMainForm();
-        } else {
-            JOptionPane.showMessageDialog(authorizationForm, "Invalid login or password! Try again.");
-        }
     }
 
     private JMenuBar creatMenuBar() {
@@ -161,6 +98,8 @@ public class MainForm extends JFrame implements ActionListener {
 
         JMenuItem jMenuItemWorkBooks = new JMenuItem("Work Books");
         JMenuItem jMenuItemNotes = new JMenuItem("Notes");
+        JMenuItem jMenuItemLogOut = new JMenuItem("Log Out");
+        JMenuItem jMenuItemExit = new JMenuItem("Exit");
 
         JMenuItem jMenuItemReports = new JMenuItem("Reports");
         JMenuItem jMenuItemGraphics = new JMenuItem("Graphics");
@@ -170,6 +109,8 @@ public class MainForm extends JFrame implements ActionListener {
 
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
+        jMenuItemLogOut.setActionCommand("logout");
+        jMenuItemExit.setActionCommand("exitMenu");
 
         jMenuItemReports.setActionCommand("reports");
         jMenuItemGraphics.setActionCommand("graphics");
@@ -179,6 +120,8 @@ public class MainForm extends JFrame implements ActionListener {
 
         jMenuItemWorkBooks.addActionListener(this);
         jMenuItemNotes.addActionListener(this);
+        jMenuItemLogOut.addActionListener(this);
+        jMenuItemExit.addActionListener(this);
 
         jMenuItemReports.addActionListener(this);
         jMenuItemGraphics.addActionListener(this);
@@ -189,6 +132,10 @@ public class MainForm extends JFrame implements ActionListener {
         menu.add(jMenuItemWorkBooks);
         menu.addSeparator();
         menu.add(jMenuItemNotes);
+        menu.addSeparator();
+        menu.add(jMenuItemLogOut);
+        menu.addSeparator();
+        menu.add(jMenuItemExit);
 
         reports.add(jMenuItemReports);
 
@@ -322,17 +269,6 @@ public class MainForm extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
-            case "ok":
-                validateUserAuthorization(textFieldEmail, passwordField);
-                break;
-            case "exit":
-                try {
-                    Database.closeConnection();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                System.exit(0);
-                break;
             case "workBooks":
                 new WorkBooksForm().setVisible(true);
                 addItemComboBoxWorker();
@@ -340,6 +276,12 @@ public class MainForm extends JFrame implements ActionListener {
                 break;
             case "notes":
                 new NotesForm().setVisible(true);
+                break;
+            case "logout":
+
+                break;
+            case "exitMenu":
+                this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
                 break;
             case "users":
                 new UsersForm().setVisible(true);
