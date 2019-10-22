@@ -17,7 +17,7 @@ public class Supplier extends Base {
             while (resultSet.next())
                 results.add(new Supplier(
                         resultSet.getInt("id"),
-                        resultSet.getString("company_name")
+                        resultSet.getString("name")
                 ));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,7 +42,7 @@ public class Supplier extends Base {
             }
 
             this.id = resultSet.getInt("id");
-            this.name = resultSet.getString("company_name");
+            this.name = resultSet.getString("name");
         } catch (SQLException e) {
             writeLog(e);
         }
@@ -74,7 +74,7 @@ public class Supplier extends Base {
 
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
-        String query = String.format("insert into %s(company_name) values(?)", getTableName());
+        String query = String.format("insert into %s(name) values(?)", getTableName());
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, name);
 
@@ -83,7 +83,7 @@ public class Supplier extends Base {
 
     @Override
     protected PreparedStatement getUpdateStatement(Connection connection) throws SQLException {
-        String query = String.format("update %s set company_name = ? where id = ?", getTableName());
+        String query = String.format("update %s set name = ? where id = ?", getTableName());
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, name);
         preparedStatement.setInt(2,id);
