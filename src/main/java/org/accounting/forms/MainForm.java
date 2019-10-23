@@ -64,9 +64,7 @@ public class MainForm extends JFrame implements ActionListener {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 }
             }
-        });
 
-        this.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent event) {
                 timer.stop();
                 CurrentUser.updateDataTimeInProgram();
@@ -203,12 +201,7 @@ public class MainForm extends JFrame implements ActionListener {
     }
 
     private void insertRecord() {
-        Delivery delivery = new Delivery();
-        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
-        delivery.setProduct(textFieldProduct.getText());
-        delivery.setPrice(textFieldPrice.getText());
-        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
+        Delivery delivery = getNewValues(new Delivery());
 
         if (!delivery.save()) {
             JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
@@ -221,13 +214,7 @@ public class MainForm extends JFrame implements ActionListener {
     }
 
     private void saveRecord() {
-        int rowIndex = tableDeliveries.getSelectedRow();
-        Delivery delivery = deliveryTableModel.getRecord(rowIndex);
-        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
-        delivery.setProduct(textFieldProduct.getText());
-        delivery.setPrice(textFieldPrice.getText());
-        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
+        Delivery delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
 
         if (!delivery.save()) {
             JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
@@ -235,37 +222,52 @@ public class MainForm extends JFrame implements ActionListener {
         }
 
         delivery.save();
-        deliveryTableModel.setValueAt(delivery, rowIndex);
+        deliveryTableModel.setValueAt(delivery, getRowIndex());
         setDefaultMode();
     }
 
     private void deleteRecord() {
-        int rowIndex = tableDeliveries.getSelectedRow();
-        if (rowIndex < 0) {
+        if (getRowIndex() < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            deliveryTableModel.getRecord(rowIndex).delete();
-            deliveryTableModel.removeRow(rowIndex);
+            deliveryTableModel.getRecord(getRowIndex()).delete();
+            deliveryTableModel.removeRow(getRowIndex());
         }
     }
 
     private void setValues() {
-        int rowIndex = tableDeliveries.getSelectedRow();
-        if (rowIndex < 0) {
+        if (getRowIndex() < 0) {
             JOptionPane.showMessageDialog(this, "Select an entry in the table!");
             return;
         }
 
-        Delivery delivery = deliveryTableModel.getRecord(rowIndex);
+        Delivery delivery = deliveryTableModel.getRecord(getRowIndex());
         spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
         comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getName());
         textFieldProduct.setText(delivery.getProduct());
         textFieldPrice.setText(delivery.getPrice());
         comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
         setEditMode();
+    }
+
+    private Delivery getNewValues(Delivery delivery) {
+        if (delivery == null) {
+            delivery = new Delivery();
+        }
+        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
+        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
+        delivery.setProduct(textFieldProduct.getText());
+        delivery.setPrice(textFieldPrice.getText());
+        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
+
+        return delivery;
+    }
+
+    private int getRowIndex() {
+        return tableDeliveries.getSelectedRow();
     }
 
     private void setDefaultMode() {
