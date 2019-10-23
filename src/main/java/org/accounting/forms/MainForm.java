@@ -13,11 +13,13 @@ import org.accounting.forms.models.tablemodels.DeliveryTable;
 import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
 
-public class MainForm extends JFrame implements ActionListener {
+public class MainForm extends JFrame implements ActionListener, ListSelectionListener {
     private JTable tableDeliveries;
     private JPanel panelMain;
     private JScrollPane scrollPaneMain;
@@ -55,6 +57,23 @@ public class MainForm extends JFrame implements ActionListener {
         spinnerDeliveriesDeliveryDate.setEditor(new JSpinner.DateEditor(spinnerDeliveriesDeliveryDate, "dd.MM.yyyy"));
         spinnerDeliveriesDeliveryDate.setValue(new Date());
 
+        updateStatusBar();
+        timer = new Timer(1000, e -> updateStatusBar());
+        timer.start();
+
+        supplierComboBoxModel = new SupplierComboBoxModel();
+        workerComboBoxModel = new WorkerComboBoxModel();
+        addItemComboBoxSupplier();
+        addItemComboBoxWorker();
+
+        tableDeliveries.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
                 if (new YesNoDialog("Are you sure you want to exit?", "Confirm Exit").isPositive()) {
@@ -71,16 +90,6 @@ public class MainForm extends JFrame implements ActionListener {
                 CurrentUser.updateDataTimeInProgram();
             }
         });
-
-        updateStatusBar();
-
-        timer = new Timer(1000, e -> updateStatusBar());
-        timer.start();
-
-        supplierComboBoxModel = new SupplierComboBoxModel();
-        workerComboBoxModel = new WorkerComboBoxModel();
-        addItemComboBoxSupplier();
-        addItemComboBoxWorker();
     }
 
     private void createMainForm() {
@@ -121,7 +130,7 @@ public class MainForm extends JFrame implements ActionListener {
         jMenuItemWorkBooks.setActionCommand("workBooks");
         jMenuItemNotes.setActionCommand("notes");
         jMenuItemLogOut.setActionCommand("logout");
-        jMenuItemExit.setActionCommand("exitMenu");
+        jMenuItemExit.setActionCommand("exit");
 
         jMenuItemReports.setActionCommand("reports");
 
@@ -292,6 +301,11 @@ public class MainForm extends JFrame implements ActionListener {
     }
 
     @Override
+    public void valueChanged(ListSelectionEvent e) {
+        setValues();
+    }
+
+    @Override
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case "workBooks":
@@ -306,7 +320,7 @@ public class MainForm extends JFrame implements ActionListener {
                 dispose();
                 new AuthorizationForm().setVisible(true);
                 break;
-            case "exitMenu":
+            case "exit":
                 dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
                 break;
             case "users":
@@ -419,4 +433,5 @@ public class MainForm extends JFrame implements ActionListener {
     public JComponent $$$getRootComponent$$$() {
         return panelMain;
     }
+
 }
