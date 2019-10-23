@@ -41,6 +41,7 @@ public class MainForm extends JFrame implements ActionListener {
     private SupplierComboBoxModel supplierComboBoxModel;
     private WorkerComboBoxModel workerComboBoxModel;
     private Timer timer;
+    private boolean isNewRecord = true;
 
     MainForm() {
         createMainForm();
@@ -200,30 +201,29 @@ public class MainForm extends JFrame implements ActionListener {
         comboBoxWorkers.setModel(workerComboBoxModel);
     }
 
-    private void insertRecord() {
-        Delivery delivery = getNewValues(new Delivery());
-
-        if (!delivery.save()) {
-            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
-            return;
-        }
-
-        deliveryTableModel.addRecord(delivery);
-        textFieldProduct.setText("");
-        textFieldPrice.setText("");
-    }
-
     private void saveRecord() {
-        Delivery delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
+        Delivery delivery;
+
+        if (isNewRecord) {
+            delivery = getNewValues(new Delivery());
+        } else {
+            delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
+        }
 
         if (!delivery.save()) {
             JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
             return;
         }
 
-        delivery.save();
-        deliveryTableModel.setValueAt(delivery, getRowIndex());
-        setDefaultMode();
+        if (isNewRecord) {
+            deliveryTableModel.addRecord(delivery);
+            textFieldProduct.setText("");
+            textFieldPrice.setText("");
+        } else {
+            deliveryTableModel.setValueAt(delivery, getRowIndex());
+            setDefaultMode();
+            isNewRecord = true;
+        }
     }
 
     private void deleteRecord() {
@@ -251,6 +251,7 @@ public class MainForm extends JFrame implements ActionListener {
         textFieldPrice.setText(delivery.getPrice());
         comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
         setEditMode();
+        isNewRecord = false;
     }
 
     private Delivery getNewValues(Delivery delivery) {
@@ -324,13 +325,11 @@ public class MainForm extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null,"Copyright © 2019 devTeam ");
                 break;
             case "addButton":
-                insertRecord();
+            case "saveButton":
+                saveRecord();
                 break;
             case "editButton":
                 setValues();
-                break;
-            case "saveButton":
-                saveRecord();
                 break;
             case "cancelButton":
                 setDefaultMode();
