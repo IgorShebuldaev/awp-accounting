@@ -40,7 +40,6 @@ public class MainForm extends JFrame implements ActionListener {
     private DeliveryTable deliveryTableModel;
     private SupplierComboBoxModel supplierComboBoxModel;
     private WorkerComboBoxModel workerComboBoxModel;
-
     private Timer timer;
 
     MainForm() {
@@ -64,6 +63,13 @@ public class MainForm extends JFrame implements ActionListener {
                 } else {
                     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 }
+            }
+        });
+
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent event) {
+                timer.stop();
+                CurrentUser.updateDataTimeInProgram();
             }
         });
 
@@ -294,8 +300,6 @@ public class MainForm extends JFrame implements ActionListener {
                 new NotesForm().setVisible(true);
                 break;
             case "logout":
-                timer.stop();
-                CurrentUser.updateDataTimeInProgram();
                 dispose();
                 new AuthorizationForm().setVisible(true);
                 break;
