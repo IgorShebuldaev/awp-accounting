@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class UsersForm extends JDialog implements ActionListener {
     private JPanel panelUsersForm;
@@ -28,21 +30,29 @@ public class UsersForm extends JDialog implements ActionListener {
     private UserFields userFields;
 
     UsersForm() {
-        createUsersForm();
-    }
-
-    private void createUsersForm() {
-        setContentPane(panelUsersForm);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
-        setTitle("Users");
-        setModalityType(ModalityType.APPLICATION_MODAL);
+        createForm();
 
         userTableModel = new UserTable();
 
         User.getAll().forEach(userTableModel::addRecord);
         tableUsers.getTableHeader().setReorderingAllowed(false);
         tableUsers.setModel(userTableModel);
+
+        tableUsers.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+    }
+
+    private void createForm() {
+        setContentPane(panelUsersForm);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+        setTitle("Users");
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);

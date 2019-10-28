@@ -3,6 +3,7 @@ package org.accounting.forms.workbooks;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+
 import org.accounting.database.models.Supplier;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.tablemodels.SupplierTable;
@@ -11,6 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class SuppliersForm extends JPanel implements ActionListener {
 
@@ -35,6 +38,18 @@ public class SuppliersForm extends JPanel implements ActionListener {
         tableSuppliers.setModel(supplierTableModel);
         tableSuppliers.getTableHeader().setReorderingAllowed(false);
 
+        tableSuppliers.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+
+        createForm();
+    }
+
+    private void createForm() {
         btnAddSuppliers.addActionListener(this);
         btnDeleteSuppliers.addActionListener(this);
         btnEditSuppliers.addActionListener(this);

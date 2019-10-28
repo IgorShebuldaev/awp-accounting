@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PositionsForm extends JDialog implements ActionListener {
     private JTable tablePositions;
@@ -25,21 +27,29 @@ public class PositionsForm extends JDialog implements ActionListener {
     private PositionTable positionTableModel;
 
     public PositionsForm() {
-        createPositionForm();
-    }
-
-    private void createPositionForm() {
-        setContentPane(panelPositions);
-        setSize(450, 300);
-        setLocationRelativeTo(null);
-        setTitle("Positions");
-        setModalityType(ModalityType.APPLICATION_MODAL);
+        createForm();
 
         positionTableModel = new PositionTable();
 
         Position.getAll().forEach(positionTableModel::addRecord);
         tablePositions.setModel(positionTableModel);
         tablePositions.getTableHeader().setReorderingAllowed(false);
+
+        tablePositions.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+    }
+
+    private void createForm() {
+        setContentPane(panelPositions);
+        setSize(450, 300);
+        setLocationRelativeTo(null);
+        setTitle("Positions");
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);

@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RolesForm extends JDialog implements ActionListener {
     private JPanel panelRolesForm;
@@ -26,21 +28,29 @@ public class RolesForm extends JDialog implements ActionListener {
     private RoleTable roleTableModel;
 
     public RolesForm() {
-        createRolesForm();
-    }
-
-    private void createRolesForm() {
-        setContentPane(panelRolesForm);
-        setSize(450, 300);
-        setLocationRelativeTo(null);
-        setTitle("Roles");
-        setModalityType(ModalityType.APPLICATION_MODAL);
+        createForm();
 
         roleTableModel = new RoleTable();
 
         Role.getAll().forEach(roleTableModel::addRecord);
         tableRoles.getTableHeader().setReorderingAllowed(false);
         tableRoles.setModel(roleTableModel);
+
+        tableRoles.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+    }
+
+    private void createForm() {
+        setContentPane(panelRolesForm);
+        setSize(450, 300);
+        setLocationRelativeTo(null);
+        setTitle("Roles");
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         addButton.addActionListener(this);
         editButton.addActionListener(this);

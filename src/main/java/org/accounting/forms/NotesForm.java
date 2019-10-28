@@ -18,7 +18,7 @@ public class NotesForm extends JDialog {
     private Note note;
 
     NotesForm() {
-        createNotesForm();
+        createForm();
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -28,7 +28,7 @@ public class NotesForm extends JDialog {
         });
     }
 
-    private void createNotesForm() {
+    private void createForm() {
         setContentPane(panelNotes);
         setSize(800, 600);
         setLocationRelativeTo(null);

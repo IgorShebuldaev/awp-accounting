@@ -22,7 +22,7 @@ public class AuthorizationForm extends JFrame implements ActionListener {
     private JLabel labelPassword;
 
     public AuthorizationForm() {
-        createAuthorizationForm();
+        createForm();
 
         passwordField.addKeyListener(new KeyListener() {
             @Override
@@ -44,7 +44,7 @@ public class AuthorizationForm extends JFrame implements ActionListener {
         });
     }
 
-    private void createAuthorizationForm() {
+    private void createForm() {
         setContentPane(panelAuthorization);
         setTitle("Log In");
         setSize(250, 170);

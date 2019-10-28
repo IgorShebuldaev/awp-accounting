@@ -3,6 +3,7 @@ package org.accounting.forms.workbooks;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+
 import org.accounting.database.models.*;
 import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.YesNoDialog;
@@ -14,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 
 public class WorkersForms extends JPanel implements ActionListener {
@@ -52,6 +55,18 @@ public class WorkersForms extends JPanel implements ActionListener {
         spinnerDateOfBirth.setEditor(new JSpinner.DateEditor(spinnerDateOfBirth, "dd.MM.yyyy"));
         spinnerDateOfBirth.setValue(new Date());
 
+        tableWorkers.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    setValues();
+                }
+            }
+        });
+
+        createForm();
+    }
+
+    private void createForm() {
         addButton.addActionListener(this);
         editButton.addActionListener(this);
         saveButton.addActionListener(this);

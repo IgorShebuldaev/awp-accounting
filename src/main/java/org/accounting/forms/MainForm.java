@@ -46,7 +46,7 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
     private boolean isNewRecord = true;
 
     MainForm() {
-        createMainForm();
+        createForm();
 
         deliveryTableModel = new DeliveryTable();
         Delivery.getAll().forEach(deliveryTableModel::addRecord);
@@ -92,7 +92,7 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
         });
     }
 
-    private void createMainForm() {
+    private void createForm() {
         setJMenuBar(creatMenuBar());
         setContentPane(panelMain);
         setSize(800, 600);
