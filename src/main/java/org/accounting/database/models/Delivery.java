@@ -133,6 +133,38 @@ public class Delivery extends Base {
         return "deliveries";
     }
 
+    public ArrayList<Delivery> getRecordsByDate(String from, String to) {
+        ArrayList<Delivery> results = new ArrayList<>();
+
+        try {
+            Connection connection = Database.getConnection();
+            String query = "select * from deliveries d " +
+                    "join suppliers s on d.supplier_id = s.id join workers w on d.worker_id = w.id " +
+                    "where delivery_date between ? and ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, from);
+            preparedStatement.setString(2, to);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                results.add(new Delivery(
+                        resultSet.getInt("id"),
+                        resultSet.getDate("delivery_date"),
+                        resultSet.getInt("supplier_id"),
+                        resultSet.getString("product"),
+                        resultSet.getString("price"),
+                        resultSet.getInt("worker_id")
+                ));
+            }
+
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return results;
+    }
+
     @Override
     protected PreparedStatement getInsertStatement(Connection connection) throws SQLException {
         String query = String.format(

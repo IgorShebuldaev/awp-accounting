@@ -5,7 +5,9 @@
     <constraints>
       <xy x="20" y="20" width="655" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <font/>
+    </properties>
     <border type="none"/>
     <children>
       <scrollpane id="a23f1" binding="scrollPaneMain">

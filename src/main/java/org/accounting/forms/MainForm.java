@@ -336,7 +336,7 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
                 new ChartForm().setVisible(true);
                 break;
             case "about":
-                JOptionPane.showMessageDialog(null,"Copyright © 2019 devTeam ");
+                JOptionPane.showMessageDialog(null, "Copyright © 2019 devTeam ");
                 break;
             case "addButton":
             case "saveButton":
@@ -371,6 +371,8 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
     private void $$$setupUI$$$() {
         panelMain = new JPanel();
         panelMain.setLayout(new GridLayoutManager(5, 5, new Insets(5, 5, 5, 5), -1, -1));
+        Font panelMainFont = this.$$$getFont$$$(null, -1, -1, panelMain.getFont());
+        if (panelMainFont != null) panelMain.setFont(panelMainFont);
         scrollPaneMain = new JScrollPane();
         panelMain.add(scrollPaneMain, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         tableDeliveries = new JTable();
@@ -402,13 +404,13 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
         panelMain.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         spinnerDeliveriesDeliveryDate = new JSpinner();
         panelMain.add(spinnerDeliveriesDeliveryDate, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxSuppliers = new JComboBox<>();
+        comboBoxSuppliers = new JComboBox();
         panelMain.add(comboBoxSuppliers, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textFieldProduct = new JTextField();
         panelMain.add(textFieldProduct, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         textFieldPrice = new JTextField();
         panelMain.add(textFieldPrice, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        comboBoxWorkers = new JComboBox<>();
+        comboBoxWorkers = new JComboBox();
         panelMain.add(comboBoxWorkers, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelDeliveryDate = new JLabel();
         labelDeliveryDate.setText("Delivery date");
@@ -425,6 +427,25 @@ public class MainForm extends JFrame implements ActionListener, ListSelectionLis
         labelWorker = new JLabel();
         labelWorker.setText("Worker");
         panelMain.add(labelWorker, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**

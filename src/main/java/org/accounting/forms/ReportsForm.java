@@ -2,21 +2,36 @@ package org.accounting.forms;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.accounting.database.models.Delivery;
+import org.accounting.forms.reports.Report;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
-public class ReportsForm extends JDialog {
+public class ReportsForm extends JDialog implements ActionListener {
     private JSpinner spinnerDateFrom;
     private JSpinner spinnerDateTo;
     private JButton showButton;
     private JLabel labelFrom;
     private JLabel labelTo;
     private JPanel panelReports;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public ReportsForm() {
+    ReportsForm() {
         createForm();
+
+        spinnerDateFrom.setModel(new SpinnerDateModel());
+        spinnerDateFrom.setEditor(new JSpinner.DateEditor(spinnerDateFrom, "dd.MM.yyyy"));
+        spinnerDateFrom.setValue(new Date());
+
+        spinnerDateTo.setModel(new SpinnerDateModel());
+        spinnerDateTo.setEditor(new JSpinner.DateEditor(spinnerDateTo, "dd.MM.yyyy"));
+        spinnerDateTo.setValue(new Date());
     }
 
     private void createForm() {
@@ -26,13 +41,53 @@ public class ReportsForm extends JDialog {
         setTitle("Reports");
         setModalityType(ModalityType.APPLICATION_MODAL);
 
-        spinnerDateFrom.setModel(new SpinnerDateModel());
-        spinnerDateFrom.setEditor(new JSpinner.DateEditor(spinnerDateFrom, "dd.MM.yyyy"));
-        spinnerDateFrom.setValue(new Date());
+        showButton.addActionListener(this);
+    }
 
-        spinnerDateTo.setModel(new SpinnerDateModel());
-        spinnerDateTo.setEditor(new JSpinner.DateEditor(spinnerDateTo, "dd.MM.yyyy"));
-        spinnerDateTo.setValue(new Date());
+    private void showReport() {
+        JDialog reportForm = new JDialog();
+        JTextPane report = new JTextPane();
+        reportForm.setModalityType(ModalityType.APPLICATION_MODAL);
+
+        report.setContentType("text/html");
+        report.setEditable(false);
+        report.setBackground(Color.white);
+        report.setText(getReport());
+
+        reportForm.getContentPane().add(report);
+        reportForm.pack();
+
+        reportForm.setLocationRelativeTo(null);
+        reportForm.setVisible(true);
+    }
+
+    private String getReport()  {
+        String from = dateFormat.format(spinnerDateFrom.getValue());
+        String to = dateFormat.format(spinnerDateTo.getValue());
+        ArrayList<Delivery> results = new Delivery().getRecordsByDate(from,to);
+
+        Report report = new Report();
+        report.addHeader("Delivery",new String[]{"Delivery date","Supplier","Product","Price","Worker"});
+        for (Delivery delivery : results) {
+            report.insertOpenTr();
+            report.insertRow(delivery.getDeliveryDate().toString());
+            report.insertRow(delivery.getSupplier().getName());
+            report.insertRow(delivery.getProduct());
+            report.insertRow(delivery.getPrice());
+            report.insertRow(delivery.getWorker().getFullName());
+            report.insertCloseTr();
+        }
+
+        report.insertCloseTable();
+
+        return report.getDocument().toString();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if ("show".equals(e.getActionCommand())) {
+            showReport();
+        }
     }
 
     {
@@ -57,6 +112,7 @@ public class ReportsForm extends JDialog {
         spinnerDateTo = new JSpinner();
         panelReports.add(spinnerDateTo, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         showButton = new JButton();
+        showButton.setActionCommand("show");
         showButton.setText("Show");
         panelReports.add(showButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         labelFrom = new JLabel();
