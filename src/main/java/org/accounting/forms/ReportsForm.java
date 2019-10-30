@@ -3,9 +3,10 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Delivery;
-import org.accounting.forms.reports.Report;
+import org.accounting.libs.Report;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,25 +63,34 @@ public class ReportsForm extends JDialog implements ActionListener {
     }
 
     private String getReport()  {
+        Report report = new Report();
+        report.setStyle("table {width: 100%;} th, td {border: solid black;} th {height: 50px;}");
+        report.setTableName("Deliveries");
+        report.addTable(getData());
+
+        return report.getDocument();
+    }
+
+    private DefaultTableModel getData() {
         String from = dateFormat.format(spinnerDateFrom.getValue());
         String to = dateFormat.format(spinnerDateTo.getValue());
+
         ArrayList<Delivery> results = new Delivery().getRecordsByDate(from,to);
 
-        Report report = new Report();
-        report.addHeader("Delivery",new String[]{"Delivery date","Supplier","Product","Price","Worker"});
-        for (Delivery delivery : results) {
-            report.insertOpenTr();
-            report.insertRow(delivery.getDeliveryDate().toString());
-            report.insertRow(delivery.getSupplier().getName());
-            report.insertRow(delivery.getProduct());
-            report.insertRow(delivery.getPrice());
-            report.insertRow(delivery.getWorker().getFullName());
-            report.insertCloseTr();
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"Delivery date","Supplier","Product","Price","Worker"});
+
+        for (Delivery delivery: results) {
+            model.addRow(new Object[]{
+                    delivery.getDeliveryDate().toString(),
+                    delivery.getSupplier().getName(),
+                    delivery.getProduct(),
+                    delivery.getPrice(),
+                    delivery.getWorker().getFullName()
+            });
         }
 
-        report.insertCloseTable();
-
-        return report.getDocument().toString();
+        return model;
     }
 
     @Override
