@@ -3,10 +3,9 @@ package org.accounting.forms;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Delivery;
-import org.accounting.libs.Report;
+import org.accounting.libs.ReportBuilder;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,26 +61,18 @@ public class ReportsForm extends JDialog implements ActionListener {
         reportForm.setVisible(true);
     }
 
-    private String getReport()  {
-        Report report = new Report();
-        report.setStyle("table {width: 100%;} th, td {border: solid black;} th {height: 50px;}");
-        report.setTableName("Deliveries");
-        report.addTable(getData());
+    private String getReport() {
+        ReportBuilder reportBuilder = new ReportBuilder();
+        ReportBuilder.TableNode tableNode = new ReportBuilder.TableNode(new String[]{"Delivery date", "Supplier", "Product", "Price", "Worker"});
+        tableNode.setTitle("Deliveries");
 
-        return report.getDocument();
-    }
-
-    private DefaultTableModel getData() {
         String from = dateFormat.format(spinnerDateFrom.getValue());
         String to = dateFormat.format(spinnerDateTo.getValue());
 
-        ArrayList<Delivery> results = new Delivery().getRecordsByDate(from,to);
+        ArrayList<Delivery> results = new Delivery().getRecordsByDate(from, to);
 
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Delivery date","Supplier","Product","Price","Worker"});
-
-        for (Delivery delivery: results) {
-            model.addRow(new Object[]{
+        for (Delivery delivery : results) {
+            tableNode.appendRow(new Object[]{
                     delivery.getDeliveryDate().toString(),
                     delivery.getSupplier().getName(),
                     delivery.getProduct(),
@@ -90,7 +81,15 @@ public class ReportsForm extends JDialog implements ActionListener {
             });
         }
 
-        return model;
+        ReportBuilder.TableNode innerTableNode = new ReportBuilder.TableNode(new String[]{"Price", "Worker"});
+        innerTableNode.appendRow(new Object[]{"value1", "value2"});
+        innerTableNode.setTitle("Inner table");
+
+        tableNode.appendRow(new Object[]{innerTableNode});
+
+        reportBuilder.addTableNode(tableNode);
+
+        return reportBuilder.buildReport(ReportBuilder.html);
     }
 
     @Override
