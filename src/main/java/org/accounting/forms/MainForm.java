@@ -1,458 +1,363 @@
 package org.accounting.forms;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
+import org.accounting.database.models.Delivery;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.tablemodels.DeliveryFX;
 
-import org.accounting.database.Database;
-import org.accounting.database.models.*;
-import org.accounting.forms.helpers.YesNoDialog;
-import org.accounting.forms.models.comboboxmodels.SupplierComboBoxModel;
-import org.accounting.forms.models.comboboxmodels.WorkerComboBoxModel;
-import org.accounting.forms.workbooks.WorkBooksForm;
-import org.accounting.forms.models.tablemodels.DeliveryTable;
-import org.accounting.user.CurrentUser;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.ResourceBundle;
 
-public class MainForm extends JFrame implements ActionListener, ListSelectionListener {
-    private JTable tableDeliveries;
-    private JPanel panelMain;
-    private JScrollPane scrollPaneMain;
-    private JButton addButton;
-    private JButton editButton;
-    private JButton saveButton;
-    private JButton cancelButton;
-    private JButton deleteButton;
-    private JSpinner spinnerDeliveriesDeliveryDate;
-    private JComboBox comboBoxSuppliers;
-    private JTextField textFieldProduct;
-    private JTextField textFieldPrice;
-    private JComboBox comboBoxWorkers;
-    private JLabel labelStatusBar;
-    private JLabel labelDeliveryDate;
-    private JLabel labelSupplier;
-    private JLabel labelProduct;
-    private JLabel labelPrice;
-    private JLabel labelWorker;
-    private DeliveryTable deliveryTableModel;
-    private SupplierComboBoxModel supplierComboBoxModel;
-    private WorkerComboBoxModel workerComboBoxModel;
-    private Timer timer;
-    private boolean isNewRecord = true;
+public class MainForm implements Initializable {
 
-    MainForm() {
-        createForm();
+    @FXML
+    private Label labelStatusBar;
+    @FXML
+    private TableView<DeliveryFX> tableDeliveries;
+    @FXML
+    private TableColumn<DeliveryFX, String> columnDeliveryDate;
+    @FXML
+    private TableColumn<DeliveryFX, String> columnSupplier;
+    @FXML
+    private TableColumn<DeliveryFX, String> columnProduct;
+    @FXML
+    private TableColumn<DeliveryFX, String> columnPrice;
+    @FXML
+    private TableColumn<DeliveryFX, String> columnWorker;
+    private ObservableList<DeliveryFX> data;
 
-        deliveryTableModel = new DeliveryTable();
-        Delivery.getAll().forEach(deliveryTableModel::addRecord);
-        tableDeliveries.setModel(deliveryTableModel);
-        tableDeliveries.getTableHeader().setReorderingAllowed(false);
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        data = FXCollections.observableArrayList();
+        ArrayList<Delivery> results = Delivery.getAll();
 
-        spinnerDeliveriesDeliveryDate.setModel(new SpinnerDateModel());
-        spinnerDeliveriesDeliveryDate.setEditor(new JSpinner.DateEditor(spinnerDeliveriesDeliveryDate, "dd.MM.yyyy"));
-        spinnerDeliveriesDeliveryDate.setValue(new Date());
-
-        updateStatusBar();
-        timer = new Timer(1000, e -> updateStatusBar());
-        timer.start();
-
-        supplierComboBoxModel = new SupplierComboBoxModel();
-        workerComboBoxModel = new WorkerComboBoxModel();
-        addItemComboBoxSupplier();
-        addItemComboBoxWorker();
-
-        tableDeliveries.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    setValues();
-                }
-            }
-        });
-
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent event) {
-                if (new YesNoDialog("Are you sure you want to exit?", "Confirm Exit").isPositive()) {
-                    CurrentUser.updateDataTimeInProgram();
-                    Database.closeConnection();
-                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                } else {
-                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-            }
-
-            public void windowClosed(WindowEvent event) {
-                timer.stop();
-                CurrentUser.updateDataTimeInProgram();
-            }
-        });
-    }
-
-    private void createForm() {
-        setJMenuBar(creatMenuBar());
-        setContentPane(panelMain);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
-
-        addButton.addActionListener(this);
-        editButton.addActionListener(this);
-        saveButton.addActionListener(this);
-        deleteButton.addActionListener(this);
-        cancelButton.addActionListener(this);
-    }
-
-    private JMenuBar creatMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
-        JMenu reports = new JMenu("Reports");
-        JMenu graphics = new JMenu("Graphics");
-        JMenu settings = new JMenu("Settings");
-        JMenu help = new JMenu("Help");
-
-        JMenuItem jMenuItemWorkBooks = new JMenuItem("Work Books");
-        JMenuItem jMenuItemNotes = new JMenuItem("Notes");
-        JMenuItem jMenuItemLogOut = new JMenuItem("Log Out");
-        JMenuItem jMenuItemExit = new JMenuItem("Exit");
-
-        JMenuItem jMenuItemReports = new JMenuItem("Reports");
-
-        JMenuItem jMenuItemChart = new JMenuItem("Chart");
-
-        JMenuItem jMenuItemUsers = new JMenuItem("Users");
-        JMenuItem jMenuItemRoles = new JMenuItem("Roles");
-
-        JMenuItem jMenuItemAbout = new JMenuItem("About");
-
-        jMenuItemWorkBooks.setActionCommand("workBooks");
-        jMenuItemNotes.setActionCommand("notes");
-        jMenuItemLogOut.setActionCommand("logout");
-        jMenuItemExit.setActionCommand("exit");
-
-        jMenuItemReports.setActionCommand("reports");
-
-        jMenuItemChart.setActionCommand("chart");
-
-        jMenuItemUsers.setActionCommand("users");
-        jMenuItemRoles.setActionCommand("roles");
-
-        jMenuItemAbout.setActionCommand("about");
-
-        jMenuItemWorkBooks.addActionListener(this);
-        jMenuItemNotes.addActionListener(this);
-        jMenuItemLogOut.addActionListener(this);
-        jMenuItemExit.addActionListener(this);
-
-        jMenuItemReports.addActionListener(this);
-
-        jMenuItemChart.addActionListener(this);
-
-        jMenuItemUsers.addActionListener(this);
-        jMenuItemRoles.addActionListener(this);
-
-        jMenuItemAbout.addActionListener(this);
-
-        menu.add(jMenuItemWorkBooks);
-        menu.addSeparator();
-        menu.add(jMenuItemNotes);
-        menu.addSeparator();
-        menu.add(jMenuItemLogOut);
-        menu.addSeparator();
-        menu.add(jMenuItemExit);
-
-        reports.add(jMenuItemReports);
-
-        graphics.add(jMenuItemChart);
-
-        settings.add(jMenuItemUsers);
-        settings.addSeparator();
-        settings.add(jMenuItemRoles);
-
-        help.add(jMenuItemAbout);
-
-        menuBar.add(menu);
-        menuBar.add(reports);
-        menuBar.add(graphics);
-
-        if ((CurrentUser.getUser().getRole().isAdmin())) {
-            menuBar.add(settings);
+        for (Delivery delivery : results) {
+            data.add(new DeliveryFX(delivery));
         }
-        menuBar.add(help);
 
-        return menuBar;
+        columnDeliveryDate.setCellValueFactory(cellData -> cellData.getValue().deliveryDateProperty());
+        columnSupplier.setCellValueFactory(cellData -> cellData.getValue().supplierProperty());
+        columnProduct.setCellValueFactory(cellData -> cellData.getValue().productProperty());
+        columnPrice.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
+        columnWorker.setCellValueFactory(cellData -> cellData.getValue().workerProperty());
+        tableDeliveries.setItems(data);
+
+        tableDeliveries.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        columnDeliveryDate.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnSupplier.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnWorker.setCellFactory(TextFieldTableCell.forTableColumn());
     }
 
-    private void updateStatusBar() {
-        User currentUser = CurrentUser.getUser();
+    public MainForm() {
 
-        currentUser.incrementTimeInProgram(1);
-        labelStatusBar.setText(
-                String.format("User: %s. Role: %s. Time in program: %s",
-                        currentUser.getEmail(),
-                        currentUser.getRole().getName(),
-                        currentUser.getFormattedTimeInProgram()
-                )
-        );
     }
 
-    private void addItemComboBoxSupplier() {
-        supplierComboBoxModel.removeAllElements();
-        Supplier.getAll().forEach(supplierComboBoxModel::addRecord);
-        comboBoxSuppliers.setModel(supplierComboBoxModel);
-    }
+   public void showForm() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("org/accounting/forms/MainForm.fxml")));
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setTitle("Accounting");
+            stage.setScene(scene);
+            stage.show();
 
-    private void addItemComboBoxWorker() {
-        workerComboBoxModel.removeAllElements();
-        Worker.getAll().forEach(workerComboBoxModel::addRecord);
-        comboBoxWorkers.setModel(workerComboBoxModel);
-    }
-
-    private void saveRecord() {
-        Delivery delivery;
-
-        if (isNewRecord) {
-            delivery = getNewValues(new Delivery());
-        } else {
-            delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+//    private void updateStatusBar() {
+//        User currentUser = CurrentUser.getUser();
+//
+//        currentUser.incrementTimeInProgram(1);
+//        labelStatusBar.setText(
+//                String.format("User: %s. Role: %s. Time in program: %s",
+//                        currentUser.getEmail(),
+//                        currentUser.getRole().getName(),
+//                        currentUser.getFormattedTimeInProgram()
+//                )
+//        );
+//    }
+
+
+    @FXML
+    private void handleMiWorkBooks() {
+    }
+
+    @FXML
+    private void handleMiNotes() {
+    }
+
+    @FXML
+    private void handleMiLogOut() {
+    }
+
+    @FXML
+    private void handleMiExit() {
+        if (new AlertMessage("Are you sure you want to exit?", "Confirm Exit").confirmationMessage()) {
+            Platform.exit();
+        }
+    }
+
+    @FXML
+    private void handleMiDeliveries() {
+    }
+
+    @FXML
+    private void handleMiTimeInProgram() {
+    }
+
+    @FXML
+    private void handleMiUsers() {
+    }
+
+    @FXML
+    private void handleMiRoles() {
+    }
+
+    @FXML
+    private void handleMiAbout() {
+    }
+
+    @FXML
+    private void handleBtnAdd() {
+        data.add(new DeliveryFX(new Delivery()));
+        int row = data.size() - 1;
+        tableDeliveries.getSelectionModel().select(row);
+        tableDeliveries.getSelectionModel().focus(row);
+        tableDeliveries.edit(row, columnDeliveryDate);
+    }
+
+    @FXML
+    private void handleBtnSave() {
+        DeliveryFX deliveryFX  = tableDeliveries.getSelectionModel().getSelectedItem();
+        Delivery delivery = new Delivery();
+        delivery.setDeliveryDate(new Date());
+        delivery.setSupplierId(Integer.parseInt(deliveryFX.getSupplier()));
+        delivery.setProduct(deliveryFX.getProduct());
+        delivery.setPrice(deliveryFX.getPrice());
+        delivery.setWorkerId(Integer.parseInt(deliveryFX.getWorker()));
+
 
         if (!delivery.save()) {
-            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
-            return;
+        new AlertMessage("Error", delivery.getErrors().fullMessages("\n"));
         }
 
-        if (isNewRecord) {
-            deliveryTableModel.addRecord(delivery);
-            textFieldProduct.setText("");
-            textFieldPrice.setText("");
-        } else {
-            deliveryTableModel.setValueAt(delivery, getRowIndex());
-            setDefaultMode();
-            isNewRecord = true;
-        }
     }
 
-    private void deleteRecord() {
-        if (getRowIndex() < 0) {
-            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-            return;
-        }
-
-        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            deliveryTableModel.getRecord(getRowIndex()).delete();
-            deliveryTableModel.removeRow(getRowIndex());
-        }
+    @FXML
+    private void handleBtnCancel() {
     }
 
-    private void setValues() {
-        if (getRowIndex() < 0) {
-            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-            return;
-        }
-
-        Delivery delivery = deliveryTableModel.getRecord(getRowIndex());
-        spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
-        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getName());
-        textFieldProduct.setText(delivery.getProduct());
-        textFieldPrice.setText(delivery.getPrice());
-        comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
-        setEditMode();
-        isNewRecord = false;
+    @FXML
+    private void handleBtnDelete() {
     }
 
-    private Delivery getNewValues(Delivery delivery) {
-        if (delivery == null) {
-            delivery = new Delivery();
-        }
-        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
-        delivery.setProduct(textFieldProduct.getText());
-        delivery.setPrice(textFieldPrice.getText());
-        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
-
-        return delivery;
+    @FXML
+    private void onEditCommitDeliveryDate(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+        deliveryFX.setDeliveryDate(deliveryFXStringCellEditEvent.getNewValue());
     }
 
-    private int getRowIndex() {
-        return tableDeliveries.getSelectedRow();
+    @FXML
+    private void onEditCommitSupplier(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+        deliveryFX.setSupplier(deliveryFXStringCellEditEvent.getNewValue());
     }
 
-    private void setDefaultMode() {
-        addButton.setEnabled(true);
-        editButton.setEnabled(true);
-        saveButton.setEnabled(false);
-        cancelButton.setEnabled(false);
-        deleteButton.setEnabled(true);
-        tableDeliveries.setEnabled(true);
-        textFieldProduct.setText("");
-        textFieldPrice.setText("");
+    @FXML
+    private void onEditCommitProduct(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+        deliveryFX.setProduct(deliveryFXStringCellEditEvent.getNewValue());
     }
 
-    private void setEditMode() {
-        addButton.setEnabled(false);
-        editButton.setEnabled(false);
-        saveButton.setEnabled(true);
-        cancelButton.setEnabled(true);
-        deleteButton.setEnabled(false);
-        tableDeliveries.setEnabled(false);
+    @FXML
+    private void onEditCommitPrice(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+        deliveryFX.setPrice(deliveryFXStringCellEditEvent.getNewValue());
     }
 
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
-        setValues();
+    @FXML
+    private void onEditCommitWorker(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+        deliveryFX.setWorker(deliveryFXStringCellEditEvent.getNewValue());
     }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        switch (event.getActionCommand()) {
-            case "workBooks":
-                new WorkBooksForm().setVisible(true);
-                addItemComboBoxWorker();
-                addItemComboBoxSupplier();
-                break;
-            case "notes":
-                new NotesForm().setVisible(true);
-                break;
-            case "logout":
-                dispose();
-                new AuthorizationForm().setVisible(true);
-                break;
-            case "exit":
-                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-                break;
-            case "users":
-                new UsersForm().setVisible(true);
-                break;
-            case "roles":
-                new RolesForm().setVisible(true);
-                break;
-            case "reports":
-                new ReportsForm().setVisible(true);
-                break;
-            case "chart":
-                new ChartForm().setVisible(true);
-                break;
-            case "about":
-                JOptionPane.showMessageDialog(null, "Copyright © 2019 devTeam ");
-                break;
-            case "addButton":
-            case "saveButton":
-                saveRecord();
-                break;
-            case "editButton":
-                setValues();
-                break;
-            case "cancelButton":
-                setDefaultMode();
-                break;
-            case "deleteButton":
-                deleteRecord();
-                break;
-        }
-    }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
-    }
+//    private void addItemComboBoxSupplier() {
+//        supplierComboBoxModel.removeAllElements();
+//        Supplier.getAll().forEach(supplierComboBoxModel::addRecord);
+//        comboBoxSuppliers.setModel(supplierComboBoxModel);
+//    }
+//
+//    private void addItemComboBoxWorker() {
+//        workerComboBoxModel.removeAllElements();
+//        Worker.getAll().forEach(workerComboBoxModel::addRecord);
+//        comboBoxWorkers.setModel(workerComboBoxModel);
+//    }
+//
+//    private void saveRecord() {
+//        Delivery delivery;
+//
+//        if (isNewRecord) {
+//            delivery = getNewValues(new Delivery());
+//        } else {
+//            delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
+//        }
+//
+//        if (!delivery.save()) {
+//            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
+//            return;
+//        }
+//
+//        if (isNewRecord) {
+//            deliveryTableModel.addRecord(delivery);
+//            textFieldProduct.setText("");
+//            textFieldPrice.setText("");
+//        } else {
+//            deliveryTableModel.setValueAt(delivery, getRowIndex());
+//            setDefaultMode();
+//            isNewRecord = true;
+//        }
+//    }
+//
+//    private void deleteRecord() {
+//        if (getRowIndex() < 0) {
+//            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+//            return;
+//        }
+//
+//        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
+//            deliveryTableModel.getRecord(getRowIndex()).delete();
+//            deliveryTableModel.removeRow(getRowIndex());
+//        }
+//    }
+//
+//    private void setValues() {
+//        if (getRowIndex() < 0) {
+//            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
+//            return;
+//        }
+//
+//        Delivery delivery = deliveryTableModel.getRecord(getRowIndex());
+//        spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
+//        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getName());
+//        textFieldProduct.setText(delivery.getProduct());
+//        textFieldPrice.setText(delivery.getPrice());
+//        comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
+//        setEditMode();
+//        isNewRecord = false;
+//    }
+//
+//    private Delivery getNewValues(Delivery delivery) {
+//        if (delivery == null) {
+//            delivery = new Delivery();
+//        }
+//        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
+//        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
+//        delivery.setProduct(textFieldProduct.getText());
+//        delivery.setPrice(textFieldPrice.getText());
+//        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
+//
+//        return delivery;
+//    }
+////
+//    private int getRowIndex() {
+//        return tableDeliveries.getSelectionModel().get
+//    }
+//
+//    private void setDefaultMode() {
+//        addButton.setEnabled(true);
+//        editButton.setEnabled(true);
+//        saveButton.setEnabled(false);
+//        cancelButton.setEnabled(false);
+//        deleteButton.setEnabled(true);
+//        tableDeliveries.setEnabled(true);
+//        textFieldProduct.setText("");
+//        textFieldPrice.setText("");
+//    }
+//
+//    private void setEditMode() {
+//        addButton.setEnabled(false);
+//        editButton.setEnabled(false);
+//        saveButton.setEnabled(true);
+//        cancelButton.setEnabled(true);
+//        deleteButton.setEnabled(false);
+//        tableDeliveries.setEnabled(false);
+//    }
+//
+//    @Override
+//    public void valueChanged(ListSelectionEvent e) {
+//        setValues();
+//    }
+//
+//    @Override
+//    public void actionPerformed(ActionEvent event) {
+//        switch (event.getActionCommand()) {
+//            case "workBooks":
+//                new WorkBooksForm().setVisible(true);
+//                addItemComboBoxWorker();
+//                addItemComboBoxSupplier();
+//                break;
+//            case "notes":
+//                new NotesForm().setVisible(true);
+//                break;
+//            case "logout":
+//                dispose();
+//
+//                break;
+//            case "exit":
+//                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+//                break;
+//            case "users":
+//                new UsersForm().setVisible(true);
+//                break;
+//            case "roles":
+//                new RolesForm().setVisible(true);
+//                break;
+//            case "reports":
+//                new ReportsForm().setVisible(true);
+//                break;
+//            case "chart":
+//                new ChartForm().setVisible(true);
+//                break;
+//            case "about":
+//                JOptionPane.showMessageDialog(null, "Copyright © 2019 devTeam ");
+//                break;
+//            case "addButton":
+//            case "saveButton":
+//                saveRecord();
+//                break;
+//            case "editButton":
+//                setValues();
+//                break;
+//            case "cancelButton":
+//                setDefaultMode();
+//                break;
+//            case "deleteButton":
+//                deleteRecord();
+//                break;
+//        }
+//    }
 
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        panelMain = new JPanel();
-        panelMain.setLayout(new GridLayoutManager(5, 5, new Insets(5, 5, 5, 5), -1, -1));
-        Font panelMainFont = this.$$$getFont$$$(null, -1, -1, panelMain.getFont());
-        if (panelMainFont != null) panelMain.setFont(panelMainFont);
-        scrollPaneMain = new JScrollPane();
-        panelMain.add(scrollPaneMain, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        tableDeliveries = new JTable();
-        scrollPaneMain.setViewportView(tableDeliveries);
-        labelStatusBar = new JLabel();
-        labelStatusBar.setText("                     ");
-        panelMain.add(labelStatusBar, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        addButton = new JButton();
-        addButton.setActionCommand("addButton");
-        addButton.setText("Add");
-        panelMain.add(addButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        editButton = new JButton();
-        editButton.setActionCommand("editButton");
-        editButton.setText("Edit");
-        panelMain.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        saveButton = new JButton();
-        saveButton.setActionCommand("saveButton");
-        saveButton.setEnabled(false);
-        saveButton.setText("Save");
-        panelMain.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cancelButton = new JButton();
-        cancelButton.setActionCommand("cancelButton");
-        cancelButton.setEnabled(false);
-        cancelButton.setText("Cancel");
-        panelMain.add(cancelButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        deleteButton = new JButton();
-        deleteButton.setActionCommand("deleteButton");
-        deleteButton.setText("Delete");
-        panelMain.add(deleteButton, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        spinnerDeliveriesDeliveryDate = new JSpinner();
-        panelMain.add(spinnerDeliveriesDeliveryDate, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBoxSuppliers = new JComboBox();
-        panelMain.add(comboBoxSuppliers, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        textFieldProduct = new JTextField();
-        panelMain.add(textFieldProduct, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        textFieldPrice = new JTextField();
-        panelMain.add(textFieldPrice, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        comboBoxWorkers = new JComboBox();
-        panelMain.add(comboBoxWorkers, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelDeliveryDate = new JLabel();
-        labelDeliveryDate.setText("Delivery date");
-        panelMain.add(labelDeliveryDate, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelSupplier = new JLabel();
-        labelSupplier.setText("Supplier");
-        panelMain.add(labelSupplier, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelProduct = new JLabel();
-        labelProduct.setText("Product");
-        panelMain.add(labelProduct, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelPrice = new JLabel();
-        labelPrice.setText("Price");
-        panelMain.add(labelPrice, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelWorker = new JLabel();
-        labelWorker.setText("Worker");
-        panelMain.add(labelWorker, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return panelMain;
-    }
 
 }
