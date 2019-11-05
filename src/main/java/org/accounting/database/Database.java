@@ -1,13 +1,13 @@
 package org.accounting.database;
 
-import org.accounting.config.Config;
+import org.accounting.config.DbConfigReader;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class Database {
+    private static boolean includeDatabase = true;
     private static Connection connection;
 
     public static Connection getConnection() throws SQLException {
@@ -19,16 +19,25 @@ public class Database {
             System.out.println(ex.getMessage());
         }
 
-        Properties properties = new Config().properties;
+        DbConfigReader.DbConfig config = DbConfigReader.getDbConfig();
 
-        String host = properties.getProperty("host");
-        String port = properties.getProperty("port");
-        String database = properties.getProperty("database");
-        String user = properties.getProperty("user");
-        String password = properties.getProperty("pass");
-        String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
+        StringBuilder connectionUrl = new StringBuilder();
+        connectionUrl.append("jdbc:mysql://");
+        connectionUrl.append(String.format("%s:%s/", config.getHost(), config.getPort()));
 
-        return connection = DriverManager.getConnection(url, user, password);
+        if (includeDatabase) {
+            connectionUrl.append(config.getDatabase());
+        }
+
+        return connection = DriverManager.getConnection(connectionUrl.toString(), config.getUser(), config.getPassword());
+    }
+
+    public static Connection getConnectionWithoutDB() throws SQLException {
+        includeDatabase = false;
+        Connection tmp_connection = getConnection();
+        includeDatabase = true;
+
+        return tmp_connection;
     }
 
     public static void closeConnection() {
