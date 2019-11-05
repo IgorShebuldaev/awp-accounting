@@ -6,7 +6,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import org.accounting.database.models.Base;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.YesNoDialog;
-import org.accounting.forms.models.tablemodels.UserTable;
+import org.accounting.forms.models.tablemodels.UserFX;
 import org.accounting.forms.partials.UserFields;
 
 import javax.swing.*;
@@ -26,17 +26,17 @@ public class UsersForm extends JDialog implements ActionListener {
     private JButton cancelButton;
     private JButton editButton;
     public JPanel userFieldsPanel;
-    private UserTable userTableModel;
+    private UserFX userFXModel;
     private UserFields userFields;
 
     UsersForm() {
         createForm();
 
-        userTableModel = new UserTable();
+        userFXModel = new UserFX();
 
-        User.getAll().forEach(userTableModel::addRecord);
+        User.getAll().forEach(userFXModel::addRecord);
         tableUsers.getTableHeader().setReorderingAllowed(false);
-        tableUsers.setModel(userTableModel);
+        //tableUsers.setModel(userFXModel);
 
         tableUsers.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
@@ -69,14 +69,14 @@ public class UsersForm extends JDialog implements ActionListener {
             return;
         }
 
-        userTableModel.addRecord(user);
+        userFXModel.addRecord(user);
         userFields.textFieldEmail.setText("");
         userFields.textFieldPassword.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tableUsers.getSelectedRow();
-        User user = userTableModel.getRecord(rowIndex);
+        User user = userFXModel.getRecord(rowIndex);
 
         user.setEmail(userFields.textFieldEmail.getText());
         user.setPassword(userFields.textFieldPassword.getText());
@@ -87,7 +87,7 @@ public class UsersForm extends JDialog implements ActionListener {
             return;
         }
 
-        userTableModel.setValueAt(user, rowIndex);
+        userFXModel.setValueAt(user, rowIndex);
         setDefaultMode();
     }
 
@@ -99,8 +99,8 @@ public class UsersForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            userTableModel.getRecord(rowIndex).delete();
-            userTableModel.removeRow(rowIndex);
+            userFXModel.getRecord(rowIndex).delete();
+            userFXModel.removeRow(rowIndex);
         }
     }
 
@@ -111,7 +111,7 @@ public class UsersForm extends JDialog implements ActionListener {
             return;
         }
 
-        User user = userTableModel.getRecord(rowIndex);
+        User user = userFXModel.getRecord(rowIndex);
 
         userFields.textFieldEmail.setText(user.getEmail());
         userFields.textFieldPassword.setText(user.getPassword());

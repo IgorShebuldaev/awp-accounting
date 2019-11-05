@@ -8,7 +8,7 @@ import org.accounting.database.models.*;
 import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.comboboxmodels.PositionComboBoxModel;
-import org.accounting.forms.models.tablemodels.WorkerTable;
+import org.accounting.forms.models.tablemodels.WorkerFX;
 import org.accounting.forms.partials.UserFields;
 
 import javax.swing.*;
@@ -36,16 +36,16 @@ public class WorkersForms extends JPanel implements ActionListener {
     private UserFields userFieldsPanel;
     private JButton cancelButton;
     private JButton deleteButton;
-    private WorkerTable workerTableModel;
+    private WorkerFX workerFXModel;
     private PositionComboBoxModel positionComboBoxModel;
 
     WorkersForms() {
         super();
 
-        workerTableModel = new WorkerTable();
+        workerFXModel = new WorkerFX();
 
-        Worker.getAll().forEach(workerTableModel::addRecord);
-        tableWorkers.setModel(workerTableModel);
+        Worker.getAll().forEach(workerFXModel::addRecord);
+        //tableWorkers.setModel(workerFXModel);
         tableWorkers.getTableHeader().setReorderingAllowed(false);
 
         positionComboBoxModel = new PositionComboBoxModel();
@@ -113,7 +113,7 @@ public class WorkersForms extends JPanel implements ActionListener {
         worker.setUser(user);
         worker.save();
 
-        workerTableModel.addRecord(worker);
+        workerFXModel.addRecord(worker);
         textFieldFullName.setText("");
         userFieldsPanel.textFieldEmail.setText("");
         userFieldsPanel.textFieldPassword.setText("");
@@ -121,7 +121,7 @@ public class WorkersForms extends JPanel implements ActionListener {
 
     private void saveRecord() {
         int rowIndex = tableWorkers.getSelectedRow();
-        Worker worker = workerTableModel.getRecord(rowIndex);
+        Worker worker = workerFXModel.getRecord(rowIndex);
 
         worker.setFullName(textFieldFullName.getText());
         worker.setDateOfBirth((Date) spinnerDateOfBirth.getValue());
@@ -132,7 +132,7 @@ public class WorkersForms extends JPanel implements ActionListener {
             return;
         }
 
-        workerTableModel.setValueAt(worker, rowIndex);
+        workerFXModel.setValueAt(worker, rowIndex);
         textFieldFullName.setText("");
         setDefaultMode();
     }
@@ -145,8 +145,8 @@ public class WorkersForms extends JPanel implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            workerTableModel.getRecord(rowIndex).delete();
-            workerTableModel.removeRow(rowIndex);
+            workerFXModel.getRecord(rowIndex).delete();
+            workerFXModel.removeRow(rowIndex);
         }
     }
 
@@ -157,7 +157,7 @@ public class WorkersForms extends JPanel implements ActionListener {
             return;
         }
 
-        Worker worker = workerTableModel.getRecord(rowIndex);
+        Worker worker = workerFXModel.getRecord(rowIndex);
         textFieldFullName.setText(worker.getFullName());
         spinnerDateOfBirth.setValue(worker.getDateOfBirth());
         comboBoxPositions.setSelectedItem(worker.getPosition().getName());

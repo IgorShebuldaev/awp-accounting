@@ -4,10 +4,10 @@ import org.accounting.database.models.Worker;
 
 import java.text.SimpleDateFormat;
 
-public class WorkerTable extends MainTableModel {
+public class WorkerFX extends AdapterFX {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-    public WorkerTable() {
+    public WorkerFX() {
         columnNames = new String[]{"Full Name", "Date of birth", "Position", "Email"};
     }
 

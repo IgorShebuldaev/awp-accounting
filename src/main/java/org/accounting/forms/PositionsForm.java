@@ -4,7 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Position;
 import org.accounting.forms.helpers.YesNoDialog;
-import org.accounting.forms.models.tablemodels.PositionTable;
+import org.accounting.forms.models.tablemodels.PositionFX;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,15 +24,15 @@ public class PositionsForm extends JDialog implements ActionListener {
     private JLabel labelPosition;
     private JScrollPane scrollPanePositions;
     private JPanel panelPositions;
-    private PositionTable positionTableModel;
+    private PositionFX positionFXModel;
 
     public PositionsForm() {
         createForm();
 
-        positionTableModel = new PositionTable();
+        positionFXModel = new PositionFX();
 
-        Position.getAll().forEach(positionTableModel::addRecord);
-        tablePositions.setModel(positionTableModel);
+        Position.getAll().forEach(positionFXModel::addRecord);
+        //tablePositions.setModel(positionFXModel);
         tablePositions.getTableHeader().setReorderingAllowed(false);
 
         tablePositions.addMouseListener(new MouseAdapter() {
@@ -67,13 +67,13 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        positionTableModel.addRecord(position);
+        positionFXModel.addRecord(position);
         textFieldPosition.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tablePositions.getSelectedRow();
-        Position position = positionTableModel.getRecord(rowIndex);
+        Position position = positionFXModel.getRecord(rowIndex);
         position.setName(textFieldPosition.getText());
 
         if (!position.save()) {
@@ -81,7 +81,7 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        positionTableModel.setValueAt(position, rowIndex);
+        positionFXModel.setValueAt(position, rowIndex);
         textFieldPosition.setText("");
         setDefaultMode();
     }
@@ -94,8 +94,8 @@ public class PositionsForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            positionTableModel.getRecord(rowIndex).delete();
-            positionTableModel.removeRow(rowIndex);
+            positionFXModel.getRecord(rowIndex).delete();
+            positionFXModel.removeRow(rowIndex);
         }
     }
 
@@ -106,7 +106,7 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        textFieldPosition.setText(positionTableModel.getRecord(rowIndex).getName());
+        textFieldPosition.setText(positionFXModel.getRecord(rowIndex).getName());
         setEditMode();
     }
 

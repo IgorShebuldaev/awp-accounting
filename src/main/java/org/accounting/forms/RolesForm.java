@@ -4,7 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.accounting.database.models.Role;
 import org.accounting.forms.helpers.YesNoDialog;
-import org.accounting.forms.models.tablemodels.RoleTable;
+import org.accounting.forms.models.tablemodels.RoleFX;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,16 +25,16 @@ public class RolesForm extends JDialog implements ActionListener {
     private JButton deleteButton;
     private JLabel labelRole;
     private JScrollPane scrollPaneTableRoles;
-    private RoleTable roleTableModel;
+    private RoleFX roleTableModel;
 
     public RolesForm() {
         createForm();
 
-        roleTableModel = new RoleTable();
+        roleTableModel = new RoleFX();
 
         Role.getAll().forEach(roleTableModel::addRecord);
         tableRoles.getTableHeader().setReorderingAllowed(false);
-        tableRoles.setModel(roleTableModel);
+        //tableRoles.setModel(roleTableModel);
 
         tableRoles.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {

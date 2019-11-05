@@ -2,9 +2,9 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Role;
 
-public class RoleTable extends MainTableModel {
+public class RoleFX extends AdapterFX {
 
-    public RoleTable() {
+    public RoleFX() {
         columnNames = new String[]{"Role", "Lookup Code"};
     }
 

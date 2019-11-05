@@ -2,9 +2,9 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Position;
 
-public class PositionTable extends MainTableModel {
+public class PositionFX extends AdapterFX {
 
-    public PositionTable() {
+    public PositionFX() {
         columnNames = new String[]{"Position"};
     }
 

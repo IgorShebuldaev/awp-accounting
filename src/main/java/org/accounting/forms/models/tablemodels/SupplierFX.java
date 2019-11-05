@@ -2,9 +2,9 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Supplier;
 
-public class SupplierTable extends MainTableModel {
+public class SupplierFX extends AdapterFX {
 
-    public SupplierTable() {
+    public SupplierFX() {
         columnNames = new String[]{"Company name"};
     }
 

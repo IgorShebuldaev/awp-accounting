@@ -2,9 +2,9 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.User;
 
-public class UserTable extends MainTableModel {
+public class UserFX extends AdapterFX {
 
-    public UserTable() {
+    public UserFX() {
         columnNames = new String[]{"Email", "Password", "Role", "Time in program"};
     }
 

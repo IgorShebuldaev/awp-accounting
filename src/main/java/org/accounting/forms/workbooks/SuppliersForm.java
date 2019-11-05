@@ -6,7 +6,7 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import org.accounting.database.models.Supplier;
 import org.accounting.forms.helpers.YesNoDialog;
-import org.accounting.forms.models.tablemodels.SupplierTable;
+import org.accounting.forms.models.tablemodels.SupplierFX;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,15 +27,15 @@ public class SuppliersForm extends JPanel implements ActionListener {
     private JButton btnSaveSuppliers;
     private JButton btnCancelSuppliers;
     private JButton btnDeleteSuppliers;
-    private SupplierTable supplierTableModel;
+    private SupplierFX supplierFXModel;
 
     SuppliersForm() {
         super();
 
-        supplierTableModel = new SupplierTable();
+        supplierFXModel = new SupplierFX();
 
-        Supplier.getAll().forEach(supplierTableModel::addRecord);
-        tableSuppliers.setModel(supplierTableModel);
+        Supplier.getAll().forEach(supplierFXModel::addRecord);
+        //tableSuppliers.setModel(supplierFXModel);
         tableSuppliers.getTableHeader().setReorderingAllowed(false);
 
         tableSuppliers.addMouseListener(new MouseAdapter() {
@@ -72,13 +72,13 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        supplierTableModel.addRecord(supplier);
+        supplierFXModel.addRecord(supplier);
         textFieldSuppliersCompanyName.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tableSuppliers.getSelectedRow();
-        Supplier supplier = supplierTableModel.getRecord(rowIndex);
+        Supplier supplier = supplierFXModel.getRecord(rowIndex);
         supplier.setName(textFieldSuppliersCompanyName.getText());
 
         if (!supplier.save()) {
@@ -86,7 +86,7 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        supplierTableModel.setValueAt(supplier, rowIndex);
+        supplierFXModel.setValueAt(supplier, rowIndex);
         textFieldSuppliersCompanyName.setText("");
         setDefaultMode();
     }
@@ -99,8 +99,8 @@ public class SuppliersForm extends JPanel implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            supplierTableModel.getRecord(rowIndex).delete();
-            supplierTableModel.removeRow(rowIndex);
+            supplierFXModel.getRecord(rowIndex).delete();
+            supplierFXModel.removeRow(rowIndex);
         }
     }
 
@@ -111,7 +111,7 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        textFieldSuppliersCompanyName.setText(supplierTableModel.getRecord(rowIndex).getName());
+        textFieldSuppliersCompanyName.setText(supplierFXModel.getRecord(rowIndex).getName());
         setEditMode();
     }
 
