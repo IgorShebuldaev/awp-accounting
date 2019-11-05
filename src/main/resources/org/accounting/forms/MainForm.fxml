@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="350.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.accounting.forms.MainForm">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="Menu">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleMiWorkBooks" text="Work Books" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMiNotes" text="Notes" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMiLogOut" text="Log out" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMiExit" text="Exit" />
+          </items>
+        </Menu>
+            <Menu mnemonicParsing="false" text="Reports">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#handleMiDeliveries" text="Deliveries" />
+              </items>
+            </Menu>
+        <Menu mnemonicParsing="false" text="Charts">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleMiTimeInProgram" text="Time in program" />
+          </items>
+        </Menu>
+            <Menu mnemonicParsing="false" text="Settings">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#handleMiUsers" text="Users" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleMiRoles" text="Roles" />
+              </items>
+            </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleMiAbout" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="581.0" prefWidth="790.0" VBox.vgrow="ALWAYS">
+         <children>
+            <TableView fx:id="tableDeliveries" editable="true" prefHeight="259.0" prefWidth="800.0">
+              <columns>
+                <TableColumn fx:id="columnDeliveryDate" onEditCommit="#onEditCommitDeliveryDate" prefWidth="150.0" text="Delivery date" />
+                <TableColumn fx:id="columnSupplier" onEditCommit="#onEditCommitSupplier" prefWidth="150.0" text="Supplier" />
+                  <TableColumn fx:id="columnProduct" minWidth="0.0" onEditCommit="#onEditCommitProduct" prefWidth="150.0" text="Product" />
+                  <TableColumn fx:id="columnPrice" onEditCommit="#onEditCommitPrice" prefWidth="117.0" text="Price" />
+                  <TableColumn fx:id="columnWorker" onEditCommit="#onEditCommitWorker" prefWidth="199.0" text="Worker" />
+              </columns>
+            </TableView>
+            <Label fx:id="labelStatusBar" layoutY="301.0" prefHeight="15.0" prefWidth="790.0" />
+            <ToolBar layoutY="261.0" prefHeight="40.0" prefWidth="800.0">
+              <items>
+                  <Button mnemonicParsing="false" onAction="#handleBtnAdd" prefHeight="25.0" prefWidth="193.0" text="Add" />
+                  <Button mnemonicParsing="false" onAction="#handleBtnSave" prefHeight="25.0" prefWidth="193.0" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#handleBtnCancel" prefHeight="25.0" prefWidth="193.0" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#handleBtnDelete" prefHeight="25.0" prefWidth="195.0" text="Delete" />
+              </items>
+            </ToolBar>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+    </AnchorPane>
+  </children>
+</VBox>
