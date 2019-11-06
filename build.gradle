@@ -10,7 +10,8 @@ application {
 group 'wannaasbird'
 version '1.0.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 8
+targetCompatibility = 8
 
 repositories {
     mavenCentral()
