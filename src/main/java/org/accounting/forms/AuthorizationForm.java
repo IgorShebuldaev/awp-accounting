@@ -11,6 +11,8 @@ import org.accounting.database.models.User;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.user.CurrentUser;
 
+import java.io.IOException;
+
 public class AuthorizationForm  {
 
     @FXML
@@ -18,7 +20,7 @@ public class AuthorizationForm  {
     @FXML
     private PasswordField passField;
 
-    public void showForm() throws Exception {
+    public void showForm() throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("AuthorizationForm.fxml"));
         Scene scene = new Scene(root);
         Stage stage = new Stage();
