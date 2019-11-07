@@ -1,32 +1,37 @@
 package org.accounting.forms.models.tablemodels;
 
-import javafx.beans.property.SimpleStringProperty;
 import org.accounting.database.models.Delivery;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+
+import java.util.Date;
+
 public class DeliveryFX {
-    private SimpleStringProperty deliveryDate = new SimpleStringProperty();
-    private SimpleStringProperty supplier = new SimpleStringProperty();
-    private SimpleStringProperty product = new SimpleStringProperty();
-    private SimpleStringProperty price = new SimpleStringProperty();
-    private SimpleStringProperty worker = new SimpleStringProperty();
+    private ObjectProperty<Date> deliveryDate;
+    private SimpleStringProperty supplier;
+    private SimpleStringProperty product;
+    private SimpleStringProperty price;
+    private SimpleStringProperty worker;
 
     public DeliveryFX(Delivery delivery) {
-        deliveryDate.set(toString(delivery.getDeliveryDate()));
-        supplier.set(delivery.getSupplier().getName());
-        product.set(delivery.getProduct());
-        price.set(delivery.getPrice());
-        worker.set(delivery.getWorker().getFullName());
+        deliveryDate = new SimpleObjectProperty<>(delivery.getDeliveryDate());
+        supplier = new SimpleStringProperty(delivery.getSupplier().getName());
+        product = new SimpleStringProperty(delivery.getProduct());
+        price = new SimpleStringProperty(delivery.getPrice());
+        worker = new SimpleStringProperty(delivery.getWorker().getFullName());
     }
 
-    public String getDeliveryDate() {
+    public Date getDeliveryDate() {
         return deliveryDate.get();
     }
 
-    public SimpleStringProperty deliveryDateProperty() {
+    public ObjectProperty<Date> deliveryDateProperty() {
         return deliveryDate;
     }
 
-    public void setDeliveryDate(String deliveryDate) {
+    public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate.set(deliveryDate);
     }
 
@@ -78,11 +83,4 @@ public class DeliveryFX {
         this.worker.set(worker);
     }
 
-    private String toString(Object object) {
-        if (object != null) {
-            return object.toString();
-        }
-
-        return "";
-    }
 }
