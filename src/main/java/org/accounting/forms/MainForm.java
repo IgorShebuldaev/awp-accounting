@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import org.accounting.database.models.Delivery;
+import org.accounting.forms.components.DateTableCell;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.tablemodels.DeliveryFX;
 
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainForm implements Initializable {
@@ -31,7 +31,7 @@ public class MainForm implements Initializable {
     @FXML
     private TableView<DeliveryFX> tableDeliveries;
     @FXML
-    private TableColumn<DeliveryFX, String> columnDeliveryDate;
+    private TableColumn<DeliveryFX, Date> columnDeliveryDate;
     @FXML
     private TableColumn<DeliveryFX, String> columnSupplier;
     @FXML
@@ -40,6 +40,7 @@ public class MainForm implements Initializable {
     private TableColumn<DeliveryFX, String> columnPrice;
     @FXML
     private TableColumn<DeliveryFX, String> columnWorker;
+
     private ObservableList<DeliveryFX> data;
 
     @Override
@@ -60,7 +61,7 @@ public class MainForm implements Initializable {
 
         tableDeliveries.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        columnDeliveryDate.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnDeliveryDate.setCellFactory((TableColumn<DeliveryFX, Date> param) -> new DateTableCell());
         columnSupplier.setCellFactory(TextFieldTableCell.forTableColumn());
         columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
         columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -73,13 +74,12 @@ public class MainForm implements Initializable {
 
    public void showForm() {
         try {
-            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("org/accounting/forms/MainForm.fxml")));
+            Parent root = FXMLLoader.load((getClass()).getResource("MainForm.fxml"));
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setTitle("Accounting");
             stage.setScene(scene);
             stage.show();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,24 +144,21 @@ public class MainForm implements Initializable {
         int row = data.size() - 1;
         tableDeliveries.getSelectionModel().select(row);
         tableDeliveries.getSelectionModel().focus(row);
-        tableDeliveries.edit(row, columnDeliveryDate);
     }
 
     @FXML
     private void handleBtnSave() {
         DeliveryFX deliveryFX  = tableDeliveries.getSelectionModel().getSelectedItem();
         Delivery delivery = new Delivery();
-        delivery.setDeliveryDate(new Date());
+        delivery.setDeliveryDate(deliveryFX.getDeliveryDate());
         delivery.setSupplierId(Integer.parseInt(deliveryFX.getSupplier()));
         delivery.setProduct(deliveryFX.getProduct());
         delivery.setPrice(deliveryFX.getPrice());
         delivery.setWorkerId(Integer.parseInt(deliveryFX.getWorker()));
 
-
         if (!delivery.save()) {
         new AlertMessage("Error", delivery.getErrors().fullMessages("\n"));
         }
-
     }
 
     @FXML
@@ -173,7 +170,7 @@ public class MainForm implements Initializable {
     }
 
     @FXML
-    private void onEditCommitDeliveryDate(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
+    private void onEditCommitDeliveryDate(TableColumn.CellEditEvent<DeliveryFX, Date> deliveryFXStringCellEditEvent) {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
         deliveryFX.setDeliveryDate(deliveryFXStringCellEditEvent.getNewValue());
     }
@@ -358,6 +355,5 @@ public class MainForm implements Initializable {
 //                break;
 //        }
 //    }
-
 
 }
