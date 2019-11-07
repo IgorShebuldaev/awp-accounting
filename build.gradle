@@ -1,17 +1,15 @@
 plugins {
     id 'application'
-    id "org.openjfx.javafxplugin" version "0.0.8"
 }
 
 application {
   mainClassName = 'org.accounting.Main'
 }
 
-group 'wannaasbird'
 version '1.0.0'
 
-sourceCompatibility = 8
-targetCompatibility = 8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -25,11 +23,6 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
     annotationProcessor 'org.apache.logging.log4j:log4j-api:2.12.1'
     compile group: 'org.jfree', name: 'jfreechart', version: '1.5.0'
-}
-
-javafx {
-    version = "13"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 task create(type: JavaExec) {
