@@ -1,5 +1,8 @@
 package org.accounting.forms;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,26 +11,34 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
 import org.accounting.database.models.Delivery;
+import org.accounting.database.models.Supplier;
+import org.accounting.database.models.User;
+import org.accounting.database.models.Worker;
 import org.accounting.forms.components.DateTableCell;
 import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
 import org.accounting.forms.models.tablemodels.DeliveryFX;
+import org.accounting.forms.models.tablemodels.SupplierFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+import org.accounting.user.CurrentUser;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 public class MainForm implements Initializable {
-
-    @FXML
-    private Label labelStatusBar;
     @FXML
     private TableView<DeliveryFX> tableDeliveries;
     @FXML
@@ -40,64 +51,177 @@ public class MainForm implements Initializable {
     private TableColumn<DeliveryFX, String> columnPrice;
     @FXML
     private TableColumn<DeliveryFX, String> columnWorker;
+    @FXML
+    private DatePicker dpDeliveryDate;
+    @FXML
+    private ComboBox<SupplierFX> cbSupplier;
+    @FXML
+    private TextField tfProduct;
+    @FXML
+    private TextField tfPrice;
+    @FXML
+    private ComboBox<WorkerFX> cbWorker;
+    @FXML
+    private Label labelStatusBar;
 
     private ObservableList<DeliveryFX> data;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public MainForm() {
         data = FXCollections.observableArrayList();
-        ArrayList<Delivery> results = Delivery.getAll();
+        ArrayList<Delivery> resultsDelivery = Delivery.getAll();
 
-        for (Delivery delivery : results) {
+        for (Delivery delivery : resultsDelivery) {
             data.add(new DeliveryFX(delivery));
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        startTimer();
 
         columnDeliveryDate.setCellValueFactory(cellData -> cellData.getValue().deliveryDateProperty());
         columnSupplier.setCellValueFactory(cellData -> cellData.getValue().supplierProperty());
         columnProduct.setCellValueFactory(cellData -> cellData.getValue().productProperty());
         columnPrice.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
         columnWorker.setCellValueFactory(cellData -> cellData.getValue().workerProperty());
-        tableDeliveries.setItems(data);
+
+        columnDeliveryDate.setCellFactory((TableColumn<DeliveryFX, Date> param) -> new DateTableCell());
+        columnSupplier.setCellFactory((TableColumn<DeliveryFX, String> param) -> new SupplierComboBoxCell(getItemsComboBoxSupplier()));
+        columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnWorker.setCellFactory(ComboBoxTableCell.forTableColumn(getItemsComboBoxWorker().toString()));
 
         tableDeliveries.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        columnDeliveryDate.setCellFactory((TableColumn<DeliveryFX, Date> param) -> new DateTableCell());
-        columnSupplier.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnWorker.setCellFactory(TextFieldTableCell.forTableColumn());
-    }
+        tableDeliveries.setItems(data);
 
-    public MainForm() {
-
+        cbSupplier.setItems(getItemsComboBoxSupplier());
+        cbWorker.setItems(getItemsComboBoxWorker());
+        createComboBox();
     }
 
    public void showForm() {
         try {
             Parent root = FXMLLoader.load((getClass()).getResource("MainForm.fxml"));
-            Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setTitle("Accounting");
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-//    private void updateStatusBar() {
-//        User currentUser = CurrentUser.getUser();
-//
-//        currentUser.incrementTimeInProgram(1);
-//        labelStatusBar.setText(
-//                String.format("User: %s. Role: %s. Time in program: %s",
-//                        currentUser.getEmail(),
-//                        currentUser.getRole().getName(),
-//                        currentUser.getFormattedTimeInProgram()
-//                )
-//        );
-//    }
+    private ObservableList<SupplierFX> getItemsComboBoxSupplier() {
+        ObservableList<SupplierFX> suppliers = FXCollections.observableArrayList();
+        ArrayList<Supplier> results = Supplier.getAll();
 
+        for (Supplier supplier : results) {
+            suppliers.add(new SupplierFX(supplier));
+        }
+
+        return suppliers;
+    }
+
+    private ObservableList<WorkerFX> getItemsComboBoxWorker() {
+        ObservableList<WorkerFX> workers = FXCollections.observableArrayList();
+        ArrayList<Worker> results = Worker.getAll();
+
+        for (Worker worker : results) {
+            workers.add(new WorkerFX(worker));
+        }
+
+        return workers;
+    }
+
+    private void createComboBox() {
+        cbSupplier.setCellFactory(new Callback<ListView<SupplierFX>, ListCell<SupplierFX>>() {
+            @Override
+            public ListCell<SupplierFX> call(ListView<SupplierFX> supplierFXListView) {
+                return new ListCell<SupplierFX>() {
+                    @Override
+                    protected void updateItem(SupplierFX item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.getName());
+                        }
+                    }
+                };
+            }
+        });
+
+        cbSupplier.setConverter(new StringConverter<SupplierFX>() {
+            @Override
+            public String toString(SupplierFX supplierFX) {
+                if (supplierFX == null){
+                    return null;
+                } else {
+                    return supplierFX.getName();
+                }
+            }
+
+            @Override
+            public SupplierFX fromString(String name) {
+                return null;
+            }
+        });
+
+        cbWorker.setCellFactory(new Callback<ListView<WorkerFX>, ListCell<WorkerFX>>() {
+            @Override
+            public ListCell<WorkerFX> call(ListView<WorkerFX> workerFXListView) {
+                return new ListCell<WorkerFX>() {
+                    @Override
+                    protected void updateItem(WorkerFX item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.getFullName());
+                        }
+                    }
+                };
+            }
+        });
+
+        cbWorker.setConverter(new StringConverter<WorkerFX>() {
+            @Override
+            public String toString(WorkerFX workerFX) {
+                if (workerFX == null){
+                    return null;
+                } else {
+                    return workerFX.getFullName();
+                }
+            }
+
+            @Override
+            public WorkerFX fromString(String fullName) {
+                return null;
+            }
+        });
+    }
+
+    private void startTimer() {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+            updateStatusBar();
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    private void updateStatusBar() {
+        User currentUser = CurrentUser.getUser();
+
+        currentUser.incrementTimeInProgram(1);
+        labelStatusBar.setText(
+                String.format("User: %s. Role: %s. Time in program: %s",
+                        currentUser.getEmail(),
+                        currentUser.getRole().getName(),
+                        currentUser.getFormattedTimeInProgram()
+                )
+        );
+    }
 
     @FXML
     private void handleMiWorkBooks() {
@@ -140,220 +264,84 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleBtnAdd() {
-        data.add(new DeliveryFX(new Delivery()));
-        int row = data.size() - 1;
-        tableDeliveries.getSelectionModel().select(row);
-        tableDeliveries.getSelectionModel().focus(row);
+        Delivery delivery = new Delivery();
+        delivery.setDeliveryDate(convertToDate(dpDeliveryDate.getValue()));
+        delivery.setSupplierId(cbSupplier.getSelectionModel().getSelectedItem().getSupplier().getId());
+        delivery.setProduct(tfProduct.getText());
+        delivery.setPrice(tfPrice.getText());
+        delivery.setWorkerId(cbWorker.getSelectionModel().getSelectedItem().getWorker().getId());
+
+        if (!delivery.save()) {
+            new AlertMessage("Error", delivery.getErrors().fullMessages()).showErrorMessage();
+            return;
+        }
+
+        data.add(new DeliveryFX(delivery));
     }
 
     @FXML
-    private void handleBtnSave() {
-        DeliveryFX deliveryFX  = tableDeliveries.getSelectionModel().getSelectedItem();
-        Delivery delivery = new Delivery();
-        delivery.setDeliveryDate(deliveryFX.getDeliveryDate());
-        delivery.setSupplierId(Integer.parseInt(deliveryFX.getSupplier()));
-        delivery.setProduct(deliveryFX.getProduct());
-        delivery.setPrice(deliveryFX.getPrice());
-        delivery.setWorkerId(Integer.parseInt(deliveryFX.getWorker()));
-
+    private void handleBtnAdd(Delivery delivery) {
         if (!delivery.save()) {
-        new AlertMessage("Error", delivery.getErrors().fullMessages("\n"));
+            new AlertMessage("Error", delivery.getErrors().fullMessages()).showErrorMessage();
         }
     }
 
     @FXML
-    private void handleBtnCancel() {
+    private void handleBtnDelete() {
+        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+
+        if (new AlertMessage("Message","Are you sure you want to delete the record?").confirmationMessage()) {
+            deliveryFX.getDelivery().delete();
+        }
+
+        data.remove(deliveryFX);
     }
 
-    @FXML
-    private void handleBtnDelete() {
+    private Date convertToDate(LocalDate dateToConvert) {
+        if (dateToConvert != null) {
+            return Date.from(dateToConvert.atStartOfDay()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant());
+        }
+        return null;
     }
 
     @FXML
     private void onEditCommitDeliveryDate(TableColumn.CellEditEvent<DeliveryFX, Date> deliveryFXStringCellEditEvent) {
-        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
-        deliveryFX.setDeliveryDate(deliveryFXStringCellEditEvent.getNewValue());
+            DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
+            deliveryFX.setDeliveryDate(deliveryFXStringCellEditEvent.getNewValue());
+            deliveryFX.getDelivery().setDeliveryDate(deliveryFXStringCellEditEvent.getNewValue());
+            handleBtnAdd(deliveryFX.getDelivery());
     }
 
     @FXML
     private void onEditCommitSupplier(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
         deliveryFX.setSupplier(deliveryFXStringCellEditEvent.getNewValue());
+        //get instance ComboboxCell
     }
 
     @FXML
     private void onEditCommitProduct(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
         deliveryFX.setProduct(deliveryFXStringCellEditEvent.getNewValue());
+        deliveryFX.getDelivery().setProduct(deliveryFXStringCellEditEvent.getNewValue());
+        handleBtnAdd(deliveryFX.getDelivery());
     }
 
     @FXML
     private void onEditCommitPrice(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
         deliveryFX.setPrice(deliveryFXStringCellEditEvent.getNewValue());
+        deliveryFX.getDelivery().setPrice(deliveryFXStringCellEditEvent.getNewValue());
+        handleBtnAdd(deliveryFX.getDelivery());
     }
 
     @FXML
     private void onEditCommitWorker(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
         deliveryFX.setWorker(deliveryFXStringCellEditEvent.getNewValue());
+        //get instance ComboboxCell
     }
-
-
-//    private void addItemComboBoxSupplier() {
-//        supplierComboBoxModel.removeAllElements();
-//        Supplier.getAll().forEach(supplierComboBoxModel::addRecord);
-//        comboBoxSuppliers.setModel(supplierComboBoxModel);
-//    }
-//
-//    private void addItemComboBoxWorker() {
-//        workerComboBoxModel.removeAllElements();
-//        Worker.getAll().forEach(workerComboBoxModel::addRecord);
-//        comboBoxWorkers.setModel(workerComboBoxModel);
-//    }
-//
-//    private void saveRecord() {
-//        Delivery delivery;
-//
-//        if (isNewRecord) {
-//            delivery = getNewValues(new Delivery());
-//        } else {
-//            delivery = getNewValues(deliveryTableModel.getRecord(getRowIndex()));
-//        }
-//
-//        if (!delivery.save()) {
-//            JOptionPane.showMessageDialog(this, delivery.getErrors().fullMessages("\n"));
-//            return;
-//        }
-//
-//        if (isNewRecord) {
-//            deliveryTableModel.addRecord(delivery);
-//            textFieldProduct.setText("");
-//            textFieldPrice.setText("");
-//        } else {
-//            deliveryTableModel.setValueAt(delivery, getRowIndex());
-//            setDefaultMode();
-//            isNewRecord = true;
-//        }
-//    }
-//
-//    private void deleteRecord() {
-//        if (getRowIndex() < 0) {
-//            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-//            return;
-//        }
-//
-//        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-//            deliveryTableModel.getRecord(getRowIndex()).delete();
-//            deliveryTableModel.removeRow(getRowIndex());
-//        }
-//    }
-//
-//    private void setValues() {
-//        if (getRowIndex() < 0) {
-//            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-//            return;
-//        }
-//
-//        Delivery delivery = deliveryTableModel.getRecord(getRowIndex());
-//        spinnerDeliveriesDeliveryDate.setValue(delivery.getDeliveryDate());
-//        comboBoxSuppliers.setSelectedItem(delivery.getSupplier().getName());
-//        textFieldProduct.setText(delivery.getProduct());
-//        textFieldPrice.setText(delivery.getPrice());
-//        comboBoxWorkers.setSelectedItem(delivery.getWorker().getFullName());
-//        setEditMode();
-//        isNewRecord = false;
-//    }
-//
-//    private Delivery getNewValues(Delivery delivery) {
-//        if (delivery == null) {
-//            delivery = new Delivery();
-//        }
-//        delivery.setDeliveryDate((Date) spinnerDeliveriesDeliveryDate.getValue());
-//        delivery.setSupplierId(supplierComboBoxModel.getSelection().map(Base::getId).orElse(0));
-//        delivery.setProduct(textFieldProduct.getText());
-//        delivery.setPrice(textFieldPrice.getText());
-//        delivery.setWorkerId(workerComboBoxModel.getSelection().map(Base::getId).orElse(0));
-//
-//        return delivery;
-//    }
-////
-//    private int getRowIndex() {
-//        return tableDeliveries.getSelectionModel().get
-//    }
-//
-//    private void setDefaultMode() {
-//        addButton.setEnabled(true);
-//        editButton.setEnabled(true);
-//        saveButton.setEnabled(false);
-//        cancelButton.setEnabled(false);
-//        deleteButton.setEnabled(true);
-//        tableDeliveries.setEnabled(true);
-//        textFieldProduct.setText("");
-//        textFieldPrice.setText("");
-//    }
-//
-//    private void setEditMode() {
-//        addButton.setEnabled(false);
-//        editButton.setEnabled(false);
-//        saveButton.setEnabled(true);
-//        cancelButton.setEnabled(true);
-//        deleteButton.setEnabled(false);
-//        tableDeliveries.setEnabled(false);
-//    }
-//
-//    @Override
-//    public void valueChanged(ListSelectionEvent e) {
-//        setValues();
-//    }
-//
-//    @Override
-//    public void actionPerformed(ActionEvent event) {
-//        switch (event.getActionCommand()) {
-//            case "workBooks":
-//                new WorkBooksForm().setVisible(true);
-//                addItemComboBoxWorker();
-//                addItemComboBoxSupplier();
-//                break;
-//            case "notes":
-//                new NotesForm().setVisible(true);
-//                break;
-//            case "logout":
-//                dispose();
-//
-//                break;
-//            case "exit":
-//                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-//                break;
-//            case "users":
-//                new UsersForm().setVisible(true);
-//                break;
-//            case "roles":
-//                new RolesForm().setVisible(true);
-//                break;
-//            case "reports":
-//                new ReportsForm().setVisible(true);
-//                break;
-//            case "chart":
-//                new ChartForm().setVisible(true);
-//                break;
-//            case "about":
-//                JOptionPane.showMessageDialog(null, "Copyright © 2019 devTeam ");
-//                break;
-//            case "addButton":
-//            case "saveButton":
-//                saveRecord();
-//                break;
-//            case "editButton":
-//                setValues();
-//                break;
-//            case "cancelButton":
-//                setDefaultMode();
-//                break;
-//            case "deleteButton":
-//                deleteRecord();
-//                break;
-//        }
-//    }
 
 }
