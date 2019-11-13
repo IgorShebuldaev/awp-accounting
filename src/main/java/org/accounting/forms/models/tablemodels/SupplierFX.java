@@ -1,26 +1,35 @@
 package org.accounting.forms.models.tablemodels;
 
+import javafx.beans.property.SimpleStringProperty;
 import org.accounting.database.models.Supplier;
 
-public class SupplierFX extends AdapterFX {
+public class SupplierFX  {
+    private SimpleStringProperty name;
+    private Supplier supplier;
 
-    public SupplierFX() {
-        columnNames = new String[]{"Company name"};
+    public SupplierFX(Supplier supplier) {
+        name = new SimpleStringProperty(supplier.getName());
+        this.supplier = supplier;
     }
 
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Supplier supplier = (Supplier) data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return supplier.getName();
-            default:
-                return "";
-        }
+    public String getName() {
+        return name.get();
     }
 
-    @Override
-    public Supplier getRecord(int rowIndex) {
-        return (Supplier) super.getRecord(rowIndex);
+    public SimpleStringProperty nameProperty() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
 }

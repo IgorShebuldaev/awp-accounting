@@ -14,6 +14,7 @@ public class DeliveryFX {
     private SimpleStringProperty product;
     private SimpleStringProperty price;
     private SimpleStringProperty worker;
+    private Delivery delivery;
 
     public DeliveryFX(Delivery delivery) {
         deliveryDate = new SimpleObjectProperty<>(delivery.getDeliveryDate());
@@ -21,6 +22,7 @@ public class DeliveryFX {
         product = new SimpleStringProperty(delivery.getProduct());
         price = new SimpleStringProperty(delivery.getPrice());
         worker = new SimpleStringProperty(delivery.getWorker().getFullName());
+        this.delivery = delivery;
     }
 
     public Date getDeliveryDate() {
@@ -81,6 +83,14 @@ public class DeliveryFX {
 
     public void setWorker(String worker) {
         this.worker.set(worker);
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 
 }
