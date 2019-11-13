@@ -3,9 +3,7 @@ package org.accounting.forms.workbooks;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
 import org.accounting.database.models.Supplier;
-import org.accounting.forms.helpers.YesNoDialog;
 import org.accounting.forms.models.tablemodels.SupplierFX;
 
 import javax.swing.*;
@@ -32,9 +30,9 @@ public class SuppliersForm extends JPanel implements ActionListener {
     SuppliersForm() {
         super();
 
-        supplierFXModel = new SupplierFX();
+        //supplierFXModel = new SupplierFX();
 
-        Supplier.getAll().forEach(supplierFXModel::addRecord);
+        //Supplier.getAll().forEach(supplierFXModel::addRecord);
         //tableSuppliers.setModel(supplierFXModel);
         tableSuppliers.getTableHeader().setReorderingAllowed(false);
 
@@ -72,23 +70,23 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        supplierFXModel.addRecord(supplier);
+        //supplierFXModel.addRecord(supplier);
         textFieldSuppliersCompanyName.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tableSuppliers.getSelectedRow();
-        Supplier supplier = supplierFXModel.getRecord(rowIndex);
-        supplier.setName(textFieldSuppliersCompanyName.getText());
+       // Supplier supplier = supplierFXModel.getRecord(rowIndex);
+       // supplier.setName(textFieldSuppliersCompanyName.getText());
 
-        if (!supplier.save()) {
-            JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
-            return;
-        }
+//        if (!supplier.save()) {
+//            JOptionPane.showMessageDialog(this, supplier.getErrors().fullMessages("\n"));
+//            return;
+//        }
 
-        supplierFXModel.setValueAt(supplier, rowIndex);
-        textFieldSuppliersCompanyName.setText("");
-        setDefaultMode();
+//        supplierFXModel.setValueAt(supplier, rowIndex);
+//        textFieldSuppliersCompanyName.setText("");
+//        setDefaultMode();
     }
 
     private void deleteRecord() {
@@ -98,10 +96,10 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            supplierFXModel.getRecord(rowIndex).delete();
-            supplierFXModel.removeRow(rowIndex);
-        }
+//        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
+//            supplierFXModel.getRecord(rowIndex).delete();
+//            supplierFXModel.removeRow(rowIndex);
+//        }
     }
 
     private void setValues() {
@@ -111,8 +109,8 @@ public class SuppliersForm extends JPanel implements ActionListener {
             return;
         }
 
-        textFieldSuppliersCompanyName.setText(supplierFXModel.getRecord(rowIndex).getName());
-        setEditMode();
+//        textFieldSuppliersCompanyName.setText(supplierFXModel.getRecord(rowIndex).getName());
+//        setEditMode();
     }
 
     private void setDefaultMode() {

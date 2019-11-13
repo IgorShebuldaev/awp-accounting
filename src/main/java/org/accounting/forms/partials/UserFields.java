@@ -6,8 +6,8 @@ import org.accounting.database.models.Base;
 import org.accounting.database.models.Role;
 import org.accounting.database.models.User;
 import org.accounting.forms.RolesForm;
-import org.accounting.forms.models.comboboxmodels.MainComboBoxModel;
-import org.accounting.forms.models.comboboxmodels.RoleComboBoxModel;
+import org.accounting.forms.models.comboboxcell.MainComboBoxModel;
+import org.accounting.forms.models.comboboxcell.RoleComboBoxModel;
 import org.accounting.user.CurrentUser;
 
 import javax.swing.*;
