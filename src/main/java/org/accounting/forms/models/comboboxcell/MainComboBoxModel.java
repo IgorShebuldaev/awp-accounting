@@ -1,4 +1,4 @@
-package org.accounting.forms.models.comboboxmodels;
+package org.accounting.forms.models.comboboxcell;
 
 import org.accounting.database.models.Base;
 
