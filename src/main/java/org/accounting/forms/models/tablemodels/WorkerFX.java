@@ -1,9 +1,10 @@
 package org.accounting.forms.models.tablemodels;
 
+import org.accounting.database.models.Worker;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import org.accounting.database.models.Worker;
 
 import java.util.Date;
 

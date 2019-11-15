@@ -1,11 +1,12 @@
 package org.accounting.forms.models.comboboxcell;
 
+import org.accounting.forms.models.tablemodels.DeliveryFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.accounting.forms.models.tablemodels.DeliveryFX;
-import org.accounting.forms.models.tablemodels.WorkerFX;
 
 public class WorkerComboBoxCell extends TableCell<DeliveryFX, String> {
     private ComboBox<WorkerFX> comboBox;

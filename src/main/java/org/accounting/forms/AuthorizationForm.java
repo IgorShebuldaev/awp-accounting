@@ -13,15 +13,13 @@ import org.accounting.user.CurrentUser;
 
 import java.io.IOException;
 
-public class AuthorizationForm  {
-
-    @FXML
-    private TextField textFieldEmail;
-    @FXML
-    private PasswordField passField;
+public class AuthorizationForm {
+    @FXML private TextField textFieldEmail;
+    @FXML private PasswordField passField;
 
     public void showForm() throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("AuthorizationForm.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AuthorizationForm.fxml"));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
         Stage stage = new Stage();
         stage.setTitle("Sign in");

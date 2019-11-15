@@ -1,5 +1,17 @@
 package org.accounting.forms;
 
+import org.accounting.database.models.Delivery;
+import org.accounting.database.models.Supplier;
+import org.accounting.database.models.User;
+import org.accounting.database.models.Worker;
+import org.accounting.forms.components.DateTableCell;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
+import org.accounting.forms.models.tablemodels.DeliveryFX;
+import org.accounting.forms.models.tablemodels.SupplierFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+import org.accounting.user.CurrentUser;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -18,17 +30,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import org.accounting.database.models.Delivery;
-import org.accounting.database.models.Supplier;
-import org.accounting.database.models.User;
-import org.accounting.database.models.Worker;
-import org.accounting.forms.components.DateTableCell;
-import org.accounting.forms.helpers.AlertMessage;
-import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
-import org.accounting.forms.models.tablemodels.DeliveryFX;
-import org.accounting.forms.models.tablemodels.SupplierFX;
-import org.accounting.forms.models.tablemodels.WorkerFX;
-import org.accounting.user.CurrentUser;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,31 +40,18 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 public class MainForm implements Initializable {
-    @FXML
-    private TableView<DeliveryFX> tableDeliveries;
-    @FXML
-    private TableColumn<DeliveryFX, Date> columnDeliveryDate;
-    @FXML
-    private TableColumn<DeliveryFX, String> columnSupplier;
-    @FXML
-    private TableColumn<DeliveryFX, String> columnProduct;
-    @FXML
-    private TableColumn<DeliveryFX, String> columnPrice;
-    @FXML
-    private TableColumn<DeliveryFX, String> columnWorker;
-    @FXML
-    private DatePicker dpDeliveryDate;
-    @FXML
-    private ComboBox<SupplierFX> cbSupplier;
-    @FXML
-    private TextField tfProduct;
-    @FXML
-    private TextField tfPrice;
-    @FXML
-    private ComboBox<WorkerFX> cbWorker;
-    @FXML
-    private Label labelStatusBar;
-
+    @FXML private TableView<DeliveryFX> tableDeliveries;
+    @FXML private TableColumn<DeliveryFX, Date> columnDeliveryDate;
+    @FXML private TableColumn<DeliveryFX, String> columnSupplier;
+    @FXML private TableColumn<DeliveryFX, String> columnProduct;
+    @FXML private TableColumn<DeliveryFX, String> columnPrice;
+    @FXML private TableColumn<DeliveryFX, String> columnWorker;
+    @FXML private DatePicker dpDeliveryDate;
+    @FXML private ComboBox<SupplierFX> cbSupplier;
+    @FXML private TextField tfProduct;
+    @FXML private TextField tfPrice;
+    @FXML private ComboBox<WorkerFX> cbWorker;
+    @FXML private Label labelStatusBar;
     private ObservableList<DeliveryFX> data;
 
     public MainForm() {
@@ -102,7 +90,8 @@ public class MainForm implements Initializable {
 
    public void showForm() {
         try {
-            Parent root = FXMLLoader.load((getClass()).getResource("MainForm.fxml"));
+            FXMLLoader loader = new FXMLLoader((getClass()).getResource("MainForm.fxml"));
+            Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Accounting");
             stage.setScene(new Scene(root));
@@ -203,9 +192,7 @@ public class MainForm implements Initializable {
     }
 
     private void startTimer() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
-            updateStatusBar();
-        }));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> updateStatusBar()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -252,6 +239,7 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiUsers() {
+        new UsersForm().showForm();
     }
 
     @FXML

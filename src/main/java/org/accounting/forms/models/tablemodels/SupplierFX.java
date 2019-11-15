@@ -1,7 +1,8 @@
 package org.accounting.forms.models.tablemodels;
 
-import javafx.beans.property.SimpleStringProperty;
 import org.accounting.database.models.Supplier;
+
+import javafx.beans.property.SimpleStringProperty;
 
 public class SupplierFX  {
     private SimpleStringProperty name;
