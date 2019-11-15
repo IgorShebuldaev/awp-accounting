@@ -1,224 +1,118 @@
 package org.accounting.forms;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
-import org.accounting.database.models.Base;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.accounting.database.models.User;
-import org.accounting.forms.helpers.YesNoDialog;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.comboboxcell.RoleComboBoxCell;
 import org.accounting.forms.models.tablemodels.UserFX;
 import org.accounting.forms.partials.UserFields;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
-public class UsersForm extends JDialog implements ActionListener {
-    private JPanel panelUsersForm;
-    private JScrollPane scrollPaneTableUsers;
-    private JTable tableUsers;
-    private JButton addButton;
-    private JButton deleteButton;
-    private JButton saveButton;
-    private JButton cancelButton;
-    private JButton editButton;
-    public JPanel userFieldsPanel;
-    private UserFX userFXModel;
-    private UserFields userFields;
+public class UsersForm implements Initializable {
+    @FXML private AnchorPane paneUserFields;
+    @FXML private UserFields userFields;
+    @FXML private TableView<UserFX> tableUsers;
+    @FXML private TableColumn<UserFX, String> columnEmail;
+    @FXML private TableColumn<UserFX, String> columnPassword;
+    @FXML private TableColumn<UserFX, String> columnRole;
+    @FXML private TableColumn<UserFX, Integer> columnTimeInProgram;
+    @FXML private Label labelRole;
+    private ObservableList<UserFX> data;
 
-    UsersForm() {
-        createForm();
+    public UsersForm() {
+        data = FXCollections.observableArrayList();
+        ArrayList<User> results = User.getAll();
 
-        userFXModel = new UserFX();
-
-        User.getAll().forEach(userFXModel::addRecord);
-        tableUsers.getTableHeader().setReorderingAllowed(false);
-        //tableUsers.setModel(userFXModel);
-
-        tableUsers.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent mouseEvent) {
-                if (mouseEvent.getClickCount() == 2) {
-                    setValues();
-                }
-            }
-        });
-    }
-
-    private void createForm() {
-        setContentPane(panelUsersForm);
-        setSize(800, 600);
-        setLocationRelativeTo(null);
-        setTitle("Users");
-        setModalityType(ModalityType.APPLICATION_MODAL);
-
-        addButton.addActionListener(this);
-        editButton.addActionListener(this);
-        saveButton.addActionListener(this);
-        deleteButton.addActionListener(this);
-        cancelButton.addActionListener(this);
-    }
-
-    private void insertRecord() {
-        User user = userFields.buildUser();
-
-        if (!user.save()) {
-            JOptionPane.showMessageDialog(this, user.getErrors().fullMessages("\n"));
-            return;
+        for (User user : results) {
+            data.add(new UserFX(user));
         }
-
-        userFXModel.addRecord(user);
-        userFields.textFieldEmail.setText("");
-        userFields.textFieldPassword.setText("");
-    }
-
-    private void saveRecord() {
-        int rowIndex = tableUsers.getSelectedRow();
-        User user = userFXModel.getRecord(rowIndex);
-
-        user.setEmail(userFields.textFieldEmail.getText());
-        user.setPassword(userFields.textFieldPassword.getText());
-        user.setRoleId(userFields.roleModel.getSelection().map(Base::getId).orElse(0));
-
-        if (!user.save()) {
-            JOptionPane.showMessageDialog(this, user.getErrors().fullMessages());
-            return;
-        }
-
-        userFXModel.setValueAt(user, rowIndex);
-        setDefaultMode();
-    }
-
-    private void deleteRecord() {
-        int rowIndex = tableUsers.getSelectedRow();
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-            return;
-        }
-
-        if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            userFXModel.getRecord(rowIndex).delete();
-            userFXModel.removeRow(rowIndex);
-        }
-    }
-
-    private void setValues() {
-        int rowIndex = tableUsers.getSelectedRow();
-        if (rowIndex < 0) {
-            JOptionPane.showMessageDialog(this, "Select an entry in the table!");
-            return;
-        }
-
-        User user = userFXModel.getRecord(rowIndex);
-
-        userFields.textFieldEmail.setText(user.getEmail());
-        userFields.textFieldPassword.setText(user.getPassword());
-        userFields.comboBoxRoles.setSelectedItem(user.getRole().getName());
-        setEditMode();
-    }
-
-    private void setDefaultMode() {
-        addButton.setEnabled(true);
-        editButton.setEnabled(true);
-        saveButton.setEnabled(false);
-        cancelButton.setEnabled(false);
-        deleteButton.setEnabled(true);
-        tableUsers.setEnabled(true);
-        userFields.textFieldEmail.setText("");
-        userFields.textFieldPassword.setText("");
-    }
-
-    private void setEditMode() {
-        addButton.setEnabled(false);
-        editButton.setEnabled(false);
-        saveButton.setEnabled(true);
-        cancelButton.setEnabled(true);
-        deleteButton.setEnabled(false);
-        tableUsers.setEnabled(false);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "add":
-                insertRecord();
-                break;
-            case "delete":
-                deleteRecord();
-                break;
-            case "edit":
-                setValues();
-                break;
-            case "save":
-                saveRecord();
-                break;
-            case "cancel":
-                setDefaultMode();
-                break;
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        columnEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
+        columnPassword.setCellValueFactory(cellData -> cellData.getValue().passwordProperty());
+        columnRole.setCellValueFactory(cellData -> cellData.getValue().roleProperty());
+        columnTimeInProgram.setCellValueFactory(cellData -> cellData.getValue().timeInProgramProperty());
+
+        columnEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnPassword.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnRole.setCellFactory((TableColumn<UserFX, String> param) -> new RoleComboBoxCell());
+
+        tableUsers.setItems(data);
+    }
+
+    public void showForm() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("UsersForm.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Users");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
+    @FXML
+    private void handleBtnAdd() {
+        User user = userFields.buildUser();
+
+        if (!user.save()) {
+            new AlertMessage("Error", user.getErrors().fullMessages()).showErrorMessage();
+            return;
+        }
+
+        data.add(new UserFX(user));
     }
 
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        panelUsersForm = new JPanel();
-        panelUsersForm.setLayout(new GridLayoutManager(7, 3, new Insets(5, 5, 5, 5), -1, -1));
-        scrollPaneTableUsers = new JScrollPane();
-        scrollPaneTableUsers.setEnabled(true);
-        panelUsersForm.add(scrollPaneTableUsers, new GridConstraints(0, 0, 7, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        tableUsers = new JTable();
-        scrollPaneTableUsers.setViewportView(tableUsers);
-        final Spacer spacer1 = new Spacer();
-        panelUsersForm.add(spacer1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 15), null, null, 0, false));
-        saveButton = new JButton();
-        saveButton.setActionCommand("save");
-        saveButton.setEnabled(false);
-        saveButton.setText("Save");
-        panelUsersForm.add(saveButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        deleteButton = new JButton();
-        deleteButton.setActionCommand("delete");
-        deleteButton.setText("Delete");
-        panelUsersForm.add(deleteButton, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        addButton = new JButton();
-        addButton.setActionCommand("add");
-        addButton.setText("Add");
-        panelUsersForm.add(addButton, new GridConstraints(1, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        panelUsersForm.add(spacer2, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        editButton = new JButton();
-        editButton.setActionCommand("edit");
-        editButton.setText("Edit");
-        panelUsersForm.add(editButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cancelButton = new JButton();
-        cancelButton.setActionCommand("cancel");
-        cancelButton.setEnabled(false);
-        cancelButton.setText("Cancel");
-        panelUsersForm.add(cancelButton, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        userFieldsPanel = new JPanel();
-        userFieldsPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panelUsersForm.add(userFieldsPanel, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        userFields = new UserFields();
-        userFieldsPanel.add(userFields.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+    @FXML
+    private void handleBtnDelete() {
+        UserFX userFX = tableUsers.getSelectionModel().getSelectedItem();
+
+        if (new AlertMessage("Message","Are you sure you want to delete the record?").confirmationMessage()) {
+            userFX.getUser().delete();
+        }
+
+        data.remove(userFX);
     }
 
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return panelUsersForm;
+    @FXML
+    private void handleEditCommitEmail(TableColumn.CellEditEvent cellEditEvent) {
     }
+
+    @FXML
+    private void handleEditCommitPassword(TableColumn.CellEditEvent cellEditEvent) {
+    }
+
+    @FXML
+    private void handleEditCommitRole(TableColumn.CellEditEvent cellEditEvent) {
+    }
+
+    @FXML
+    private void handleEditCommitTimeInProgram(TableColumn.CellEditEvent cellEditEvent) {
+    }
+
+    public void setController(UserFields controller) {
+        this.userFields = controller;
+    }
+
 }
