@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="usersForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.accounting.forms.UsersForm">
+   <children>
+      <TableView fx:id="tableUsers" prefHeight="400.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="columnEmail" onEditCommit="#handleEditCommitEmail" prefWidth="150.0" text="Email" />
+          <TableColumn fx:id="columnPassword" onEditCommit="#handleEditCommitPassword" prefWidth="150.0" text="Password" />
+            <TableColumn fx:id="columnRole" onEditCommit="#handleEditCommitRole" prefWidth="150.0" text="Role" />
+            <TableColumn fx:id="columnTimeInProgram" onEditCommit="#handleEditCommitTimeInProgram" prefWidth="150.0" text="Time in program" />
+        </columns>
+      </TableView>
+      <AnchorPane layoutX="600.0" prefHeight="150.0" prefWidth="250.0">
+         <children>
+            <fx:include fx:id="paneUserFields" source="UserFields.fxml" />
+         </children>
+      </AnchorPane>
+      <Button layoutX="614.0" layoutY="158.0" mnemonicParsing="false" onAction="#handleBtnAdd" prefHeight="25.0" prefWidth="211.0" text="Add" />
+      <Button layoutX="614.0" layoutY="190.0" mnemonicParsing="false" onAction="#handleBtnDelete" prefHeight="25.0" prefWidth="211.0" text="Delete" />
+   </children>
+</AnchorPane>
