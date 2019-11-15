@@ -30,9 +30,9 @@ public class RolesForm extends JDialog implements ActionListener {
     public RolesForm() {
         createForm();
 
-        roleTableModel = new RoleFX();
+       // roleTableModel = new RoleFX();
 
-        Role.getAll().forEach(roleTableModel::addRecord);
+       // Role.getAll().forEach(roleTableModel::addRecord);
         tableRoles.getTableHeader().setReorderingAllowed(false);
         //tableRoles.setModel(roleTableModel);
 
@@ -69,23 +69,23 @@ public class RolesForm extends JDialog implements ActionListener {
             return;
         }
 
-        roleTableModel.addRecord(role);
+       // roleTableModel.addRecord(role);
         textFieldRole.setText("");
         lookupCode.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tableRoles.getSelectedRow();
-        Role role = roleTableModel.getRecord(rowIndex);
-        role.setName(textFieldRole.getText());
-        role.setLookupCode(lookupCode.getText());
+       // Role role = roleTableModel.getRecord(rowIndex);
+//        role.setName(textFieldRole.getText());
+//        role.setLookupCode(lookupCode.getText());
 
-        if (!role.save()) {
-            JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));
-            return;
-        }
-
-        roleTableModel.setValueAt(role, rowIndex);
+//        if (!role.save()) {
+//            JOptionPane.showMessageDialog(this, role.getErrors().fullMessages("\n"));
+//            return;
+//        }
+//
+//        roleTableModel.setValueAt(role, rowIndex);
         setDefaultMode();
     }
 
@@ -97,8 +97,8 @@ public class RolesForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            roleTableModel.getRecord(rowIndex).delete();
-            roleTableModel.removeRow(rowIndex);
+//            roleTableModel.getRecord(rowIndex).delete();
+//            roleTableModel.removeRow(rowIndex);
         }
     }
 
@@ -109,9 +109,9 @@ public class RolesForm extends JDialog implements ActionListener {
             return;
         }
 
-        Role role = roleTableModel.getRecord(rowIndex);
-        textFieldRole.setText(role.getName());
-        lookupCode.setText(role.getLookupCode());
+////        Role role = roleTableModel.getRecord(rowIndex);
+//        textFieldRole.setText(role.getName());
+//        lookupCode.setText(role.getLookupCode());
         setEditMode();
     }
 

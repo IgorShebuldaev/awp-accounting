@@ -29,9 +29,9 @@ public class PositionsForm extends JDialog implements ActionListener {
     public PositionsForm() {
         createForm();
 
-        positionFXModel = new PositionFX();
+        //positionFXModel = new PositionFX();
 
-        Position.getAll().forEach(positionFXModel::addRecord);
+        //Position.getAll().forEach(positionFXModel::addRecord);
         //tablePositions.setModel(positionFXModel);
         tablePositions.getTableHeader().setReorderingAllowed(false);
 
@@ -67,21 +67,21 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        positionFXModel.addRecord(position);
+        //positionFXModel.addRecord(position);
         textFieldPosition.setText("");
     }
 
     private void saveRecord() {
         int rowIndex = tablePositions.getSelectedRow();
-        Position position = positionFXModel.getRecord(rowIndex);
-        position.setName(textFieldPosition.getText());
+        //Position position = positionFXModel.getRecord(rowIndex);
+       // position.setName(textFieldPosition.getText());
 
-        if (!position.save()) {
-            JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
-            return;
-        }
+//        if (!position.save()) {
+//            JOptionPane.showMessageDialog(this, position.getErrors().fullMessages("\n"));
+//            return;
+//        }
 
-        positionFXModel.setValueAt(position, rowIndex);
+       // positionFXModel.setValueAt(position, rowIndex);
         textFieldPosition.setText("");
         setDefaultMode();
     }
@@ -94,8 +94,8 @@ public class PositionsForm extends JDialog implements ActionListener {
         }
 
         if (new YesNoDialog("Are you sure you want to delete the record?", "Message").isPositive()) {
-            positionFXModel.getRecord(rowIndex).delete();
-            positionFXModel.removeRow(rowIndex);
+//            positionFXModel.getRecord(rowIndex).delete();
+//            positionFXModel.removeRow(rowIndex);
         }
     }
 
@@ -106,7 +106,7 @@ public class PositionsForm extends JDialog implements ActionListener {
             return;
         }
 
-        textFieldPosition.setText(positionFXModel.getRecord(rowIndex).getName());
+        //textFieldPosition.setText(positionFXModel.getRecord(rowIndex).getName());
         setEditMode();
     }
 
