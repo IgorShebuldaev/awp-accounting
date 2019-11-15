@@ -2,25 +2,35 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Position;
 
-public class PositionFX extends AdapterFX {
+import javafx.beans.property.SimpleStringProperty;
 
-    public PositionFX() {
-        columnNames = new String[]{"Position"};
+public class PositionFX  {
+    private SimpleStringProperty name;
+    private Position position;
+
+    public PositionFX(Position position) {
+        name = new SimpleStringProperty(position.getName());
+        this.position = position;
     }
 
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Position position = (Position) data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return position.getName();
-            default:
-                return "";
-        }
+    public String getName() {
+        return name.get();
     }
 
-    @Override
-    public Position getRecord(int rowIndex) {
-        return (Position) super.getRecord(rowIndex);
+    public SimpleStringProperty nameProperty() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
 }

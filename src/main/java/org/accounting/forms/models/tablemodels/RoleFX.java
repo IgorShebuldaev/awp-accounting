@@ -2,27 +2,49 @@ package org.accounting.forms.models.tablemodels;
 
 import org.accounting.database.models.Role;
 
-public class RoleFX extends AdapterFX {
+import javafx.beans.property.SimpleStringProperty;
 
-    public RoleFX() {
-        columnNames = new String[]{"Role", "Lookup Code"};
+public class RoleFX {
+    private SimpleStringProperty name;
+    private SimpleStringProperty lookupCode;
+    private Role role;
+
+    public RoleFX (Role role) {
+        name = new SimpleStringProperty(role.getName());
+        lookupCode = new SimpleStringProperty(role.getLookupCode());
+        this.role = role;
     }
 
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        Role role = (Role) data.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                return role.getName();
-            case 1:
-                return role.getLookupCode();
-            default:
-                return "";
-        }
+    public String getName() {
+        return name.get();
     }
 
-    @Override
-    public Role getRecord(int rowIndex) {
-        return (Role) super.getRecord(rowIndex);
+    public SimpleStringProperty nameProperty() {
+        return name;
     }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public String getLookupCode() {
+        return lookupCode.get();
+    }
+
+    public SimpleStringProperty lookupCodeProperty() {
+        return lookupCode;
+    }
+
+    public void setLookupCode(String lookupCode) {
+        this.lookupCode.set(lookupCode);
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 }
