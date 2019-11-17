@@ -1,25 +1,21 @@
 package org.accounting.forms;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.comboboxcell.RoleComboBoxCell;
 import org.accounting.forms.models.tablemodels.UserFX;
 import org.accounting.forms.partials.UserFields;
 
-import java.io.IOException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -58,30 +54,16 @@ public class UsersForm implements Initializable {
         tableUsers.setItems(data);
     }
 
-    public void showForm() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("UsersForm.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Users");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @FXML
     private void handleBtnAdd() {
-        User user = userFields.buildUser();
-
-        if (!user.save()) {
-            new AlertMessage("Error", user.getErrors().fullMessages()).showErrorMessage();
-            return;
-        }
-
-        data.add(new UserFX(user));
+//        User user = userFields.buildUser();
+//
+//        if (!user.save()) {
+//            new AlertMessage("Error", user.getErrors().fullMessages()).showErrorMessage();
+//            return;
+//        }
+//
+//        data.add(new UserFX(user));
     }
 
     @FXML
@@ -109,10 +91,6 @@ public class UsersForm implements Initializable {
 
     @FXML
     private void handleEditCommitTimeInProgram(TableColumn.CellEditEvent cellEditEvent) {
-    }
-
-    public void setController(UserFields controller) {
-        this.userFields = controller;
     }
 
 }

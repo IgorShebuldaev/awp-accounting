@@ -1,5 +1,6 @@
 package org.accounting.forms;
 
+import org.accounting.ControllerManager;
 import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
@@ -7,31 +8,26 @@ import org.accounting.database.models.Worker;
 import org.accounting.forms.components.DateTableCell;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
+import org.accounting.forms.models.comboboxcell.WorkerComboBoxCell;
 import org.accounting.forms.models.tablemodels.DeliveryFX;
 import org.accounting.forms.models.tablemodels.SupplierFX;
 import org.accounting.forms.models.tablemodels.WorkerFX;
 import org.accounting.user.CurrentUser;
 
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -77,7 +73,7 @@ public class MainForm implements Initializable {
         columnSupplier.setCellFactory((TableColumn<DeliveryFX, String> param) -> new SupplierComboBoxCell(getItemsComboBoxSupplier()));
         columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
         columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
-        columnWorker.setCellFactory(ComboBoxTableCell.forTableColumn(getItemsComboBoxWorker().toString()));
+        columnWorker.setCellFactory((TableColumn<DeliveryFX, String> param) -> new WorkerComboBoxCell(getItemsComboBoxWorker()));
 
         tableDeliveries.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -86,19 +82,6 @@ public class MainForm implements Initializable {
         cbSupplier.setItems(getItemsComboBoxSupplier());
         cbWorker.setItems(getItemsComboBoxWorker());
         createComboBox();
-    }
-
-   public void showForm() {
-        try {
-            FXMLLoader loader = new FXMLLoader((getClass()).getResource("MainForm.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Accounting");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private ObservableList<SupplierFX> getItemsComboBoxSupplier() {
@@ -199,6 +182,7 @@ public class MainForm implements Initializable {
 
     private void updateStatusBar() {
         User currentUser = CurrentUser.getUser();
+        if (currentUser == null) { return; }
 
         currentUser.incrementTimeInProgram(1);
         labelStatusBar.setText(
@@ -220,6 +204,8 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiLogOut() {
+        ControllerManager.getInstance().getStage(MainForm.class).close();
+        ControllerManager.getInstance().getStageReloaded(AuthorizationForm.class).show();
     }
 
     @FXML
@@ -239,11 +225,12 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiUsers() {
-        new UsersForm().showForm();
+        ControllerManager.getInstance().getStageReloaded(UsersForm.class).show();
     }
 
     @FXML
     private void handleMiRoles() {
+        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
     }
 
     @FXML

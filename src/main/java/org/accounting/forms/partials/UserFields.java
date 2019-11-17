@@ -1,5 +1,12 @@
 package org.accounting.forms.partials;
 
+import org.accounting.ControllerManager;
+import org.accounting.database.models.Role;
+import org.accounting.database.models.User;
+import org.accounting.forms.RolesForm;
+import org.accounting.forms.models.tablemodels.RoleFX;
+import org.accounting.user.CurrentUser;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,10 +14,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.accounting.database.models.Role;
-import org.accounting.database.models.User;
-import org.accounting.forms.models.tablemodels.RoleFX;
-import org.accounting.user.CurrentUser;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,12 +35,6 @@ public class UserFields implements Initializable {
         }
 
         addItemComboBoxRole();
-
-
-    }
-
-    public UserFields() {
-
     }
 
     private void addItemComboBoxRole() {
@@ -93,8 +90,9 @@ public class UserFields implements Initializable {
         return user;
     }
 
-    public void handleBtnShowRolesForm(javafx.event.ActionEvent actionEvent) {
-
+    @FXML
+    private void handleBtnShowRolesForm() {
+        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
     }
 
 }
