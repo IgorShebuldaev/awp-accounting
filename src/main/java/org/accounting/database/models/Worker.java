@@ -160,7 +160,7 @@ public class Worker extends Base {
     }
 
     public User getUser() {
-        if (this.user != null || userID == 0) {
+        if (this.user != null) {
             return user;
         }
 
