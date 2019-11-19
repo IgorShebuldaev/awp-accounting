@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="530.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.accounting.forms.workbooks.WorkBooksForm">
+   <children>
+      <TabPane prefHeight="530.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Supplier">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <fx:include fx:id="paneSuppliers" source="SupplierForm.fxml" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Worker">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="534.0" prefWidth="600.0">
+                     <children>
+                         <fx:include fx:id="paneWorkers" source="WorkersForm.fxml" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>

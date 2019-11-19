@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="paneSuppliers" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.accounting.forms.workbooks.SuppliersForm">
+   <children>
+      <TableView fx:id="tableSuppliers" editable="true" prefHeight="300.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="columnCompanyName" onEditCommit="#onEditCommitCompanyName" prefWidth="599.0" text="Company name" />
+        </columns>
+      </TableView>
+      <Label layoutX="14.0" layoutY="310.0" text="Company name" />
+      <TextField fx:id="tfCompanyName" layoutX="14.0" layoutY="325.0" />
+      <Button layoutX="195.0" layoutY="325.0" mnemonicParsing="false" onAction="#handleBtnAdd" text="Add" />
+      <Button layoutX="249.0" layoutY="325.0" mnemonicParsing="false" onAction="#handleBtnDelete" text="Delete" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="paneWorkers" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="500.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.accounting.forms.workbooks.WorkersForm">
+   <children>
+      <TableView fx:id="tableWorkers" editable="true" prefHeight="300.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="columnFullName" onEditCommit="#onEditCommitFullName" prefWidth="150.0" text="Full name" />
+          <TableColumn fx:id="columnDateOfBirth" onEditCommit="#onEditCommitDateOfBirth" prefWidth="150.0" text="Date of birth" />
+            <TableColumn fx:id="columnPosition" onEditCommit="#onEditCommitPosition" prefWidth="150.0" text="Position" />
+            <TableColumn fx:id="columnEmail" prefWidth="150.0" text="Email" />
+        </columns>
+      </TableView>
+      <Label layoutX="10.0" layoutY="310.0" text="Full name" />
+      <TextField fx:id="tfFullName" layoutX="10.0" layoutY="325.0" prefWidth="200.0" />
+      <DatePicker fx:id="dpDateOfBirth" layoutX="10.0" layoutY="375.0" prefWidth="200.0" />
+      <Label layoutX="10.0" layoutY="360.0" text="Date of birth" />
+      <ComboBox fx:id="cbPosition" layoutX="10.0" layoutY="425.0" prefWidth="200.0" />
+      <Button layoutX="10.0" layoutY="460.0" mnemonicParsing="false" onAction="#handleBtnAdd" text="Add" />
+      <Label layoutX="10.0" layoutY="410.0" text="Position" />
+      <AnchorPane layoutX="210.0" layoutY="300.0" prefHeight="200.0" prefWidth="200.0">
+         <children>
+             <fx:include fx:id="paneUserFields" source="../partials/UserFields.fxml" />
+         </children>
+      </AnchorPane>
+      <Button layoutX="65.0" layoutY="460.0" mnemonicParsing="false" onAction="#handleBtnDelete" text="Delete" />
+   </children>
+</AnchorPane>
