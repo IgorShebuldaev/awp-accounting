@@ -14,16 +14,16 @@ import org.accounting.forms.models.tablemodels.SupplierFX;
 import org.accounting.forms.models.tablemodels.WorkerFX;
 import org.accounting.user.CurrentUser;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -82,6 +82,52 @@ public class MainForm implements Initializable {
         cbSupplier.setItems(getItemsComboBoxSupplier());
         cbWorker.setItems(getItemsComboBoxWorker());
         createComboBox();
+    }
+
+    @FXML
+    private void handleMiWorkBooks() {
+    }
+
+    @FXML
+    private void handleMiNotes() {
+        ControllerManager.getInstance().getStage(NotesForm.class).show();
+    }
+
+    @FXML
+    private void handleMiLogOut() {
+        ControllerManager.getInstance().getStage(MainForm.class).close();
+        ControllerManager.getInstance().getStageReloaded(AuthorizationForm.class).show();
+    }
+
+    @FXML
+    private void handleMiExit() {
+        if (new AlertMessage("Confirm Exit", "Are you sure you want to exit?").showConfirmationMessage()) {
+            Platform.exit();
+        }
+    }
+
+    @FXML
+    private void handleMiDeliveries() {
+        ControllerManager.getInstance().getStageReloaded(ReportsForm.class).show();
+    }
+
+    @FXML
+    private void handleMiTimeInProgram() {
+    }
+
+    @FXML
+    private void handleMiUsers() {
+        ControllerManager.getInstance().getStageReloaded(UsersForm.class).show();
+    }
+
+    @FXML
+    private void handleMiRoles() {
+        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
+    }
+
+    @FXML
+    private void handleMiAbout() {
+        new AlertMessage("About", "Copyright © 2019 Dev Team").showInformationMessage();
     }
 
     private ObservableList<SupplierFX> getItemsComboBoxSupplier() {
@@ -195,49 +241,6 @@ public class MainForm implements Initializable {
     }
 
     @FXML
-    private void handleMiWorkBooks() {
-    }
-
-    @FXML
-    private void handleMiNotes() {
-    }
-
-    @FXML
-    private void handleMiLogOut() {
-        ControllerManager.getInstance().getStage(MainForm.class).close();
-        ControllerManager.getInstance().getStageReloaded(AuthorizationForm.class).show();
-    }
-
-    @FXML
-    private void handleMiExit() {
-        if (new AlertMessage("Are you sure you want to exit?", "Confirm Exit").confirmationMessage()) {
-            Platform.exit();
-        }
-    }
-
-    @FXML
-    private void handleMiDeliveries() {
-    }
-
-    @FXML
-    private void handleMiTimeInProgram() {
-    }
-
-    @FXML
-    private void handleMiUsers() {
-        ControllerManager.getInstance().getStageReloaded(UsersForm.class).show();
-    }
-
-    @FXML
-    private void handleMiRoles() {
-        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
-    }
-
-    @FXML
-    private void handleMiAbout() {
-    }
-
-    @FXML
     private void handleBtnAdd() {
         Delivery delivery = new Delivery();
         delivery.setDeliveryDate(convertToDate(dpDeliveryDate.getValue()));
@@ -252,6 +255,7 @@ public class MainForm implements Initializable {
         }
 
         data.add(new DeliveryFX(delivery));
+        clearComponents();
     }
 
     @FXML
@@ -265,11 +269,19 @@ public class MainForm implements Initializable {
     private void handleBtnDelete() {
         DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
 
-        if (new AlertMessage("Message","Are you sure you want to delete the record?").confirmationMessage()) {
+        if (new AlertMessage("Message","Are you sure you want to delete the record?").showConfirmationMessage()) {
             deliveryFX.getDelivery().delete();
+            data.remove(deliveryFX);
         }
 
-        data.remove(deliveryFX);
+    }
+
+    private void clearComponents() {
+        dpDeliveryDate.setValue(null);
+        cbSupplier.getSelectionModel().clearSelection();
+        tfProduct.clear();
+        tfPrice.clear();
+        cbWorker.getSelectionModel().clearSelection();
     }
 
     private Date convertToDate(LocalDate dateToConvert) {

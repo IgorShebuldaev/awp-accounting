@@ -1,64 +1,88 @@
 package org.accounting.forms;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.DatePicker;
+import javafx.scene.layout.StackPane;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.accounting.database.models.Delivery;
 import org.accounting.libs.ReportBuilder;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.ResourceBundle;
 
-public class ReportsForm extends JDialog implements ActionListener {
-    private JSpinner spinnerDateFrom;
-    private JSpinner spinnerDateTo;
-    private JButton showButton;
-    private JLabel labelFrom;
-    private JLabel labelTo;
-    private JPanel panelReports;
+public class ReportsForm implements Initializable {
+    @FXML private DatePicker dpFrom;
+    @FXML private DatePicker dpTo;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    ReportsForm() {
-        createForm();
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        dpFrom.setConverter(new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-        spinnerDateFrom.setModel(new SpinnerDateModel());
-        spinnerDateFrom.setEditor(new JSpinner.DateEditor(spinnerDateFrom, "dd.MM.yyyy"));
-        spinnerDateFrom.setValue(new Date());
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
 
-        spinnerDateTo.setModel(new SpinnerDateModel());
-        spinnerDateTo.setEditor(new JSpinner.DateEditor(spinnerDateTo, "dd.MM.yyyy"));
-        spinnerDateTo.setValue(new Date());
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        });
+
+        dpTo.setConverter(new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        });
     }
 
-    private void createForm() {
-        setContentPane(panelReports);
-        setSize(450, 100);
-        setLocationRelativeTo(null);
-        setTitle("Reports");
-        setModalityType(ModalityType.APPLICATION_MODAL);
+    @FXML
+    private void handleBtnShow() {
+        Stage stage = new Stage();
+        StackPane root = new StackPane();
+        WebView webView = new WebView();
 
-        showButton.addActionListener(this);
-    }
+        webView.getEngine().loadContent(getReport());
 
-    private void showReport() {
-        JDialog reportForm = new JDialog();
-        JTextPane report = new JTextPane();
-        reportForm.setModalityType(ModalityType.APPLICATION_MODAL);
+        root.getChildren().add(webView);
 
-        report.setContentType("text/html");
-        report.setEditable(false);
-        report.setBackground(Color.white);
-        report.setText(getReport());
-
-        reportForm.getContentPane().add(report);
-        reportForm.pack();
-
-        reportForm.setLocationRelativeTo(null);
-        reportForm.setVisible(true);
+        stage.setTitle("Report");
+        stage.setScene(new Scene(root, 300, 250));
+        stage.show();
     }
 
     private String getReport() {
@@ -66,8 +90,8 @@ public class ReportsForm extends JDialog implements ActionListener {
         ReportBuilder.TableNode tableNode = new ReportBuilder.TableNode(new String[]{"Delivery date", "Supplier", "Product", "Price", "Worker"});
         tableNode.setTitle("Deliveries");
 
-        String from = dateFormat.format(spinnerDateFrom.getValue());
-        String to = dateFormat.format(spinnerDateTo.getValue());
+        String from = dpFrom.getValue().toString();
+        String to = dpTo.getValue().toString();
 
         ArrayList<Delivery> results = new Delivery().getRecordsByDate(from, to);
 
@@ -92,51 +116,6 @@ public class ReportsForm extends JDialog implements ActionListener {
         return reportBuilder.buildReport(ReportBuilder.html);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if ("show".equals(e.getActionCommand())) {
-            showReport();
-        }
-    }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
-    }
-
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        panelReports = new JPanel();
-        panelReports.setLayout(new GridLayoutManager(1, 5, new Insets(5, 5, 5, 5), -1, -1));
-        spinnerDateFrom = new JSpinner();
-        panelReports.add(spinnerDateFrom, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        spinnerDateTo = new JSpinner();
-        panelReports.add(spinnerDateTo, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        showButton = new JButton();
-        showButton.setActionCommand("show");
-        showButton.setText("Show");
-        panelReports.add(showButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelFrom = new JLabel();
-        labelFrom.setText("From");
-        panelReports.add(labelFrom, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        labelTo = new JLabel();
-        labelTo.setText("To");
-        panelReports.add(labelTo, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return panelReports;
-    }
 
 }
