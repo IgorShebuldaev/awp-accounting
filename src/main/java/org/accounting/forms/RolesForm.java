@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class RolesForm implements Initializable {
     @FXML private TableView<RoleFX> tableRoles;
-    @FXML private TableColumn<RoleFX, String> columnRole;
+    @FXML private TableColumn<RoleFX, String> columnRoleName;
     @FXML private TableColumn<RoleFX, String> columnLookupCode;
     @FXML private TextField tfNameRole;
     @FXML private TextField tfLookupCode;
@@ -36,10 +36,10 @@ public class RolesForm implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        columnRole.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        columnRoleName.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         columnLookupCode.setCellValueFactory(cellData -> cellData.getValue().lookupCodeProperty());
 
-        columnRole.setCellFactory(TextFieldTableCell.forTableColumn());
+        columnRoleName.setCellFactory(TextFieldTableCell.forTableColumn());
 
         tableRoles.setItems(data);
     }
