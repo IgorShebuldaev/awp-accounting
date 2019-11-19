@@ -1,9 +1,8 @@
-package org.accounting.forms.components;
+package org.accounting.forms.models;
 
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.util.StringConverter;
-import org.accounting.forms.models.tablemodels.DeliveryFX;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -12,7 +11,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class DateTableCell extends TableCell<DeliveryFX, Date> {
+public class DateTableCell<T> extends TableCell<T, Date> {
 
     private DatePicker datePicker;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
