@@ -4,17 +4,15 @@ import org.accounting.database.models.Role;
 import org.accounting.forms.models.tablemodels.RoleFX;
 import org.accounting.forms.models.tablemodels.UserFX;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 
-public class RoleComboBoxCell extends TableCell<UserFX, String> {
-    private ComboBox<RoleFX> comboBox;
-    private ObservableList<RoleFX> items = FXCollections.observableArrayList();
+public class RoleComboBoxCell extends BaseComboBoxCell<UserFX, RoleFX> {
 
     public RoleComboBoxCell() {
         ArrayList<Role> results = Role.getAll();
@@ -24,47 +22,7 @@ public class RoleComboBoxCell extends TableCell<UserFX, String> {
         }
     }
 
-    @Override
-    public void startEdit() {
-        super.startEdit();
-
-        if (comboBox == null) {
-            createComboBox();
-        }
-
-        setGraphic(comboBox);
-        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-    }
-
-    @Override
-    public void cancelEdit() {
-        super.cancelEdit();
-
-        setText(String.valueOf(getItem()));
-        setContentDisplay(ContentDisplay.TEXT_ONLY);
-    }
-
-    public void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (empty) {
-            setText(null);
-            setGraphic(null);
-        } else {
-            if (isEditing()) {
-                if (comboBox != null) {
-                    comboBox.setValue(comboBox.getSelectionModel().getSelectedItem());
-                }
-                setGraphic(comboBox);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            } else {
-                setText(getString());
-                setContentDisplay(ContentDisplay.TEXT_ONLY);
-            }
-        }
-    }
-
-    private void createComboBox() {
+    protected void createComboBox() {
         comboBox = new ComboBox<>(items);
 
         comboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);
@@ -76,7 +34,7 @@ public class RoleComboBoxCell extends TableCell<UserFX, String> {
 
         comboBox.setCellFactory(new Callback<ListView<RoleFX>, ListCell<RoleFX>>() {
             @Override
-            public ListCell<RoleFX> call(ListView<RoleFX> roleFXistView) {
+            public ListCell<RoleFX> call(ListView<RoleFX> roleFXListView) {
                 return new ListCell<RoleFX>() {
                     @Override
                     protected void updateItem(RoleFX item, boolean empty) {
@@ -106,10 +64,7 @@ public class RoleComboBoxCell extends TableCell<UserFX, String> {
                 return null;
             }
         });
-    }
 
-    private String getString() {
-        return getItem() == null ? "" : getItem();
     }
 
 }

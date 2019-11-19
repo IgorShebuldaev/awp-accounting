@@ -1,61 +1,20 @@
 package org.accounting.forms.models.comboboxcell;
 
+import org.accounting.forms.models.tablemodels.DeliveryFX;
+import org.accounting.forms.models.tablemodels.SupplierFX;
+
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.accounting.forms.models.tablemodels.DeliveryFX;
-import org.accounting.forms.models.tablemodels.SupplierFX;
 
-public class SupplierComboBoxCell extends TableCell<DeliveryFX, String> {
-    private ComboBox<SupplierFX> comboBox;
-    private ObservableList<SupplierFX> items;
+public class SupplierComboBoxCell extends BaseComboBoxCell<DeliveryFX, SupplierFX> {
 
     public SupplierComboBoxCell(ObservableList<SupplierFX> items) {
         this.items = items;
     }
 
-    @Override
-    public void startEdit() {
-        super.startEdit();
-
-        if (comboBox == null) {
-            createComboBox();
-        }
-
-        setGraphic(comboBox);
-        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-    }
-
-    @Override
-    public void cancelEdit() {
-        super.cancelEdit();
-
-        setText(String.valueOf(getItem()));
-        setContentDisplay(ContentDisplay.TEXT_ONLY);
-    }
-
-    public void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (empty) {
-            setText(null);
-            setGraphic(null);
-        } else {
-            if (isEditing()) {
-                if (comboBox != null) {
-                    comboBox.setValue(comboBox.getSelectionModel().getSelectedItem());
-                }
-                setGraphic(comboBox);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            } else {
-                setText(getString());
-                setContentDisplay(ContentDisplay.TEXT_ONLY);
-            }
-        }
-    }
-
-    private void createComboBox() {
+    protected void createComboBox() {
         comboBox = new ComboBox<>(items);
 
         comboBox.setMinWidth(this.getWidth() - this.getGraphicTextGap()*2);
@@ -97,9 +56,7 @@ public class SupplierComboBoxCell extends TableCell<DeliveryFX, String> {
                 return null;
             }
         });
+
     }
 
-    private String getString() {
-        return getItem() == null ? "" : getItem();
-    }
 }
