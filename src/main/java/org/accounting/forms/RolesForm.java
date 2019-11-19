@@ -69,11 +69,10 @@ public class RolesForm implements Initializable {
     private void handleBtnDelete() {
         RoleFX roleFX = tableRoles.getSelectionModel().getSelectedItem();
 
-        if (new AlertMessage("Message","Are you sure you want to delete the record?").confirmationMessage()) {
+        if (new AlertMessage("Message","Are you sure you want to delete the record?").showConfirmationMessage()) {
             roleFX.getRole().delete();
+            data.remove(roleFX);
         }
-
-        data.remove(roleFX);
     }
 
     @FXML

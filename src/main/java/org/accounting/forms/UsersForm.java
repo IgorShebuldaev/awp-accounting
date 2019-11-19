@@ -70,11 +70,10 @@ public class UsersForm implements Initializable {
     private void handleBtnDelete() {
         UserFX userFX = tableUsers.getSelectionModel().getSelectedItem();
 
-        if (new AlertMessage("Message","Are you sure you want to delete the record?").confirmationMessage()) {
+        if (new AlertMessage("Message","Are you sure you want to delete the record?").showConfirmationMessage()) {
             userFX.getUser().delete();
+            data.remove(userFX);
         }
-
-        data.remove(userFX);
     }
 
     @FXML
