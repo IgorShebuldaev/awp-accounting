@@ -56,6 +56,7 @@ public class UsersForm implements Initializable {
 
     @FXML
     private void handleBtnAdd() {
+        //TODO: get instance include controller
 //        User user = userFields.buildUser();
 //
 //        if (!user.save()) {

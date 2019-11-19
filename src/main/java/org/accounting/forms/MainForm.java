@@ -5,13 +5,14 @@ import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
 import org.accounting.database.models.User;
 import org.accounting.database.models.Worker;
-import org.accounting.forms.components.DateTableCell;
+import org.accounting.forms.models.DateTableCell;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
 import org.accounting.forms.models.comboboxcell.WorkerComboBoxCell;
 import org.accounting.forms.models.tablemodels.DeliveryFX;
 import org.accounting.forms.models.tablemodels.SupplierFX;
 import org.accounting.forms.models.tablemodels.WorkerFX;
+import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.user.CurrentUser;
 
 import javafx.animation.Animation;
@@ -69,7 +70,7 @@ public class MainForm implements Initializable {
         columnPrice.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
         columnWorker.setCellValueFactory(cellData -> cellData.getValue().workerProperty());
 
-        columnDeliveryDate.setCellFactory((TableColumn<DeliveryFX, Date> param) -> new DateTableCell());
+        columnDeliveryDate.setCellFactory((TableColumn<DeliveryFX, Date> param) -> new DateTableCell<>());
         columnSupplier.setCellFactory((TableColumn<DeliveryFX, String> param) -> new SupplierComboBoxCell(getItemsComboBoxSupplier()));
         columnProduct.setCellFactory(TextFieldTableCell.forTableColumn());
         columnPrice.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -81,16 +82,18 @@ public class MainForm implements Initializable {
 
         cbSupplier.setItems(getItemsComboBoxSupplier());
         cbWorker.setItems(getItemsComboBoxWorker());
-        createComboBox();
+        setPropertiesComboBox();
     }
 
     @FXML
     private void handleMiWorkBooks() {
+        ControllerManager.getInstance().getStage(WorkBooksForm.class).show();
     }
 
     @FXML
     private void handleMiNotes() {
-        ControllerManager.getInstance().getStage(NotesForm.class).show();
+        ControllerManager.getInstance().getStage(NotesForm.class);
+
     }
 
     @FXML
@@ -108,21 +111,22 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiDeliveries() {
-        ControllerManager.getInstance().getStageReloaded(ReportsForm.class).show();
+        ControllerManager.getInstance().getStage(ReportsForm.class).show();
     }
 
     @FXML
     private void handleMiTimeInProgram() {
+        ControllerManager.getInstance().getStage(ChartsForm.class).show();
     }
 
     @FXML
     private void handleMiUsers() {
-        ControllerManager.getInstance().getStageReloaded(UsersForm.class).show();
+        ControllerManager.getInstance().getStage(UsersForm.class).show();
     }
 
     @FXML
     private void handleMiRoles() {
-        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
+        ControllerManager.getInstance().getStage(RolesForm.class).show();
     }
 
     @FXML
@@ -152,7 +156,7 @@ public class MainForm implements Initializable {
         return workers;
     }
 
-    private void createComboBox() {
+    private void setPropertiesComboBox() {
         cbSupplier.setCellFactory(new Callback<ListView<SupplierFX>, ListCell<SupplierFX>>() {
             @Override
             public ListCell<SupplierFX> call(ListView<SupplierFX> supplierFXListView) {
@@ -303,9 +307,7 @@ public class MainForm implements Initializable {
 
     @FXML
     private void onEditCommitSupplier(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
-        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
-        deliveryFX.setSupplier(deliveryFXStringCellEditEvent.getNewValue());
-        //get instance ComboboxCell
+        //TODO:save value from comboboxcells
     }
 
     @FXML
@@ -326,9 +328,7 @@ public class MainForm implements Initializable {
 
     @FXML
     private void onEditCommitWorker(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
-        DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
-        deliveryFX.setWorker(deliveryFXStringCellEditEvent.getNewValue());
-        //get instance ComboboxCell
+        //TODO:save value from comboboxcells
     }
 
 }
