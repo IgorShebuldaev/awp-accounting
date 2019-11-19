@@ -12,7 +12,6 @@ import org.accounting.database.models.Delivery;
 import org.accounting.libs.ReportBuilder;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.ResourceBundle;
 public class ReportsForm implements Initializable {
     @FXML private DatePicker dpFrom;
     @FXML private DatePicker dpTo;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -115,7 +113,5 @@ public class ReportsForm implements Initializable {
 
         return reportBuilder.buildReport(ReportBuilder.html);
     }
-
-
 
 }
