@@ -4,7 +4,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="usersForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.accounting.forms.UsersForm">
+<AnchorPane fx:id="usersForm" maxHeight="-Infinity"
+            maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="850.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.accounting.forms.UsersForm">
    <children>
       <TableView fx:id="tableUsers" prefHeight="400.0" prefWidth="600.0">
         <columns>
