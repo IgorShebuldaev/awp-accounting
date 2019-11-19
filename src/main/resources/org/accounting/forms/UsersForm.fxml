@@ -4,11 +4,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="usersForm" maxHeight="-Infinity"
-            maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="400.0"
-            prefWidth="850.0" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.accounting.forms.UsersForm">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="400.0" prefWidth="820.0"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.accounting.forms.UsersForm">
    <children>
       <TableView fx:id="tableUsers" prefHeight="400.0" prefWidth="600.0">
         <columns>
@@ -18,12 +18,12 @@
             <TableColumn fx:id="columnTimeInProgram" onEditCommit="#handleEditCommitTimeInProgram" prefWidth="150.0" text="Time in program" />
         </columns>
       </TableView>
-      <AnchorPane layoutX="600.0" prefHeight="150.0" prefWidth="250.0">
+      <AnchorPane layoutX="600.0" prefHeight="160.0" prefWidth="210.0">
          <children>
-            <fx:include fx:id="paneUserFields" source="UserFields.fxml" />
+            <fx:include fx:id="paneUserFields" source="partials/UserFields.fxml" />
          </children>
       </AnchorPane>
-      <Button layoutX="614.0" layoutY="158.0" mnemonicParsing="false" onAction="#handleBtnAdd" prefHeight="25.0" prefWidth="211.0" text="Add" />
-      <Button layoutX="614.0" layoutY="190.0" mnemonicParsing="false" onAction="#handleBtnDelete" prefHeight="25.0" prefWidth="211.0" text="Delete" />
+      <Button layoutX="610.0" layoutY="326.0" mnemonicParsing="false" onAction="#handleBtnAdd" prefHeight="25.0" prefWidth="200.0" text="Add" />
+      <Button layoutX="610.0" layoutY="361.0" mnemonicParsing="false" onAction="#handleBtnDelete" prefHeight="25.0" prefWidth="200.0" text="Delete" />
    </children>
 </AnchorPane>
