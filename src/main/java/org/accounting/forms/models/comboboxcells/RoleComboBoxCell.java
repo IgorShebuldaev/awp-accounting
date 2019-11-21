@@ -1,4 +1,4 @@
-package org.accounting.forms.models.comboboxcell;
+package org.accounting.forms.models.comboboxcells;
 
 import org.accounting.database.models.Role;
 import org.accounting.forms.models.tablemodels.RoleFX;

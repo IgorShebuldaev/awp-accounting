@@ -1,16 +1,16 @@
-package org.accounting.forms.models.comboboxcell;
+package org.accounting.forms.models.comboboxcells;
 
 import org.accounting.forms.models.tablemodels.DeliveryFX;
-import org.accounting.forms.models.tablemodels.SupplierFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
-public class SupplierComboBoxCell extends BaseComboBoxCell<DeliveryFX, SupplierFX> {
+public class WorkerComboBoxCell extends BaseComboBoxCell<DeliveryFX, WorkerFX> {
 
-    public SupplierComboBoxCell(ObservableList<SupplierFX> items) {
+    public WorkerComboBoxCell(ObservableList<WorkerFX> items) {
         this.items = items;
     }
 
@@ -21,38 +21,38 @@ public class SupplierComboBoxCell extends BaseComboBoxCell<DeliveryFX, SupplierF
         comboBox.getSelectionModel().selectFirst();
 
         comboBox.setOnAction((e) -> {
-                commitEdit(comboBox.getSelectionModel().getSelectedItem().getName());
+            commitEdit(comboBox.getSelectionModel().getSelectedItem().getFullName());
         });
 
-        comboBox.setCellFactory(new Callback<ListView<SupplierFX>, ListCell<SupplierFX>>() {
+        comboBox.setCellFactory(new Callback<ListView<WorkerFX>, ListCell<WorkerFX>>() {
             @Override
-            public ListCell<SupplierFX> call(ListView<SupplierFX> supplierFXListView) {
-                return new ListCell<SupplierFX>() {
+            public ListCell<WorkerFX> call(ListView<WorkerFX> workerFXListView) {
+                return new ListCell<WorkerFX>() {
                     @Override
-                    protected void updateItem(SupplierFX item, boolean empty) {
+                    protected void updateItem(WorkerFX item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null || empty) {
                             setGraphic(null);
                         } else {
-                            setText(item.getName());
+                            setText(item.getFullName());
                         }
                     }
                 };
             }
         });
 
-        comboBox.setConverter(new StringConverter<SupplierFX>() {
+        comboBox.setConverter(new StringConverter<WorkerFX>() {
             @Override
-            public String toString(SupplierFX supplierFX) {
-                if (supplierFX == null){
+            public String toString(WorkerFX workerFX) {
+                if (workerFX == null){
                     return null;
                 } else {
-                    return supplierFX.getName();
+                    return workerFX.getFullName();
                 }
             }
 
             @Override
-            public SupplierFX fromString(String str) {
+            public WorkerFX fromString(String fullName) {
                 return null;
             }
         });

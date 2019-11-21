@@ -1,4 +1,4 @@
-package org.accounting.forms.models.comboboxcell;
+package org.accounting.forms.models.comboboxcells;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
