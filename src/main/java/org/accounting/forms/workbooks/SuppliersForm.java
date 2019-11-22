@@ -1,9 +1,5 @@
 package org.accounting.forms.workbooks;
 
-import org.accounting.database.models.Supplier;
-import org.accounting.forms.helpers.AlertMessage;
-import org.accounting.forms.models.tablemodels.SupplierFX;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,6 +8,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
+import org.accounting.database.models.Supplier;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.tablemodels.SupplierFX;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,6 +51,7 @@ public class SuppliersForm implements Initializable {
         }
 
         data.add(new SupplierFX(supplier));
+        tfCompanyName.clear();
     }
 
     @FXML

@@ -1,20 +1,5 @@
 package org.accounting.forms;
 
-import org.accounting.ControllerManager;
-import org.accounting.database.models.Delivery;
-import org.accounting.database.models.Supplier;
-import org.accounting.database.models.User;
-import org.accounting.database.models.Worker;
-import org.accounting.forms.models.DateTableCell;
-import org.accounting.forms.helpers.AlertMessage;
-import org.accounting.forms.models.comboboxcell.SupplierComboBoxCell;
-import org.accounting.forms.models.comboboxcell.WorkerComboBoxCell;
-import org.accounting.forms.models.tablemodels.DeliveryFX;
-import org.accounting.forms.models.tablemodels.SupplierFX;
-import org.accounting.forms.models.tablemodels.WorkerFX;
-import org.accounting.forms.workbooks.WorkBooksForm;
-import org.accounting.user.CurrentUser;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -25,9 +10,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.accounting.ControllerManager;
+import org.accounting.database.models.Delivery;
+import org.accounting.database.models.Supplier;
+import org.accounting.database.models.User;
+import org.accounting.database.models.Worker;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.DateTableCell;
+import org.accounting.forms.models.comboboxcells.SupplierComboBoxCell;
+import org.accounting.forms.models.comboboxcells.WorkerComboBoxCell;
+import org.accounting.forms.models.tablemodels.DeliveryFX;
+import org.accounting.forms.models.tablemodels.SupplierFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+import org.accounting.forms.workbooks.WorkBooksForm;
+import org.accounting.user.CurrentUser;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-public class MainForm implements Initializable {
+public class MainForm extends BaseController implements Initializable {
     @FXML private TableView<DeliveryFX> tableDeliveries;
     @FXML private TableColumn<DeliveryFX, Date> columnDeliveryDate;
     @FXML private TableColumn<DeliveryFX, String> columnSupplier;
@@ -92,7 +92,7 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiNotes() {
-        ControllerManager.getInstance().getStage(NotesForm.class);
+        ControllerManager.getInstance().getStage(NotesForm.class).show();
 
     }
 
@@ -104,9 +104,7 @@ public class MainForm implements Initializable {
 
     @FXML
     private void handleMiExit() {
-        if (new AlertMessage("Confirm Exit", "Are you sure you want to exit?").showConfirmationMessage()) {
-            Platform.exit();
-        }
+        exitMessage();
     }
 
     @FXML
@@ -297,6 +295,12 @@ public class MainForm implements Initializable {
         return null;
     }
 
+    private void exitMessage() {
+        if (new AlertMessage("Confirm Exit", "Are you sure you want to exit?").showConfirmationMessage()) {
+            Platform.exit();
+        }
+    }
+
     @FXML
     private void onEditCommitDeliveryDate(TableColumn.CellEditEvent<DeliveryFX, Date> deliveryFXStringCellEditEvent) {
             DeliveryFX deliveryFX = tableDeliveries.getSelectionModel().getSelectedItem();
@@ -331,4 +335,13 @@ public class MainForm implements Initializable {
         //TODO:save value from comboboxcells
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Accounting");
+
+        this.stage.setOnCloseRequest(windowEvent -> {
+            exitMessage();
+        });
+    }
 }

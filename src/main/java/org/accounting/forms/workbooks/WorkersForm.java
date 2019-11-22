@@ -1,5 +1,13 @@
 package org.accounting.forms.workbooks;
 
+import org.accounting.database.models.Position;
+import org.accounting.database.models.Worker;
+import org.accounting.forms.helpers.AlertMessage;
+import org.accounting.forms.models.DateTableCell;
+import org.accounting.forms.models.comboboxcells.PositionComboBoxCell;
+import org.accounting.forms.models.tablemodels.PositionFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,13 +17,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.accounting.database.models.Position;
-import org.accounting.database.models.Worker;
-import org.accounting.forms.helpers.AlertMessage;
-import org.accounting.forms.models.DateTableCell;
-import org.accounting.forms.models.comboboxcell.PositionComboBoxCell;
-import org.accounting.forms.models.tablemodels.PositionFX;
-import org.accounting.forms.models.tablemodels.WorkerFX;
 
 import java.net.URL;
 import java.time.LocalDate;
