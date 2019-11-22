@@ -1,5 +1,6 @@
 package org.accounting.forms;
 
+import javafx.stage.Stage;
 import org.accounting.database.models.Position;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.tablemodels.PositionFX;
@@ -17,7 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class PositionsForm implements Initializable {
+public class PositionsForm extends BaseController implements Initializable {
     @FXML private TableView<PositionFX> tablePositions;
     @FXML private TableColumn<PositionFX, String> columnName;
     @FXML private TextField tfPositionName;
@@ -80,4 +81,9 @@ public class PositionsForm implements Initializable {
         handleBtnAdd(positionFX.getPosition());
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Positions");
+    }
 }

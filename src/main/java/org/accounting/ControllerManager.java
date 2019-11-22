@@ -3,7 +3,9 @@ package org.accounting;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.accounting.forms.BaseController;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,8 +46,12 @@ public class ControllerManager {
 
             stage = new Stage();
             stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
 
             setStageFor(controller, stage);
+
+            BaseController baseController = loader.getController();
+            baseController.setStage(stage);
         }
 
         return stage;

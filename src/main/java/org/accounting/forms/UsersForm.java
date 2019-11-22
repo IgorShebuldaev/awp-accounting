@@ -1,8 +1,9 @@
 package org.accounting.forms;
 
+import javafx.stage.Stage;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.AlertMessage;
-import org.accounting.forms.models.comboboxcell.RoleComboBoxCell;
+import org.accounting.forms.models.comboboxcells.RoleComboBoxCell;
 import org.accounting.forms.models.tablemodels.UserFX;
 import org.accounting.forms.partials.UserFields;
 
@@ -20,7 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class UsersForm implements Initializable {
+public class UsersForm extends BaseController implements Initializable {
     @FXML private AnchorPane paneUserFields;
     @FXML private UserFields userFields;
     @FXML private TableView<UserFX> tableUsers;
@@ -93,4 +94,9 @@ public class UsersForm implements Initializable {
     private void handleEditCommitTimeInProgram(TableColumn.CellEditEvent cellEditEvent) {
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Users");
+    }
 }

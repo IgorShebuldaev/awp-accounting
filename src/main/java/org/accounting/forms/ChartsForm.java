@@ -1,5 +1,12 @@
 package org.accounting.forms;
 
-public class ChartsForm {
+import javafx.stage.Stage;
 
+public class ChartsForm extends BaseController {
+
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Chart");
+    }
 }

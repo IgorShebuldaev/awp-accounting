@@ -1,5 +1,6 @@
 package org.accounting.forms;
 
+import javafx.stage.Stage;
 import org.accounting.ControllerManager;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.AlertMessage;
@@ -9,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class AuthorizationForm {
+public class AuthorizationForm extends BaseController {
     @FXML private TextField textFieldEmail;
     @FXML private PasswordField passField;
 
@@ -44,4 +45,9 @@ public class AuthorizationForm {
         }
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Sign in");
+    }
 }

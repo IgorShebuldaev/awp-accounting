@@ -1,5 +1,6 @@
 package org.accounting.forms;
 
+import javafx.stage.Stage;
 import org.accounting.database.models.Role;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.tablemodels.RoleFX;
@@ -17,7 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class RolesForm implements Initializable {
+public class RolesForm extends BaseController implements Initializable {
     @FXML private TableView<RoleFX> tableRoles;
     @FXML private TableColumn<RoleFX, String> columnRoleName;
     @FXML private TableColumn<RoleFX, String> columnLookupCode;
@@ -83,4 +84,9 @@ public class RolesForm implements Initializable {
         handleBtnAdd(roleFX.getRole());
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Roles");
+    }
 }

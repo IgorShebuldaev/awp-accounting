@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ReportsForm implements Initializable {
+public class ReportsForm extends BaseController implements Initializable {
     @FXML private DatePicker dpFrom;
     @FXML private DatePicker dpTo;
 
@@ -114,4 +114,9 @@ public class ReportsForm implements Initializable {
         return reportBuilder.buildReport(ReportBuilder.html);
     }
 
+    @Override
+    public void setStage(Stage stage) {
+        this.stage = stage;
+        this.stage.setTitle("Deliveries report");
+    }
 }
