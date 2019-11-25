@@ -114,7 +114,9 @@ public class MainForm extends BaseController implements Initializable {
 
     @FXML
     private void handleMiExit() {
-        exitMessage();
+        if (new AlertMessage("Confirm Exit", "Are you sure you want to exit?").showConfirmationMessage()) {
+            Platform.exit();
+        }
     }
 
     @FXML
@@ -303,12 +305,6 @@ public class MainForm extends BaseController implements Initializable {
                     .toInstant());
         }
         return null;
-    }
-
-    private void exitMessage() {
-        if (new AlertMessage("Confirm Exit", "Are you sure you want to exit?").showConfirmationMessage()) {
-            Platform.exit();
-        }
     }
 
     @FXML
