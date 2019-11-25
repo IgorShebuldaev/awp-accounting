@@ -1,6 +1,5 @@
 package org.accounting.forms;
 
-import javafx.stage.Stage;
 import org.accounting.database.models.User;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.comboboxcells.RoleComboBoxCell;
@@ -55,6 +54,11 @@ public class UsersForm extends BaseController implements Initializable {
         tableUsers.setItems(data);
     }
 
+    @Override
+    public void postInitializable() {
+        stage.setTitle("Users");
+    }
+
     @FXML
     private void handleBtnAdd() {
         //TODO: get instance include controller
@@ -92,11 +96,5 @@ public class UsersForm extends BaseController implements Initializable {
 
     @FXML
     private void handleEditCommitTimeInProgram(TableColumn.CellEditEvent cellEditEvent) {
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle("Users");
     }
 }

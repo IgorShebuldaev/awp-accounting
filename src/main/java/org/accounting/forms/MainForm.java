@@ -1,19 +1,5 @@
 package org.accounting.forms;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.Duration;
-import javafx.util.StringConverter;
 import org.accounting.ControllerManager;
 import org.accounting.database.models.Delivery;
 import org.accounting.database.models.Supplier;
@@ -28,6 +14,20 @@ import org.accounting.forms.models.tablemodels.SupplierFX;
 import org.accounting.forms.models.tablemodels.WorkerFX;
 import org.accounting.forms.workbooks.WorkBooksForm;
 import org.accounting.user.CurrentUser;
+
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.Callback;
+import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -83,6 +83,16 @@ public class MainForm extends BaseController implements Initializable {
         cbSupplier.setItems(getItemsComboBoxSupplier());
         cbWorker.setItems(getItemsComboBoxWorker());
         setPropertiesComboBox();
+    }
+
+    @Override
+    public void postInitializable() {
+        stage.setTitle("Accounting");
+
+        stage.setOnCloseRequest(windowEvent -> {
+            windowEvent.consume();
+            handleMiExit();
+        });
     }
 
     @FXML
@@ -333,15 +343,5 @@ public class MainForm extends BaseController implements Initializable {
     @FXML
     private void onEditCommitWorker(TableColumn.CellEditEvent<DeliveryFX, String> deliveryFXStringCellEditEvent) {
         //TODO:save value from comboboxcells
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle("Accounting");
-
-        this.stage.setOnCloseRequest(windowEvent -> {
-            exitMessage();
-        });
     }
 }

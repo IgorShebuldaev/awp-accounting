@@ -1,5 +1,8 @@
 package org.accounting.forms;
 
+import org.accounting.database.models.Delivery;
+import org.accounting.libs.ReportBuilder;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -8,8 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.accounting.database.models.Delivery;
-import org.accounting.libs.ReportBuilder;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -68,6 +69,11 @@ public class ReportsForm extends BaseController implements Initializable {
         });
     }
 
+    @Override
+    public void postInitializable() {
+        stage.setTitle("Deliveries report");
+    }
+
     @FXML
     private void handleBtnShow() {
         Stage stage = new Stage();
@@ -112,11 +118,5 @@ public class ReportsForm extends BaseController implements Initializable {
         reportBuilder.addTableNode(tableNode);
 
         return reportBuilder.buildReport(ReportBuilder.html);
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle("Deliveries report");
     }
 }

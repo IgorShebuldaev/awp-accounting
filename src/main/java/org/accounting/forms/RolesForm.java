@@ -1,6 +1,5 @@
 package org.accounting.forms;
 
-import javafx.stage.Stage;
 import org.accounting.database.models.Role;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.tablemodels.RoleFX;
@@ -45,6 +44,11 @@ public class RolesForm extends BaseController implements Initializable {
         tableRoles.setItems(data);
     }
 
+    @Override
+    public void postInitializable() {
+        stage.setTitle("Roles");
+    }
+
     @FXML
     private void handleBtnAdd() {
         Role role = new Role();
@@ -82,11 +86,5 @@ public class RolesForm extends BaseController implements Initializable {
         roleFX.setName(roleFXStringCellEditEvent.getNewValue());
         roleFX.getRole().setName(roleFXStringCellEditEvent.getNewValue());
         handleBtnAdd(roleFX.getRole());
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle("Roles");
     }
 }

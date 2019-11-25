@@ -52,6 +52,7 @@ public class ControllerManager {
 
             BaseController baseController = loader.getController();
             baseController.setStage(stage);
+            baseController.postInitializable();
         }
 
         return stage;

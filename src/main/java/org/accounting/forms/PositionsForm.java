@@ -1,6 +1,5 @@
 package org.accounting.forms;
 
-import javafx.stage.Stage;
 import org.accounting.database.models.Position;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.tablemodels.PositionFX;
@@ -41,6 +40,11 @@ public class PositionsForm extends BaseController implements Initializable {
         tablePositions.setItems(data);
     }
 
+    @Override
+    public void postInitializable() {
+        stage.setTitle("Positions");
+    }
+
     @FXML
     private void handleBtnAdd() {
         Position position = new Position();
@@ -79,11 +83,5 @@ public class PositionsForm extends BaseController implements Initializable {
         positionFX.setName(positionFXStringCellEditEvent.getNewValue());
         positionFX.getPosition().setName(positionFXStringCellEditEvent.getNewValue());
         handleBtnAdd(positionFX.getPosition());
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle("Positions");
     }
 }

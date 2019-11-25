@@ -94,5 +94,4 @@ public class UserFields implements Initializable {
     private void handleBtnShowRolesForm() {
         ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
     }
-
 }
