@@ -1,5 +1,7 @@
 package org.accounting.forms.models.comboboxcells;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.accounting.database.models.Role;
 import org.accounting.forms.models.tablemodels.RoleFX;
 import org.accounting.forms.models.tablemodels.UserFX;
@@ -13,6 +15,7 @@ import javafx.util.StringConverter;
 import java.util.ArrayList;
 
 public class RoleComboBoxCell extends BaseComboBoxCell<UserFX, RoleFX> {
+    private ObservableList<RoleFX> items = FXCollections.observableArrayList();
 
     public RoleComboBoxCell() {
         ArrayList<Role> results = Role.getAll();
