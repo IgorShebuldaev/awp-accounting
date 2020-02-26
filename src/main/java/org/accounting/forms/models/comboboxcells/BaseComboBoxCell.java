@@ -1,16 +1,20 @@
 package org.accounting.forms.models.comboboxcells;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
+
+import java.util.HashMap;
 
 public abstract class BaseComboBoxCell<A, B> extends TableCell<A, String> {
 
     protected abstract void createComboBox();
 
     protected ComboBox<B> comboBox;
-    protected ObservableList<B> items;
+    protected ObservableList<B> items = FXCollections.observableArrayList();
+    protected HashMap<String, Integer> values = new HashMap<>();
 
     @Override
     public void startEdit() {
@@ -57,4 +61,11 @@ public abstract class BaseComboBoxCell<A, B> extends TableCell<A, String> {
         return getItem() == null ? "" : getItem();
     }
 
+    public Integer getId(String value) {
+        return values.get(value);
+    }
+
+    public ObservableList<B> getList() {
+        return items;
+    }
 }
