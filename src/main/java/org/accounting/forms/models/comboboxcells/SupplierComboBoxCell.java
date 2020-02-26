@@ -1,17 +1,26 @@
 package org.accounting.forms.models.comboboxcells;
 
+import org.accounting.database.models.Position;
+import org.accounting.database.models.Supplier;
 import org.accounting.forms.models.tablemodels.DeliveryFX;
 import org.accounting.forms.models.tablemodels.SupplierFX;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import java.util.ArrayList;
+
 public class SupplierComboBoxCell extends BaseComboBoxCell<DeliveryFX, SupplierFX> {
 
-    public SupplierComboBoxCell(ObservableList<SupplierFX> items) {
-        this.items = items;
+    public SupplierComboBoxCell() {
+        //ArrayList<Supplier> results = Supplier.getAll();
+
+        ArrayList<Supplier> results = ComboBoxLoader.getInstance().getData(Supplier.class);
+        for (Supplier supplier : results) {
+            items.add(new SupplierFX(supplier));
+            values.put(supplier.getName(), supplier.getId());
+        }
     }
 
     protected void createComboBox() {
@@ -58,5 +67,4 @@ public class SupplierComboBoxCell extends BaseComboBoxCell<DeliveryFX, SupplierF
         });
 
     }
-
 }

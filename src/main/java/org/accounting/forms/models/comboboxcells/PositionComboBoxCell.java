@@ -1,19 +1,27 @@
 package org.accounting.forms.models.comboboxcells;
 
-import javafx.collections.ObservableList;
+import org.accounting.database.models.Position;
+import org.accounting.forms.models.tablemodels.PositionFX;
+import org.accounting.forms.models.tablemodels.WorkerFX;
+
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.accounting.forms.models.tablemodels.PositionFX;
-import org.accounting.forms.models.tablemodels.WorkerFX;
 
+import java.util.ArrayList;
 
 public class PositionComboBoxCell extends BaseComboBoxCell<WorkerFX, PositionFX> {
 
-    public PositionComboBoxCell(ObservableList<PositionFX> items) {
-        this.items = items;
+    public PositionComboBoxCell() {
+
+        ArrayList<Position> results = Position.getAll();
+
+        for (Position position : results) {
+            items.add(new PositionFX(position));
+            values.put(position.getName(), position.getId());
+        }
     }
 
     protected void createComboBox() {
@@ -58,5 +66,4 @@ public class PositionComboBoxCell extends BaseComboBoxCell<WorkerFX, PositionFX>
         });
 
     }
-
 }
