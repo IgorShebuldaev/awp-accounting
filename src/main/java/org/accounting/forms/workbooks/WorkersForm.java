@@ -1,7 +1,8 @@
 package org.accounting.forms.workbooks;
 
-import org.accounting.database.models.Position;
+import org.accounting.ControllerManager;
 import org.accounting.database.models.Worker;
+import org.accounting.forms.PositionsForm;
 import org.accounting.forms.helpers.AlertMessage;
 import org.accounting.forms.models.DateTableCell;
 import org.accounting.forms.models.comboboxcells.PositionComboBoxCell;
@@ -36,6 +37,7 @@ public class WorkersForm implements Initializable {
     @FXML private DatePicker dpDateOfBirth;
     @FXML private ComboBox<PositionFX> cbPosition;
     private ObservableList<WorkerFX> data;
+    private PositionComboBoxCell cbCellPosition;
 
     public WorkersForm() {
         data = FXCollections.observableArrayList();
@@ -48,6 +50,9 @@ public class WorkersForm implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        cbCellPosition = new PositionComboBoxCell();
+
         columnFullName.setCellValueFactory(cellData -> cellData.getValue().fullNameProperty());
         columnDateOfBirth.setCellValueFactory(cellData -> cellData.getValue().dateOfBirthProperty());
         columnPosition.setCellValueFactory(cellData -> cellData.getValue().positionProperty());
@@ -55,9 +60,13 @@ public class WorkersForm implements Initializable {
 
         columnFullName.setCellFactory(TextFieldTableCell.forTableColumn());
         columnDateOfBirth.setCellFactory((TableColumn<WorkerFX, Date> param) -> new DateTableCell<>());
-        columnPosition.setCellFactory((TableColumn<WorkerFX, String> param) -> new PositionComboBoxCell(getItemsComboBoxPosition()));
+        columnPosition.setCellFactory((TableColumn<WorkerFX, String> param) -> cbCellPosition);
+
+        cbPosition.setItems(cbCellPosition.getList());
 
         tableWorkers.setItems(data);
+
+        setPropertiesCombobox();
     }
 
     private void setPropertiesCombobox() {
@@ -81,7 +90,7 @@ public class WorkersForm implements Initializable {
         cbPosition.setConverter(new StringConverter<PositionFX>() {
             @Override
             public String toString(PositionFX positionFX) {
-                if (positionFX == null){
+                if (positionFX == null) {
                     return null;
                 } else {
                     return positionFX.getName();
@@ -93,17 +102,6 @@ public class WorkersForm implements Initializable {
                 return null;
             }
         });
-    }
-
-    private ObservableList<PositionFX> getItemsComboBoxPosition() {
-        ObservableList<PositionFX> workers = FXCollections.observableArrayList();
-        ArrayList<Position> results = Position.getAll();
-
-        for (Position position : results) {
-            workers.add(new PositionFX(position));
-        }
-
-        return workers;
     }
 
     private void clearComponents() {
@@ -176,4 +174,10 @@ public class WorkersForm implements Initializable {
         //TODO:save value from comboboxcells
     }
 
+    @FXML
+    private void handlerBtnShowPositionsForm() {
+        ControllerManager.getInstance().getStage(PositionsForm.class).showAndWait();
+        cbCellPosition = new PositionComboBoxCell();
+        cbPosition.setItems(cbCellPosition.getList());
+    }
 }
