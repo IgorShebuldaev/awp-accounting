@@ -10,7 +10,7 @@ public class WorkBooksForm extends BaseController {
     @FXML private AnchorPane paneWorkers;
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Work books");
     }
 }

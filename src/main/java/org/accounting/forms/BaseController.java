@@ -9,5 +9,5 @@ public abstract class BaseController {
         this.stage = stage;
     }
 
-    public void postInitializable() { }
+    public void postInitialize() { }
 }

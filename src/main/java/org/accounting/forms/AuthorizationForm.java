@@ -14,7 +14,7 @@ public class AuthorizationForm extends BaseController {
     @FXML private PasswordField passField;
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Sign in");
     }
 

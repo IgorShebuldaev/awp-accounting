@@ -25,7 +25,7 @@ public class NotesForm extends BaseController implements Initializable {
     }
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Notes");
 
         stage.setOnCloseRequest(windowEvent -> {

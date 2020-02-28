@@ -55,7 +55,7 @@ public class UsersForm extends BaseController implements Initializable {
     }
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Users");
     }
 

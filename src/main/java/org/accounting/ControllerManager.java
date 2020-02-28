@@ -1,11 +1,12 @@
 package org.accounting;
 
+import org.accounting.forms.BaseController;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.accounting.forms.BaseController;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class ControllerManager {
         if (stage == null || reload) {
             FXMLLoader loader = new FXMLLoader(controller.getResource(controller.getSimpleName() + ".fxml"));
             Parent root = null;
+
             try {
                 root = loader.load();
             } catch (IOException e) {
@@ -52,7 +54,7 @@ public class ControllerManager {
 
             BaseController baseController = loader.getController();
             baseController.setStage(stage);
-            baseController.postInitializable();
+            baseController.postInitialize();
         }
 
         return stage;

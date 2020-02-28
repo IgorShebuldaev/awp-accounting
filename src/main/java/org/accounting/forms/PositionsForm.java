@@ -41,7 +41,7 @@ public class PositionsForm extends BaseController implements Initializable {
     }
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Positions");
     }
 

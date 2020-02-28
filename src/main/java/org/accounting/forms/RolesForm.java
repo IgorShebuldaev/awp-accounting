@@ -45,7 +45,7 @@ public class RolesForm extends BaseController implements Initializable {
     }
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Roles");
     }
 
@@ -61,6 +61,9 @@ public class RolesForm extends BaseController implements Initializable {
         }
 
         data.add(new RoleFX(role));
+
+        tfNameRole.clear();
+        tfLookupCode.clear();
     }
 
     @FXML

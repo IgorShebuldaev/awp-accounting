@@ -70,7 +70,7 @@ public class ReportsForm extends BaseController implements Initializable {
     }
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Deliveries report");
     }
 

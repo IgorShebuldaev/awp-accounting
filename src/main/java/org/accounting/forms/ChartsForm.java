@@ -3,7 +3,7 @@ package org.accounting.forms;
 public class ChartsForm extends BaseController {
 
     @Override
-    public void postInitializable() {
+    public void postInitialize() {
         stage.setTitle("Chart");
     }
 }
