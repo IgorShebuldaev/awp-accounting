@@ -25,6 +25,7 @@ public class UserFields implements Initializable {
     @FXML private Label labelRole;
     @FXML private ComboBox<RoleFX> cbRole;
     @FXML private Button btnShowRolesForm;
+    @FXML private ObservableList<RoleFX> items = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -35,15 +36,22 @@ public class UserFields implements Initializable {
         }
 
         addItemComboBoxRole();
+        setPropertiesComboBox();
     }
 
     private void addItemComboBoxRole() {
-        ObservableList<RoleFX> items = FXCollections.observableArrayList();
+        items.clear();
+
         ArrayList<Role> results = Role.getAll();
+
         for (Role role: results) {
             items.add(new RoleFX(role));
         }
 
+        cbRole.setItems(items);
+    }
+
+    private void setPropertiesComboBox() {
         cbRole.setCellFactory(new Callback<ListView<RoleFX>, ListCell<RoleFX>>() {
             @Override
             public ListCell<RoleFX> call(ListView<RoleFX> roleFXListView) {
@@ -77,8 +85,6 @@ public class UserFields implements Initializable {
             }
         });
 
-        cbRole.setItems(items);
-        cbRole.getSelectionModel().selectFirst();
     }
 
     public User buildUser() {
@@ -92,6 +98,7 @@ public class UserFields implements Initializable {
 
     @FXML
     private void handleBtnShowRolesForm() {
-        ControllerManager.getInstance().getStageReloaded(RolesForm.class).show();
+        ControllerManager.getInstance().getStageReloaded(RolesForm.class).showAndWait();
+        addItemComboBoxRole();
     }
 }
