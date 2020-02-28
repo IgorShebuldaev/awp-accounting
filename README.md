@@ -6,28 +6,5 @@ To mount a database, create a file database.xml and fill in the example
 src/main/resources/database.xml.example.
 Then use the file seed.sql to fill the system tables in the program, 
 otherwise you will not be able to log in.
-## Gradle tasks
-* Loads database schema.
-```
-load
-```
-* Creates dump of database's structure.
-```
-dump
-```
-* Destroys database.
-```
-destroy
-```
-* Creates empty database.
-```
-create
-```
-* Applies seeds to database.
-```
-seed
-```
-* Creates new database and applies schema.
-```
-setup_db
-```
+## Database
+To create and load a database schema, use the library in package libs.Database.
