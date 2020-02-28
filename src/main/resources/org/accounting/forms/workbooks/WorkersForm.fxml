@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane fx:id="paneWorkers" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="500.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.accounting.forms.workbooks.WorkersForm">
    <children>
       <TableView fx:id="tableWorkers" editable="true" prefHeight="300.0" prefWidth="600.0">
@@ -23,7 +27,7 @@
       <TextField fx:id="tfFullName" layoutX="10.0" layoutY="325.0" prefWidth="200.0" />
       <DatePicker fx:id="dpDateOfBirth" layoutX="10.0" layoutY="375.0" prefWidth="200.0" />
       <Label layoutX="10.0" layoutY="360.0" text="Date of birth" />
-      <ComboBox fx:id="cbPosition" layoutX="10.0" layoutY="425.0" prefWidth="200.0" />
+      <ComboBox fx:id="cbPosition" layoutX="10.0" layoutY="425.0" prefWidth="160.0" />
       <Button layoutX="10.0" layoutY="460.0" mnemonicParsing="false" onAction="#handleBtnAdd" text="Add" />
       <Label layoutX="10.0" layoutY="410.0" text="Position" />
       <AnchorPane layoutX="210.0" layoutY="300.0" prefHeight="200.0" prefWidth="200.0">
@@ -32,5 +36,6 @@
          </children>
       </AnchorPane>
       <Button layoutX="65.0" layoutY="460.0" mnemonicParsing="false" onAction="#handleBtnDelete" text="Delete" />
+      <Button layoutX="179.0" layoutY="425.0" mnemonicParsing="false" onAction="#handlerBtnShowPositionsForm" prefHeight="26.0" prefWidth="26.0" text="..." />
    </children>
 </AnchorPane>
