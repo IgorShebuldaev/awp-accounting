@@ -24,7 +24,7 @@ public class Load {
         try {
             importSQL(connection, (new FileInputStream(dumpFile)));
 
-            System.out.println("Dump was successfully created!");
+            System.out.println("Database was successfully loaded!");
         } catch (Exception e) {
             e.printStackTrace();
         }

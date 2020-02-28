@@ -22,7 +22,7 @@ public class Seed {
         try {
             Load.importSQL(connection, (new FileInputStream(dumpFile)));
 
-            System.out.println("Dump was successfully created!");
+            System.out.println("Seeds was successfully loaded!");
         } catch (Exception e) {
             e.printStackTrace();
         }
